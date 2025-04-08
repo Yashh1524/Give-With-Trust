@@ -10,7 +10,9 @@ import {
     LayoutDashboardIcon,
     LogInIcon,
     UserPlusIcon,
+    PlusIcon,
 } from "lucide-react";
+
 import {
     Sheet,
     SheetContent,
@@ -18,8 +20,14 @@ import {
     SheetTitle,
 } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
-import { useAuth, SignInButton, SignOutButton, SignUpButton } from "@clerk/nextjs";
+import {
+    useAuth,
+    SignInButton,
+    SignOutButton,
+    SignUpButton,
+} from "@clerk/nextjs";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 
 const MobileSidebar = ({
     open,
@@ -29,6 +37,19 @@ const MobileSidebar = ({
     onClose: () => void;
 }) => {
     const { isSignedIn } = useAuth();
+    const [hasNgo, setHasNgo] = useState(false);
+
+    useEffect(() => {
+        const checkNgo = async () => {
+            const res = await fetch("/api/user/has-ngo");
+            const data = await res.json();
+            setHasNgo(data.hasNgo);
+        };
+
+        if (isSignedIn) {
+            checkNgo();
+        }
+    }, [isSignedIn]);
 
     return (
         <Sheet open={open} onOpenChange={(val) => !val && onClose()}>
@@ -72,18 +93,31 @@ const MobileSidebar = ({
                             </Link>
                         </Button>
 
-                        {isSignedIn ? (
+                        {isSignedIn && (
                             <>
-                                <Button
-                                    variant="ghost"
-                                    className="flex items-center gap-3 justify-start"
-                                    asChild
-                                >
-                                    <Link href="/dashboard">
-                                        <LayoutDashboardIcon className="w-4 h-4" />
-                                        Dashboard
-                                    </Link>
-                                </Button>
+                                {hasNgo ? (
+                                    <Button
+                                        variant="ghost"
+                                        className="flex items-center gap-3 justify-start"
+                                        asChild
+                                    >
+                                        <Link href="/dashboard">
+                                            <LayoutDashboardIcon className="w-4 h-4" />
+                                            Dashboard
+                                        </Link>
+                                    </Button>
+                                ) : (
+                                    <Button
+                                        variant="ghost"
+                                        className="flex items-center gap-3 justify-start"
+                                        asChild
+                                    >
+                                        <Link href="/register-ngo">
+                                            <PlusIcon className="w-4 h-4" />
+                                            Become an NGO
+                                        </Link>
+                                    </Button>
+                                )}
 
                                 <Button
                                     variant="ghost"
@@ -117,7 +151,9 @@ const MobileSidebar = ({
                                     </Button>
                                 </SignOutButton>
                             </>
-                        ) : (
+                        )}
+
+                        {!isSignedIn && (
                             <>
                                 <SignInButton mode="modal">
                                     <Button

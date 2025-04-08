@@ -123,4 +123,17 @@
   .nav-button {
     @apply px-2 rounded-md bg-[#1c1717] text-[#ffff] hover:bg-[#000] dark:bg-[#626262] dark:hover:bg-[#373737] dark:text-[#ffffff] transition-colors
   }
+
+  .input {
+    @apply w-full p-2 border rounded bg-transparent focus:outline-none focus:ring-2 focus:ring-primary;
+}
+}
+
+html, body {
+  height: 100%;
+  overflow: auto; /* ✅ Allows scrolling */
+}
+
+#__next {
+  height: 100%;
 }

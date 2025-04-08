@@ -1,23 +1,23 @@
 "use server"
 
 import { prisma } from "@/lib/prisma";
+import { auth } from "@clerk/nextjs/server";
 
-const syncUser = async (
-    {
-        clerkId,
-        firstName,
-        lastName,
-        email,
-        username,
-    } : {
-        clerkId: string;
-        firstName?: string | null;
-        lastName?: string | null;
-        email: string;
-        image?: string | null;
-        username?: string | null;
-    }  
-) => {
+export const syncUser = async ({
+    clerkId,
+    firstName,
+    lastName,
+    email,
+    image,
+    username,
+}: {
+    clerkId: string;
+    firstName?: string | null;
+    lastName?: string | null;
+    email: string;
+    image?: string | null;
+    username?: string | null;
+}) => {
     try {
         if (!clerkId) return; // Ensure userId is provided
 
@@ -38,7 +38,42 @@ const syncUser = async (
                 username: username ?? email.split("@")[0],
                 email,
                 image,
+                role: "DONOR"
             },
         });
+    } catch (error) {
+        console.error("Error in syncUser:", error);
+        throw new Error("Database operation failed");
     }
+};
+
+export async function getUserByClerkId(clerkId: string) {
+    return prisma.user.findUnique({
+        where: {
+            clerkId,
+        },
+    });
+}
+
+export async function getDbUserId() {
+    const { userId: clerkId } = await auth();
+    if (!clerkId) return null;
+
+    const user = await getUserByClerkId(clerkId);
+    
+    if (!user) throw new Error("User not found");
+
+    return user.id;
+}
+
+export async function checkIfUserHasNgo() {
+    const { userId: clerkId } = await auth();
+    if (!clerkId) return false;
+
+    const user = await prisma.user.findUnique({
+        where: { clerkId },
+        include: { ngoProfile: true },
+    });
+
+    return !!user?.ngoProfile;
 }

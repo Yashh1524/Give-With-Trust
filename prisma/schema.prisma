@@ -29,10 +29,11 @@ model User {
     id           String        @id @default(cuid())
     clerkId      String        @unique
     email        String        @unique
-    role         Role
-    name         String?
     username     String        @unique
-    imgae        String
+    name         String?
+    bio          String?
+    image        String?
+    role         Role
     createdAt    DateTime      @default(now())
     donations    Donation[]    @relation("DonorDonations")
     votes        Vote[]
@@ -41,14 +42,28 @@ model User {
 }
 
 model NGOProfile {
-    id                String        @id @default(cuid())
-    userId            String        @unique
-    description       String
-    generalInfo       Json
-    approved          Boolean       @default(false)
-    createdAt         DateTime      @default(now())
-    raisedThisMonth   Float         @default(0)
-    status            NGOStatus     @default(NOT_SUBMITTED)
+    id              String    @id @default(cuid())
+    userId          String    @unique
+    name            String
+    establishedDate DateTime
+    address         String
+    contactInfo     String
+    description     String
+    approved        Boolean   @default(false)
+    createdAt       DateTime  @default(now())
+    raisedThisMonth Float     @default(0)
+    status          NGOStatus @default(NOT_SUBMITTED)
+
+    accountNumber     String?
+    bankName          String?
+    ifscCode          String?
+    accountHolderName String?
+    upiId             String?
+
+    logo     String?
+    proofPdf String?
+
+    // relations
     proofs            Proof[]
     donations         Donation[]    @relation("NgoDonations")
     voteSessions      VoteSession[] @relation("FailedNgo")

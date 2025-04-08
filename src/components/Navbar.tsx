@@ -12,7 +12,7 @@ const Navbar = () => {
     const [mobileOpen, setMobileOpen] = useState(false);
 
     return (
-        <nav className="sticky top-0 z-50 w-full border-b bg-white dark:bg-[#100f1b]">
+        <nav className="sticky h-[10vh] top-0 z-50 w-full border-b bg-white dark:bg-[#100f1b]">
             <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
                 <Link href="/" className="text-xl font-bold text-primary dark:text-white">
                     GiveWithTrust
