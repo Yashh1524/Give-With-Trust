@@ -29,7 +29,7 @@ import {
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { getNgoByUserId } from "@/actions/ngo.action";
-import { getDbUserId } from "@/actions/user.action";
+import { checkIfUserHasNgo, getDbUserId } from "@/actions/user.action";
 
 const MobileSidebar = ({
     open,
@@ -41,19 +41,20 @@ const MobileSidebar = ({
     const { isSignedIn } = useAuth();
     const [hasNgo, setHasNgo] = useState(false);
 
-useEffect(() => {
+    useEffect(() => {
         const checkNgoStatus = async () => {
             try {
                 const userId = await getDbUserId();
                 if (!userId) return;
-                const ngo = await getNgoByUserId(userId);
-                setHasNgo(!!ngo); // true if ngo exists, false otherwise
+                
+                setHasNgo(await checkIfUserHasNgo())
+                
             } catch (error) {
                 console.error("Failed to check NGO status:", error);
                 setHasNgo(false);
             }
         };
-    
+
         if (isSignedIn) {
             checkNgoStatus();
         }
@@ -61,7 +62,7 @@ useEffect(() => {
 
     return (
         <Sheet open={open} onOpenChange={(val) => !val && onClose()}>
-            <SheetContent side="left" className="w-full max-w-xs">
+            <SheetContent side="left" className="w-full max-w-xs dark:bg-[#100f1b]">
                 <SheetHeader>
                     <SheetTitle className="text-left">Menu</SheetTitle>
                 </SheetHeader>
@@ -104,16 +105,28 @@ useEffect(() => {
                         {isSignedIn && (
                             <>
                                 {hasNgo ? (
-                                    <Button
-                                        variant="ghost"
-                                        className="flex items-center gap-3 justify-start"
-                                        asChild
-                                    >
-                                        <Link href="/dashboard">
-                                            <LayoutDashboardIcon className="w-4 h-4" />
-                                            Dashboard
-                                        </Link>
-                                    </Button>
+                                    <>
+                                        <Button
+                                            variant="ghost"
+                                            className="flex items-center gap-3 justify-start"
+                                            asChild
+                                        >
+                                            <Link href="/dashboard">
+                                                <LayoutDashboardIcon className="w-4 h-4" />
+                                                Dashboard
+                                            </Link>
+                                        </Button>
+                                        <Button
+                                            variant="ghost"
+                                            className="flex items-center gap-3 justify-start"
+                                            asChild
+                                        >
+                                            <Link href="/register-ngo">
+                                                <PlusIcon className="w-4 h-4" />
+                                                Add more NGO
+                                            </Link>
+                                        </Button>
+                                    </>
                                 ) : (
                                     <Button
                                         variant="ghost"

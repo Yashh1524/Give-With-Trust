@@ -75,23 +75,22 @@ export async function checkIfUserHasNgo() {
         include: { ngoProfile: true },
     });
 
-    return !!user?.ngoProfile;
+    const result = user?.ngoProfile.length
+
+    if(result === 0) return false
+    else return true;
+    // return (user?.ngoProfile?.length ?? 0) > 0;
+
 }
 
-export async function getUserDetails(userIdOrClerkId: string) {
+export async function getUserDetails(userId: string) {
     try {
-        const user = await prisma.user.findFirst({
+        const user = await prisma.user.findUnique({
             where: {
-                OR: [
-                    { id: userIdOrClerkId },
-                    { clerkId: userIdOrClerkId },
-                ],
-            },
-        });
-
-        return user;
+                id: userId
+            }
+        })
     } catch (error) {
-        console.error('Error fetching user details:', error);
-        throw new Error('Failed to fetch user details');
+        
     }
 }

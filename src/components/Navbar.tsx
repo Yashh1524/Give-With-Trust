@@ -21,7 +21,7 @@ const Navbar = () => {
                     <UserButton />
                     <ToggleDarkModeButton />
                     {/* Mobile Menu Button */}
-                    <div className="md:hidden">
+                    <div className="lg:hidden">
                         <Button variant="ghost" size="icon" onClick={() => setMobileOpen(true)}>
                             <Menu className="h-6 w-6" />
                         </Button>

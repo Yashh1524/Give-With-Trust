@@ -7,6 +7,7 @@ import Navbar from "@/components/Navbar";
 import Sidebar from "@/components/Sidebar";
 import Footer from "@/components/Footer";
 import { Toaster } from 'react-hot-toast'
+import { SidebarProvider } from "@/context/SidebarContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -31,20 +32,22 @@ export default function RootLayout({
   return (
     <ClerkProvider>
       <ThemeProvider>
-        <html lang="en">
-          <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-            <div className="flex flex-col h-screen overflow-y-hidden">
-              <Navbar />
-              <div className="flex flex-1 bg-white dark:bg-[#100f1b] overflow-hidden">
-                <Sidebar />
-                <main className="flex-1 p-4 md:p-6 lg:p-8 overflow-y-auto h-[calc(100vh-64px)]">
-                  {children}
-                </main>
+        <SidebarProvider>
+          <html lang="en">
+            <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+              <div className="flex flex-col h-screen overflow-y-hidden">
+                <Navbar />
+                <div className="flex flex-1 bg-white dark:bg-[#100f1b] overflow-hidden">
+                  <Sidebar />
+                  <main className="flex-1 p-4 md:p-6 lg:p-8 overflow-y-auto h-[calc(100vh-64px)]">
+                    {children}
+                  </main>
+                </div>
               </div>
-            </div>
-            <Toaster />
-          </body>
-        </html>
+              <Toaster />
+            </body>
+          </html>
+        </SidebarProvider>
       </ThemeProvider>
     </ClerkProvider>
   );

@@ -25,6 +25,14 @@ enum NGOStatus {
     NOT_SUBMITTED
 }
 
+enum AccentTag {
+    TRUSTED
+    FEATURED
+    VERIFIED
+    NEW
+    IMPACTFUL
+}
+
 model User {
     id           String        @id @default(cuid())
     clerkId      String        @unique
@@ -37,13 +45,13 @@ model User {
     createdAt    DateTime      @default(now())
     donations    Donation[]    @relation("DonorDonations")
     votes        Vote[]
-    ngoProfile   NGOProfile?
+    ngoProfile   NGOProfile[]
     voteSessions VoteSession[] @relation("VoteSessionVoters")
 }
 
 model NGOProfile {
     id              String    @id @default(cuid())
-    userId          String    @unique
+    userId          String    
     name            String
     email           String    @unique
     establishedDate DateTime
@@ -54,6 +62,7 @@ model NGOProfile {
     createdAt       DateTime  @default(now())
     raisedThisMonth Float     @default(0)
     status          NGOStatus @default(NOT_SUBMITTED)
+    accentTags      AccentTag @default(NEW)
 
     accountNumber     String?
     bankName          String?
