@@ -1,0 +1,127 @@
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+}
+
+enum Role {
+    DONOR
+    NGO
+    ADMIN
+}
+
+enum DonationStatus {
+    HELD
+    RELEASED
+    REASSIGNED
+}
+
+enum NGOStatus {
+    SUBMITTED
+    PENDING
+    NOT_SUBMITTED
+}
+
+model User {
+    id           String        @id @default(cuid())
+    clerkId      String        @unique
+    email        String        @unique
+    role         Role
+    name         String?
+    username     String        @unique
+    imgae        String
+    createdAt    DateTime      @default(now())
+    donations    Donation[]    @relation("DonorDonations")
+    votes        Vote[]
+    ngoProfile   NGOProfile?
+    voteSessions VoteSession[] @relation("VoteSessionVoters")
+}
+
+model NGOProfile {
+    id                String        @id @default(cuid())
+    userId            String        @unique
+    description       String
+    generalInfo       Json
+    approved          Boolean       @default(false)
+    createdAt         DateTime      @default(now())
+    raisedThisMonth   Float         @default(0)
+    status            NGOStatus     @default(NOT_SUBMITTED)
+    proofs            Proof[]
+    donations         Donation[]    @relation("NgoDonations")
+    voteSessions      VoteSession[] @relation("FailedNgo")
+    votes             Vote[]
+    candidateSessions VoteSession[] @relation("VoteSessionCandidates")
+
+    user User @relation(fields: [userId], references: [id])
+}
+
+model Donation {
+    id        String         @id @default(cuid())
+    donorId   String
+    ngoId     String
+    amount    Float
+    createdAt DateTime       @default(now())
+    month     Int
+    year      Int
+    status    DonationStatus @default(HELD)
+
+    donor User       @relation("DonorDonations", fields: [donorId], references: [id])
+    ngo   NGOProfile @relation("NgoDonations", fields: [ngoId], references: [id])
+
+    @@index([donorId])
+    @@index([ngoId])
+    @@index([status])
+    @@index([month, year])
+    @@index([ngoId, month, year], name: "ngo_month_year_idx")
+}
+
+model Proof {
+    id          String   @id @default(cuid())
+    ngoId       String
+    month       Int
+    year        Int
+    description String
+    mediaUrls   String[]
+    submittedAt DateTime @default(now())
+
+    ngo NGOProfile @relation(fields: [ngoId], references: [id])
+
+    @@unique([ngoId, month, year], name: "unique_proof_per_month")
+    @@index([ngoId])
+    @@index([month, year])
+}
+
+model VoteSession {
+    id          String   @id @default(cuid())
+    failedNgoId String
+    month       Int
+    year        Int
+    createdAt   DateTime @default(now())
+    votes       Vote[]
+
+    failedNgo  NGOProfile   @relation("FailedNgo", fields: [failedNgoId], references: [id])
+    candidates NGOProfile[] @relation("VoteSessionCandidates")
+    voters     User[]       @relation("VoteSessionVoters")
+
+    @@unique([failedNgoId, month, year], name: "unique_vote_session")
+    @@index([month, year])
+}
+
+model Vote {
+    id            String   @id @default(cuid())
+    userId        String
+    voteSessionId String
+    selectedNgoId String
+    createdAt     DateTime @default(now())
+
+    user        User        @relation(fields: [userId], references: [id])
+    voteSession VoteSession @relation(fields: [voteSessionId], references: [id])
+    selectedNgo NGOProfile  @relation(fields: [selectedNgoId], references: [id])
+
+    @@unique([userId, voteSessionId], name: "user_unique_vote_per_session")
+    @@index([voteSessionId])
+    @@index([selectedNgoId])
+}
