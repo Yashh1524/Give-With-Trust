@@ -77,3 +77,21 @@ export async function checkIfUserHasNgo() {
 
     return !!user?.ngoProfile;
 }
+
+export async function getUserDetails(userIdOrClerkId: string) {
+    try {
+        const user = await prisma.user.findFirst({
+            where: {
+                OR: [
+                    { id: userIdOrClerkId },
+                    { clerkId: userIdOrClerkId },
+                ],
+            },
+        });
+
+        return user;
+    } catch (error) {
+        console.error('Error fetching user details:', error);
+        throw new Error('Failed to fetch user details');
+    }
+}

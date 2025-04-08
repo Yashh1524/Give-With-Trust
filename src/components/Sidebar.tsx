@@ -27,23 +27,32 @@ import {
 import { useState, useEffect } from "react";
 import { FaPlus } from "react-icons/fa6";
 import { IoMdNotifications } from "react-icons/io";
+import { getDbUserId } from "@/actions/user.action";
+import { getNgoByUserId } from "@/actions/ngo.action";
 
 const Sidebar = () => {
     const { isSignedIn } = useAuth();
     const [openSidebar, setOpenSidebar] = useState(true);
     const [hasNgo, setHasNgo] = useState(false);
-
+    
     useEffect(() => {
         const checkNgoStatus = async () => {
-            const res = await fetch("/api/user/has-ngo");
-            const data = await res.json();
-            setHasNgo(data.hasNgo);
+            try {
+                const userId = await getDbUserId();
+                if (!userId) return;
+                const ngo = await getNgoByUserId(userId);
+                setHasNgo(!!ngo); // true if ngo exists, false otherwise
+            } catch (error) {
+                console.error("Failed to check NGO status:", error);
+                setHasNgo(false);
+            }
         };
-
+    
         if (isSignedIn) {
             checkNgoStatus();
         }
     }, [isSignedIn]);
+    
 
     return (
         <div className="relative h-[90vh]">

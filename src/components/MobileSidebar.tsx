@@ -28,6 +28,8 @@ import {
 } from "@clerk/nextjs";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { getNgoByUserId } from "@/actions/ngo.action";
+import { getDbUserId } from "@/actions/user.action";
 
 const MobileSidebar = ({
     open,
@@ -39,15 +41,21 @@ const MobileSidebar = ({
     const { isSignedIn } = useAuth();
     const [hasNgo, setHasNgo] = useState(false);
 
-    useEffect(() => {
-        const checkNgo = async () => {
-            const res = await fetch("/api/user/has-ngo");
-            const data = await res.json();
-            setHasNgo(data.hasNgo);
+useEffect(() => {
+        const checkNgoStatus = async () => {
+            try {
+                const userId = await getDbUserId();
+                if (!userId) return;
+                const ngo = await getNgoByUserId(userId);
+                setHasNgo(!!ngo); // true if ngo exists, false otherwise
+            } catch (error) {
+                console.error("Failed to check NGO status:", error);
+                setHasNgo(false);
+            }
         };
-
+    
         if (isSignedIn) {
-            checkNgo();
+            checkNgoStatus();
         }
     }, [isSignedIn]);
 

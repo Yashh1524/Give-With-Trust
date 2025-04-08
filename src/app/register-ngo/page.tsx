@@ -5,11 +5,13 @@ import { useRouter } from 'next/navigation'
 import { registerNgo } from '@/actions/ngo.action'
 import ImageUpload from '@/components/ImageUpload'
 import FileUpload from '@/components/FileUpload'
+import toast from 'react-hot-toast'
 
 const RegisterNgoPage = () => {
     const [form, setForm] = useState({
         logo: '/ngoLogo.jpg',
         name: '',
+        email: '',
         establishedDate: '',
         address: '',
         contactInfo: '',
@@ -54,10 +56,12 @@ const RegisterNgoPage = () => {
 
         try {
             await registerNgo(form)
+            toast.success("Your NGO registration request has been submitted successfully!")
             router.push('/dashboard')
         } catch (error: any) {
             console.error('NGO registration failed:', error)
-            alert(error.message || 'Error registering NGO. Please try again.')
+            // alert(error.message || 'Error registering NGO. Please try again.')
+            toast.error("Failed to submit NGO registration. Please check your details and try again.")
         } finally {
             setLoading(false)
         }
@@ -154,14 +158,23 @@ const RegisterNgoPage = () => {
                             </div>
 
                             {/* Contact Info */}
-                            <div className="md:col-span-2">
-                                <label className="block mb-1 font-medium">Contact Info</label>
+                            <div className="md:col-span-2 space-y-2">
+                                <label className="block mb-1 font-medium">Email Address</label>
+                                <input
+                                    name="email"
+                                    value={form.email}
+                                    onChange={handleChange}
+                                    required
+                                    placeholder="enter email address"
+                                    className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-transparent"
+                                />
+                                <label className="block mb-1 font-medium">Contact Number</label>
                                 <input
                                     name="contactInfo"
                                     value={form.contactInfo}
                                     onChange={handleChange}
                                     required
-                                    placeholder="+91 98765 43210 or email"
+                                    placeholder="enter mobile number"
                                     className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-transparent"
                                 />
                             </div>
