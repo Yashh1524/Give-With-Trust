@@ -1,19 +1,12 @@
 import { getNgoByNgoId } from '@/actions/ngo.action';
 import { getDbUserId } from '@/actions/user.action';
 import DonateBox from '@/components/DonateBox';
+import DonationPieChart from '@/components/MonthlyDonationPieChart';
 import ProofSection from '@/components/ProofSection';
-
-interface PageProps {
-    params: {
-        id: string;
-    };
-}
 
 export default async function NGOProfilePage({ params }: { params: Promise<{ id: string }> }) {
     const ngoId = (await params).id
     const ngo = await getNgoByNgoId(ngoId);
-    console.log(ngo);
-    
     const userId = await getDbUserId()
 
     if (!ngo) return <div className="text-center py-10 text-red-500">NGO not found.</div>;
@@ -37,85 +30,57 @@ export default async function NGOProfilePage({ params }: { params: Promise<{ id:
                     <img
                         src={ngo.logo}
                         alt="NGO Logo"
-                        width={80}
-                        height={80}
-                        className="rounded-md border mt-4 md:mt-0"
+                        className="rounded-md border mt-4 md:mt-0 w-40 h-40"
                     />
                 )}
             </div>
 
+
             {/* Content */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* Left: Details */}
-                <div className="space-y-4">
-                    <div>
-                        <h2 className="text-lg font-semibold text-gray-800 dark:text-white">About</h2>
-                        <p className="text-sm text-gray-600 dark:text-gray-300">{ngo.description}</p>
-                    </div>
-
-                    <div>
-                        <h2 className="text-lg font-semibold text-gray-800 dark:text-white">Details</h2>
-                        <ul className="text-sm text-gray-600 dark:text-gray-300 space-y-1">
-                            <li><strong>Established:</strong> {new Date(ngo.establishedDate).toDateString()}</li>
-                            <li><strong>Contact:</strong> {ngo.contactInfo}</li>
-                            <li><strong>Address:</strong> {ngo.address}</li>
-                            {ngo.website && (
-                                <li><strong>Website:</strong> <a href={ngo.website} target="_blank" className="text-blue-500 underline">{ngo.website}</a></li>
-                            )}
-                        </ul>
-                    </div>
-
-                    {/* <div>
-                        <h2 className="text-lg font-semibold text-gray-800 dark:text-white">Bank Details</h2>
-                        <ul className="text-sm text-gray-600 dark:text-gray-300 space-y-1">
-                            {ngo.accountNumber && <li><strong>Account No:</strong> {ngo.accountNumber}</li>}
-                            {ngo.bankName && <li><strong>Bank Name:</strong> {ngo.bankName}</li>}
-                            {ngo.ifscCode && <li><strong>IFSC:</strong> {ngo.ifscCode}</li>}
-                            {ngo.accountHolderName && <li><strong>Account Holder:</strong> {ngo.accountHolderName}</li>}
-                            {ngo.upiId && <li><strong>UPI ID:</strong> {ngo.upiId}</li>}
-                        </ul>
-                    </div> */}
+            <div className="grid grid-cols-1 gap-6">
+                <div>
+                    <h2 className="text-lg font-semibold text-gray-800 dark:text-white">About</h2>
+                    <p className="text-sm text-gray-600 dark:text-gray-300">{ngo.description}</p>
                 </div>
 
-                {/* Right: Proofs + Images */}
-                <div className="space-y-4">
-                    {ngo.proofPdf && (
-                        <div>
-                            <h2 className="text-lg font-semibold text-gray-800 dark:text-white">NGO Document</h2>
-                            <a
-                                href={ngo.proofPdf}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="text-blue-600 underline text-sm"
-                            >
-                                View Uploaded PDF
-                            </a>
-                        </div>
-                    )}
-
-                    {ngo.images.length > 0 && (
-                        <div>
-                            <h2 className="text-lg font-semibold text-gray-800 dark:text-white mb-2">Uploaded Images</h2>
-                            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                                {ngo.images.map((img, idx) => (
-                                    <img
-                                        key={idx}
-                                        src={img}
-                                        alt={`NGO Image ${idx + 1}`}
-                                        className="w-full h-auto object-cover rounded border"
-                                    />
-                                ))}
-                            </div>
-                        </div>
-                    )}
+                <div>
+                    <h2 className="text-lg font-semibold text-gray-800 dark:text-white">Details</h2>
+                    <ul className="text-sm text-gray-600 dark:text-gray-300 space-y-2">
+                        <li><strong>Established:</strong> {new Date(ngo.establishedDate).toDateString()}</li>
+                        <li><strong>Email:</strong> {ngo.email}</li>
+                        <li><strong>Contact:</strong> {ngo.contactInfo}</li>
+                        <li><strong>Address:</strong> {ngo.address}</li>
+                        {ngo.website && (
+                            <li><strong>Website:</strong> <a href={ngo.website} target="_blank" className="text-blue-500 underline">{ngo.website}</a></li>
+                        )}
+                    </ul>
                 </div>
             </div>
-            
+
+            {/* NGO Images */}
+            {ngo.images.length > 0 && (
+                <div className="my-10">
+                    <div className="overflow-x-auto">
+                        <div className="flex space-x-4">
+                            {ngo.images.map((img, idx) => (
+                                <img
+                                    key={idx}
+                                    src={img}
+                                    alt={`NGO Image ${idx + 1}`}
+                                    className="flex-shrink-0 rounded border object-cover w-[90%] sm:w-[80%] md:w-[45%] lg:w-[30%] h-auto"
+                                />
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            )}
+
             {/* Work Proof Section */}
             <ProofSection proofs={ngo?.proofs} />
 
             {/* Donate Section */}
-            <DonateBox ngoId={ngoId} userId={userId}/>
+            <DonateBox ngoId={ngoId} userId={userId} />
+
         </div>
     );
 }

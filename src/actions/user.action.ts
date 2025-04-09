@@ -2,6 +2,7 @@
 
 import { prisma } from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
+import { revalidatePath } from "next/cache";
 
 export const syncUser = async ({
     clerkId,
@@ -29,7 +30,7 @@ export const syncUser = async ({
         if (existingUser) {
             return existingUser;
         }
-
+        revalidatePath("/")
         // If user does not exist, create new user in DB
         return await prisma.user.create({
             data: {
@@ -61,8 +62,9 @@ export async function getDbUserId() {
 
     const user = await getUserByClerkId(clerkId);
     
-    if (!user) throw new Error("User not found");
-
+    // if (!user) throw new Error("User not found");
+    if(!user) return
+    
     return user.id;
 }
 
@@ -90,6 +92,8 @@ export async function getUserDetails(userId: string) {
                 id: userId
             }
         })
+
+        return user
     } catch (error) {
         
     }

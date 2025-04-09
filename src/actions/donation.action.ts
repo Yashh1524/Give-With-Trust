@@ -1,5 +1,23 @@
-// app/actions/donation.action.ts
+"use server"
+
 import { prisma } from '@/lib/prisma';
+import { updateTotamAmountRaisedThisMonth } from './ngo.action';
+import { revalidatePath } from 'next/cache';
+
+const MONTH_ENUM = [
+    'JANUARY',
+    'FEBRUARY',
+    'MARCH',
+    'APRIL',
+    'MAY',
+    'JUNE',
+    'JULY',
+    'AUGUST',
+    'SEPTEMBER',
+    'OCTOBER',
+    'NOVEMBER',
+    'DECEMBER',
+] as const;
 
 export async function createDonation({
     orderId,
@@ -17,6 +35,7 @@ export async function createDonation({
     message?: string;
 }) {
     const now = new Date();
+    const currentMonth = MONTH_ENUM[now.getMonth()];
 
     const donation = await prisma.donation.create({
         data: {
@@ -26,10 +45,48 @@ export async function createDonation({
             donorId,
             amount,
             message,
-            month: 3,
-            year: 2025,
+            month: currentMonth,
+            year: now.getFullYear(),
         },
     });
 
+    updateTotamAmountRaisedThisMonth(ngoId, amount)
+
+    revalidatePath(`/ngos/${ngoId}`)
     return donation;
+}
+
+export async function getDonationByNgoId(ngoId: string) {
+    try {
+        const donations = await prisma.donation.findMany({
+            where: {
+                ngoId,
+            },
+            orderBy: {
+                createdAt: 'desc',
+            },
+            include: {
+                donor: {
+                    select: {
+                        id: true,
+                        name: true,
+                        email: true,
+                        image: true,
+                    },
+                },
+                reAssignedNgo: {
+                    select: {
+                        id: true,
+                        name: true,
+                    },
+                },
+                ngo: true,
+            },
+        });
+
+        return donations;
+    } catch (error) {
+        console.error('Error fetching donations by NGO ID:', error);
+        throw new Error('Failed to fetch donations');
+    }
 }

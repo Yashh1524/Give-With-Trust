@@ -18,6 +18,7 @@ export const registerNgo = async ({
     upiId,
     logo,
     proofPdf,
+    images
 }: {
     name: string;
     establishedDate: string;
@@ -32,6 +33,7 @@ export const registerNgo = async ({
     upiId?: string;
     logo?: string;
     proofPdf?: string;
+    images: string[]
 }) => {
     // const { userId } = await  auth();
     const userId = await getDbUserId()
@@ -57,6 +59,7 @@ export const registerNgo = async ({
             upiId,
             logo,
             proofPdf,
+            images
         },
     });
 
@@ -107,5 +110,24 @@ export async function getNgoByNgoId(id: string) {
     } catch (error) {
         console.error("Error fetching NGO:", error);
         throw error;
+    }
+}
+
+export async function updateTotamAmountRaisedThisMonth(ngoId: string, amount: number) {
+    try {
+        await prisma.nGOProfile.update({
+            where: { 
+                id: ngoId 
+            },
+            data: {
+                raisedThisMonth: {
+                    increment: amount,
+                },
+            },
+        });
+        return { success: true };
+    } catch (error) {
+        console.error('Error updating raisedThisMonth:', error);
+        return { success: false, error: 'Failed to update raised amount' };
     }
 }

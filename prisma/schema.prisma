@@ -33,6 +33,21 @@ enum AccentTag {
     IMPACTFUL
 }
 
+enum Month {
+    JANUARY
+    FEBRUARY
+    MARCH
+    APRIL
+    MAY
+    JUNE
+    JULY
+    AUGUST
+    SEPTEMBER
+    OCTOBER
+    NOVEMBER
+    DECEMBER
+}
+
 model User {
     id           String        @id @default(cuid())
     clerkId      String        @unique
@@ -75,31 +90,33 @@ model NGOProfile {
     proofPdf String?
     images   String[]
 
-    // relations
-    proofs            Proof[]
-    donations         Donation[]    @relation("NgoDonations")
-    voteSessions      VoteSession[] @relation("FailedNgo")
-    votes             Vote[]
-    candidateSessions VoteSession[] @relation("VoteSessionCandidates")
+    proofs              Proof[]
+    donations           Donation[]    @relation("NgoDonations")
+    reassignedDonations Donation[]    @relation("ReassignedDonations")
+    voteSessions        VoteSession[] @relation("FailedNgo")
+    votes               Vote[]
+    candidateSessions   VoteSession[] @relation("VoteSessionCandidates")
 
     user User @relation(fields: [userId], references: [id])
 }
 
 model Donation {
-    id        String         @id @default(cuid())
-    orderId   String
-    paymentId String
-    donorId   String
-    ngoId     String
-    amount    Float
-    message   String?
-    createdAt DateTime       @default(now())
-    month     Int
-    year      Int
-    status    DonationStatus @default(HELD)
+    id              String         @id @default(cuid())
+    orderId         String
+    paymentId       String
+    donorId         String
+    ngoId           String
+    amount          Float
+    message         String?
+    createdAt       DateTime       @default(now())
+    month           Month
+    year            Int
+    status          DonationStatus @default(HELD)
+    reAssignedNgoId String?
 
-    donor User       @relation("DonorDonations", fields: [donorId], references: [id])
-    ngo   NGOProfile @relation("NgoDonations", fields: [ngoId], references: [id])
+    donor         User        @relation("DonorDonations", fields: [donorId], references: [id])
+    ngo           NGOProfile  @relation("NgoDonations", fields: [ngoId], references: [id])
+    reAssignedNgo NGOProfile? @relation("ReassignedDonations", fields: [reAssignedNgoId], references: [id])
 
     @@index([donorId])
     @@index([ngoId])
@@ -111,7 +128,7 @@ model Donation {
 model Proof {
     id          String   @id @default(cuid())
     ngoId       String
-    month       Int
+    month       Month
     year        Int
     description String
     mediaUrls   String[]
@@ -127,7 +144,7 @@ model Proof {
 model VoteSession {
     id          String   @id @default(cuid())
     failedNgoId String
-    month       Int
+    month       Month
     year        Int
     createdAt   DateTime @default(now())
     votes       Vote[]
