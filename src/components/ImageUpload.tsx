@@ -6,7 +6,7 @@ import { XIcon } from "lucide-react";
 interface ImageUploadProps {
     onChange: (url: string) => void;
     value: string;
-    endpoint: "ngoImage";
+    endpoint: "ngoImage" | "ngoImages";
 }
 
 function ImageUpload({ endpoint, onChange, value }: ImageUploadProps) {

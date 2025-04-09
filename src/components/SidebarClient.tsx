@@ -159,7 +159,7 @@ const SidebarClient = ({ isSignedIn, hasNgo }: Props) => {
             <button
                 // onClick={() => setOpenSidebar((prev) => !prev)}
                 onClick={toggle}
-                className={`absolute top-1/2 -translate-y-1/2 left-full transform -translate-x-1/2 bg-primary text-white p-2 rounded-full shadow-md lg:block hidden dark:bg-white dark:text-black ${open ? "" : "-left-3"
+                className={`absolute top-1/2 -translate-y-1/2 left-full transform -translate-x-1/2 bg-primary text-white p-2 rounded-full shadow-md lg:block hidden dark:bg-white dark:text-black ${open ? "" : "ml-5"
                     }`}
             >
                 {open ? (

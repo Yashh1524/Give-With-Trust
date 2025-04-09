@@ -55,7 +55,7 @@ function FileUpload({ endpoint, onChange, value }: FileUploadProps) {
                         'border border-dashed border-gray-300 p-4 rounded-md hover:border-gray-500 transition-all duration-200',
                     label: 'text-sm text-gray-500',
                     allowedContent: 'text-xs text-gray-400 mt-1',
-                    uploadIcon: 'text-blue-500',
+                    uploadIcon: 'text-blue-500 w-15 h-15',
                     button:
                         'bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg text-sm',
                 }}

@@ -51,7 +51,7 @@ model User {
 
 model NGOProfile {
     id              String    @id @default(cuid())
-    userId          String    
+    userId          String
     name            String
     email           String    @unique
     establishedDate DateTime
@@ -63,6 +63,7 @@ model NGOProfile {
     raisedThisMonth Float     @default(0)
     status          NGOStatus @default(NOT_SUBMITTED)
     accentTags      AccentTag @default(NEW)
+    website         String?
 
     accountNumber     String?
     bankName          String?
@@ -72,6 +73,7 @@ model NGOProfile {
 
     logo     String?
     proofPdf String?
+    images   String[]
 
     // relations
     proofs            Proof[]

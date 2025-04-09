@@ -1,20 +1,38 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { registerNgo } from '@/actions/ngo.action'
 import ImageUpload from '@/components/ImageUpload'
 import FileUpload from '@/components/FileUpload'
 import toast from 'react-hot-toast'
+import MultiImagesUpload from '@/components/MultiImagesUpload'
 
 const RegisterNgoPage = () => {
-    const [form, setForm] = useState({
+    const [form, setForm] = useState<{
+        logo: string
+        name: string
+        email: string
+        establishedDate: string
+        address: string
+        contactInfo: string
+        website: string
+        description: string
+        upiId: string
+        accountNumber: string
+        bankName: string
+        ifscCode: string
+        accountHolderName: string
+        proofPdf: string
+        images: string[]
+    }>({
         logo: '/ngoLogo.jpg',
         name: '',
         email: '',
         establishedDate: '',
         address: '',
         contactInfo: '',
+        website: '',
         description: '',
         upiId: '',
         accountNumber: '',
@@ -22,16 +40,21 @@ const RegisterNgoPage = () => {
         ifscCode: '',
         accountHolderName: '',
         proofPdf: '',
+        images: [],
     })
     const [showImageUpload, setShowImageUpload] = useState(false)
-    const [showBannerImageUpload, setShowBannerImageUpload] = useState(false)
     const [loading, setLoading] = useState(false)
+    const [error, setError] = useState(false)
     const router = useRouter()
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target
         setForm((prev) => ({ ...prev, [name]: value }))
     }
+
+    useEffect(() => {
+        console.log(form)
+    }, [form])
 
     const isValidPaymentInfo = () => {
         const hasUpi = form.upiId.trim() !== ''
@@ -52,6 +75,19 @@ const RegisterNgoPage = () => {
             alert('Please provide either UPI ID or all bank account details.')
             setLoading(false)
             return
+        }
+
+        if (
+            !form.name ||
+            !form.establishedDate ||
+            !form.address ||
+            !form.email ||
+            !form.description ||
+            !form.proofPdf ||
+            !form.logo
+        ) {
+            toast.error("Please enter all required field")
+            setError(true)
         }
 
         try {
@@ -144,6 +180,7 @@ const RegisterNgoPage = () => {
                                 />
                             </div>
 
+
                             {/* Address */}
                             <div className="md:col-span-2">
                                 <label className="block mb-1 font-medium">Address</label>
@@ -172,6 +209,16 @@ const RegisterNgoPage = () => {
                                 <input
                                     name="contactInfo"
                                     value={form.contactInfo}
+                                    onChange={handleChange}
+                                    required
+                                    placeholder="enter mobile number"
+                                    className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-transparent"
+                                />
+
+                                <label className="block mb-1 font-medium">Website</label>
+                                <input
+                                    name="website"
+                                    value={form.website}
                                     onChange={handleChange}
                                     required
                                     placeholder="enter mobile number"
@@ -228,6 +275,24 @@ const RegisterNgoPage = () => {
                                 </div>
                             </div>
 
+                        </div>
+                        <h3 className="text-xl font-semibold">Gallery / Banner Images</h3>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">
+                            Upload one or more images that represent your NGO’s work or events.
+                        </p>
+
+                        <div className="w-full max-w-2xl space-y-4">
+                            <MultiImagesUpload
+                                endpoint="ngoImages"
+                                value={form.images}
+                                onChange={(urls) => {
+                                    console.log("Received from MultiImagesUpload:", urls)
+                                    setForm((prev) => ({
+                                        ...prev,
+                                        images: urls,
+                                    }))
+                                }}
+                            />
                         </div>
                     </section>
 
