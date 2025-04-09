@@ -87,9 +87,12 @@ model NGOProfile {
 
 model Donation {
     id        String         @id @default(cuid())
+    orderId   String
+    paymentId String
     donorId   String
     ngoId     String
     amount    Float
+    message   String?
     createdAt DateTime       @default(now())
     month     Int
     year      Int

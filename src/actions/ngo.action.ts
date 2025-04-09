@@ -36,7 +36,7 @@ export const registerNgo = async ({
     // const { userId } = await  auth();
     const userId = await getDbUserId()
     console.log(userId);
-    
+
     if (!userId) throw new Error('Not authenticated');
 
     await prisma.nGOProfile.create({
@@ -87,5 +87,25 @@ export async function getAllNgo() {
     } catch (error) {
         console.error("Error fetching all NGOs:", error);
         return [];
+    }
+}
+
+export async function getNgoByNgoId(id: string) {
+    try {
+        const ngo = await prisma.nGOProfile.findUnique({
+            where: { id },
+            include: {
+                proofs: true
+            }
+        });
+
+        if (!ngo) {
+            throw new Error("NGO not found");
+        }
+
+        return ngo;
+    } catch (error) {
+        console.error("Error fetching NGO:", error);
+        throw error;
     }
 }
