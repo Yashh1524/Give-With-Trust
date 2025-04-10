@@ -66,10 +66,33 @@ export const registerNgo = async ({
     revalidatePath("/");
 };
 
-export async function getNgoByUserId(userId: string) {
+export async function getNgoByUserId(userId: string | null | undefined) {
     try {
+        if (!userId) return [];
+
         const ngo = await prisma.nGOProfile.findMany({
             where: { userId },
+            include: {
+                donations: {
+                    include: {
+                        donor: {
+                            select: {
+                                id: true,
+                                name: true,
+                                image: true,
+                                email: true,
+                                username: true,
+                            },
+                        },
+                        reAssignedNgo: {
+                            select: {
+                                id: true,
+                                name: true,
+                            },
+                        },
+                    },
+                },
+            },
         });
 
         return ngo;
@@ -78,6 +101,7 @@ export async function getNgoByUserId(userId: string) {
         throw new Error("Failed to fetch NGO details.");
     }
 }
+
 
 export async function getAllNgo() {
     try {

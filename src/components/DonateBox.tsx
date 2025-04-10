@@ -170,7 +170,7 @@ export default function DonateBox({ ngoId, userId }: DonateBoxProps) {
         </button>
       </div>
 
-      <div className='flex flex-col lg:flex-row items-center gap-10'>
+      <div className='flex flex-col lg:flex-row items-center justify-evenly'>
         {/* Yearly Donation Pie Chart */}
         {monthlyData.some(m => m > 0) && (
           <div className="my-10">

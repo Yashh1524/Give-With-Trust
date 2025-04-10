@@ -1,0 +1,211 @@
+'use client';
+
+import { NGOProfile } from '@prisma/client';
+import { useEffect, useState } from 'react';
+import { getDonationByNgoId } from '@/actions/donation.action';
+import { getMonthlyDonationData, getYearlyDonationTotals } from '@/lib/donationHelpers';
+import MonthlyDonationPieChart from './MonthlyDonationPieChart';
+import YearlyDonationPieChart from './YearlyDonationPieChart';
+import NGODonations from './NGODonations';
+import {
+    BiSolidDetail,
+    BiTrendingUp,
+    BiDonateHeart,
+    BiCalendarCheck,
+    BiCalendarAlt,
+    BiMedal,
+} from 'react-icons/bi';
+import Link from 'next/link';
+
+export default function DashboardClient({ ngos }: { ngos: NGOProfile[] }) {
+    const [selectedNgoId, setSelectedNgoId] = useState(ngos[0]?.id);
+    const selectedNgo = ngos.find((ngo) => ngo.id === selectedNgoId);
+    const [donations, setDonations] = useState<any[]>([]);
+    const monthlyData = getMonthlyDonationData(donations);
+    const yearlyData = getYearlyDonationTotals(donations);
+
+    const fetchDonations = async (ngoId: string) => {
+        const data = await getDonationByNgoId(ngoId);
+        setDonations(data);
+    };
+
+    useEffect(() => {
+        if (selectedNgoId) {
+            fetchDonations(selectedNgoId);
+        }
+    }, [selectedNgoId]);
+
+    const totalRaised = donations.reduce((sum, donation) => sum + donation.amount, 0);
+    const held = donations.filter((d) => d.status === 'HELD');
+    const released = donations.filter((d) => d.status === 'RELEASED');
+    const reassigned = donations.filter((d) => d.status === 'REASSIGNED');
+
+    const donorTotals: Record<string, { amount: number; name: string; image: string }> = {};
+    donations.forEach((donation) => {
+        const donorId = donation.donorId;
+        if (!donorId) return;
+
+        if (!donorTotals[donorId]) {
+            donorTotals[donorId] = {
+                amount: 0,
+                name: donation.donor?.name || 'Anonymous',
+                image: donation.donor?.image || '/default-avatar.png',
+            };
+        }
+        donorTotals[donorId].amount += donation.amount;
+    });
+
+    const topDonors = Object.entries(donorTotals)
+        .sort((a, b) => b[1].amount - a[1].amount)
+        .slice(0, 5);
+
+    const getHighestMonth = (data: number[]) => {
+        const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        const maxVal = Math.max(...data);
+        const idx = data.indexOf(maxVal);
+        return maxVal > 0 ? `${months[idx]} (₹${maxVal})` : 'N/A';
+    };
+
+    return (
+        <div className="space-y-6">
+            {/* NGO Selector */}
+            <div className="flex gap-3 items-center">
+                <label className="font-semibold text-lg">Select NGO:</label>
+                <select
+                    value={selectedNgoId}
+                    onChange={(e) => setSelectedNgoId(e.target.value)}
+                    className="border px-4 py-2 rounded-md dark:bg-[#1f2937]"
+                >
+                    {ngos.map((ngo) => (
+                        <option key={ngo.id} value={ngo.id}>
+                            {ngo.name}
+                        </option>
+                    ))}
+                </select>
+                
+                <Link href={`/edit-ngo-details/${selectedNgoId}`} className='bg-blue-800 px-4 py-2 rounded-lg hover:bg-blue-950 cursor-pointer'>
+                    Edit Details
+                </Link>
+            </div>
+
+            {/* Summary Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <StatCard title="Total Raised" value={`₹${totalRaised.toFixed(2)}`} />
+                <StatCard title="Held Donations" value={held.length} />
+                <StatCard title="Released Donations" value={released.length} />
+                <StatCard title="Reassigned Donations" value={reassigned.length} />
+            </div>
+
+            {/* NGO Info Section */}
+            <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 auto-rows-[50px]">
+                <div className="col-span-1 row-span-4 p-6 bg-white dark:bg-[#1f2937] rounded-lg shadow flex flex-col items-center justify-center">
+                    {selectedNgo?.logo ? (
+                        <img
+                            src={selectedNgo.logo}
+                            alt="NGO Logo"
+                            className="w-40 h-40 rounded-full object-cover border-4 border-gray-300"
+                        />
+                    ) : (
+                        <p className="text-gray-400">No logo uploaded</p>
+                    )}
+                </div>
+
+                <div className="p-6 bg-white dark:bg-[#1f2937] rounded-lg shadow col-span-3 row-span-4">
+                    <h2 className="flex gap-2 items-center text-xl font-semibold mb-2">
+                        <BiSolidDetail /> NGO Details
+                    </h2>
+                    <p className="text-sm">{selectedNgo?.description}</p>
+                    <div className="mt-4 text-sm space-y-1">
+                        <p><strong>Address:</strong> {selectedNgo?.address}</p>
+                        <p><strong>Contact:</strong> {selectedNgo?.contactInfo}</p>
+                        <p><strong>Established:</strong> {selectedNgo?.establishedDate ? new Date(selectedNgo.establishedDate).toDateString() : 'N/A'}</p>
+                        <p><strong>Email:</strong> {selectedNgo?.email}</p>
+                        <p><strong>Website:</strong> {selectedNgo?.website || 'N/A'}</p>
+                    </div>
+                </div>
+
+                <div className="p-6 bg-white dark:bg-[#1f2937] rounded-lg shadow col-span-2 row-span-4">
+                    <h2 className="text-xl font-semibold mb-4 flex items-center gap-2"><BiDonateHeart /> Payment Details</h2>
+                    <div className="text-sm space-y-2">
+                        <p><strong>🏦 Account No:</strong> {selectedNgo?.accountNumber || 'N/A'}</p>
+                        <p><strong>🏛️ Bank:</strong> {selectedNgo?.bankName || 'N/A'}</p>
+                        <p><strong>🧾 IFSC:</strong> {selectedNgo?.ifscCode || 'N/A'}</p>
+                        <p><strong>👤 Account Holder:</strong> {selectedNgo?.accountHolderName || 'N/A'}</p>
+                        <p><strong>🔗 UPI ID:</strong> {selectedNgo?.upiId || 'N/A'}</p>
+                    </div>
+                </div>
+
+                <div className="p-6 bg-white dark:bg-[#1f2937] rounded-lg shadow col-span-2 row-span-4 space-y-3 text-sm">
+                    <h2 className="text-xl font-semibold mb-2 flex items-center gap-2"><BiCalendarCheck /> Key Insights</h2>
+                    <p className="flex items-center gap-2"><BiDonateHeart /> <strong>Total Donations:</strong> {donations.length}</p>
+                    <p className="flex items-center gap-2"><BiCalendarAlt /> <strong>Active Donation Period:</strong> {donations.length > 0 ? `${donations.at(0).year} - ${donations.at(-1).year}` : 'N/A'}</p>
+                    <p className="flex items-center gap-2"><BiTrendingUp /> <strong>Highest Month:</strong> {getHighestMonth(monthlyData)}</p>
+                </div>
+            </div>
+
+            {/* NGO Images */}
+            {selectedNgo?.images?.length as number > 0 && (
+                <div className="bg-white dark:bg-[#1f2937] rounded-lg shadow p-6">
+                    <h2 className="text-xl font-semibold mb-4">🖼️ NGO Images</h2>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                        {selectedNgo?.images.map((img, idx) => (
+                            <img key={idx} src={img} alt={`NGO Image ${idx + 1}`} className="rounded-md object-cover w-full h-40" />
+                        ))}
+                    </div>
+                </div>
+            )}
+
+            {/* Charts + Top Donors */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {monthlyData.some((m) => m > 0) && (
+                    <div className="p-6 bg-white dark:bg-[#1f2937] rounded-lg shadow col-span-1">
+                        <h3 className="font-semibold mb-4">📊 Monthly Donations (This Year)</h3>
+                        <MonthlyDonationPieChart monthlyData={monthlyData} />
+                    </div>
+                )}
+                {Object.values(yearlyData).some((y) => y > 0) && (
+                    <div className="p-6 bg-white dark:bg-[#1f2937] rounded-lg shadow col-span-1">
+                        <h3 className="font-semibold mb-4">📆 Donations by Year</h3>
+                        <YearlyDonationPieChart yearlyTotals={yearlyData} />
+                    </div>
+                )}
+                {/* Top Donors */}
+                <div className="p-6 bg-white dark:bg-[#1f2937] rounded-lg shadow col-span-1">
+                    <h3 className="text-xl font-semibold mb-4 flex items-center gap-2"><BiMedal /> Top Donors</h3>
+                    <ul className="space-y-3 text-sm">
+                        {topDonors.map(([id, info]) => (
+                            <li key={id} className="flex items-center justify-between gap-4">
+                                <div className="flex items-center gap-2">
+                                    <img
+                                        src={info.image}
+                                        alt={info.name}
+                                        className="w-8 h-8 rounded-full object-cover"
+                                    />
+                                    <span className="text-gray-800 dark:text-gray-200 font-medium">{info.name}</span>
+                                </div>
+                                <span className="font-semibold text-green-600 dark:text-green-400">
+                                    ₹{info.amount.toFixed(0)}
+                                </span>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            </div>
+
+            {/* Donation Table */}
+            <div className="p-6 bg-white dark:bg-[#1f2937] rounded-lg shadow">
+                <h3 className="text-lg font-semibold mb-4">📄 All Donations</h3>
+                <NGODonations donations={donations} />
+            </div>
+        </div>
+    );
+}
+
+function StatCard({ title, value }: { title: string; value: string | number }) {
+    return (
+        <div className="p-4 bg-white dark:bg-[#1f2937] rounded-lg shadow text-center">
+            <p className="text-sm text-gray-500">{title}</p>
+            <h3 className="text-lg font-bold mt-1">{value}</h3>
+        </div>
+    );
+}
