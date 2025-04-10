@@ -221,7 +221,7 @@ const RegisterNgoPage = () => {
                                     value={form.website}
                                     onChange={handleChange}
                                     required
-                                    placeholder="enter mobile number"
+                                    placeholder="website url"
                                     className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-transparent"
                                 />
                             </div>
@@ -235,7 +235,7 @@ const RegisterNgoPage = () => {
                                     onChange={handleChange}
                                     required
                                     rows={4}
-                                    placeholder="Briefly describe your NGO’s mission and work"
+                                    placeholder="Briefly describe your NGO's mission and work"
                                     className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-transparent"
                                 />
                             </div>

@@ -1,23 +1,41 @@
-'use client'
+"use client"
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { registerNgo } from '@/actions/ngo.action'
+import { updateNgoDetails } from '@/actions/ngo.action'
 import ImageUpload from '@/components/ImageUpload'
 import FileUpload from '@/components/FileUpload'
 import toast from 'react-hot-toast'
 import MultiImagesUpload from '@/components/MultiImagesUpload'
 import { NGOProfile } from '@prisma/client'
 
-const EditNgoDetail = (ngo: NGOProfile) => {
+interface EditNgoDetailProps {
+    ngo: NGOProfile
+    ngoId: string
+}
 
-    console.log(ngo);
-    
-    const [form, setForm] = useState({
+const EditNgoDetail = ({ ngo, ngoId }: EditNgoDetailProps) => {
+    const [form, setForm] = useState<{
+        logo: string
+        name: string
+        email: string
+        establishedDate: Date
+        address: string
+        contactInfo: string
+        website: string
+        description: string
+        upiId: string
+        accountNumber: string
+        bankName: string
+        ifscCode: string
+        accountHolderName: string
+        proofPdf: string
+        images: string[]
+    }>({
         logo: ngo?.logo || "",
         name: ngo?.name || "",
         email: ngo?.email || "",
-        establishedDate: ngo?.establishedDate || "",
+        establishedDate: ngo?.establishedDate ? new Date(ngo.establishedDate) : new Date() || "",
         address: ngo?.address || "",
         contactInfo: ngo?.contactInfo || "",
         website: ngo?.website || "",
@@ -39,10 +57,6 @@ const EditNgoDetail = (ngo: NGOProfile) => {
         const { name, value } = e.target
         setForm((prev) => ({ ...prev, [name]: value }))
     }
-
-    useEffect(() => {
-        console.log(form)
-    }, [form])
 
     const isValidPaymentInfo = () => {
         const hasUpi = form.upiId.trim() !== ''
@@ -79,13 +93,13 @@ const EditNgoDetail = (ngo: NGOProfile) => {
         }
 
         try {
-            // await registerNgo(form)
-            toast.success("Your NGO registration request has been submitted successfully!")
+            await updateNgoDetails(ngoId, form)
+            toast.success("Your NGO details updated successfully!")
             router.push('/dashboard')
         } catch (error: any) {
-            console.error('NGO registration failed:', error)
+            console.error('Failed to update NGO details:', error)
             // alert(error.message || 'Error registering NGO. Please try again.')
-            toast.error("Failed to submit NGO registration. Please check your details and try again.")
+            toast.error("Failed to update NGO details. Please review your input and try again.")
         } finally {
             setLoading(false)
         }
@@ -161,7 +175,9 @@ const EditNgoDetail = (ngo: NGOProfile) => {
                                 <input
                                     type="date"
                                     name="establishedDate"
-                                    value={form.establishedDate}
+                                    value={form.establishedDate instanceof Date
+                                        ? form.establishedDate.toISOString().split('T')[0]
+                                        : form.establishedDate}
                                     onChange={handleChange}
                                     required
                                     className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-transparent"
@@ -208,8 +224,7 @@ const EditNgoDetail = (ngo: NGOProfile) => {
                                     name="website"
                                     value={form.website}
                                     onChange={handleChange}
-                                    required
-                                    placeholder="enter mobile number"
+                                    placeholder="website url"
                                     className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-transparent"
                                 />
                             </div>
@@ -223,7 +238,7 @@ const EditNgoDetail = (ngo: NGOProfile) => {
                                     onChange={handleChange}
                                     required
                                     rows={4}
-                                    placeholder="Briefly describe your NGO’s mission and work"
+                                    placeholder="Briefly describe your NGO's mission and work"
                                     className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-transparent"
                                 />
                             </div>
@@ -363,7 +378,7 @@ const EditNgoDetail = (ngo: NGOProfile) => {
                             disabled={loading}
                             className="w-full bg-primary dark:bg-white dark:text-black text-white py-3 text-lg rounded-lg hover:bg-opacity-90 transition"
                         >
-                            {loading ? 'Updating Details...' : 'Update NGO Details'}
+                            {loading ? 'Submitting...' : 'Update NGO Details'}
                         </button>
                     </div>
                 </form>

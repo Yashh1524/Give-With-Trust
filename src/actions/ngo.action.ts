@@ -66,6 +66,45 @@ export const registerNgo = async ({
     revalidatePath("/");
 };
 
+export async function updateNgoDetails(ngoId: string, updatedData: Partial<{
+    logo: string
+    name: string
+    email: string
+    establishedDate: Date
+    address: string
+    contactInfo: string
+    website: string
+    description: string
+    upiId: string
+    accountNumber: string
+    bankName: string
+    ifscCode: string
+    accountHolderName: string
+    proofPdf: string
+    images: string[]
+}>) {
+    try {
+
+        const existingNgo = await prisma.nGOProfile.findUnique({
+            where: {id: ngoId}
+        })
+
+        if(!existingNgo) throw new Error("NGO not found")
+
+        const updatedNgo = await prisma.nGOProfile.update({
+            where: { id: ngoId },
+            data: {
+                ...updatedData
+            }
+        })
+
+        return updatedNgo
+    } catch (error) {
+        console.error("Failed to update NGO:", error)
+        throw new Error("Error updating NGO details")
+    }
+}
+
 export async function getNgoByUserId(userId: string | null | undefined) {
     try {
         if (!userId) return [];
@@ -140,8 +179,8 @@ export async function getNgoByNgoId(id: string) {
 export async function updateTotamAmountRaisedThisMonth(ngoId: string, amount: number) {
     try {
         await prisma.nGOProfile.update({
-            where: { 
-                id: ngoId 
+            where: {
+                id: ngoId
             },
             data: {
                 raisedThisMonth: {
