@@ -1,6 +1,8 @@
+"use client"
+
 import { Proof } from '@prisma/client';
 import { useState } from 'react';
-import { FaChevronDown, FaChevronUp, FaFilePdf, FaImage } from 'react-icons/fa';
+import { FaChevronDown, FaChevronUp, FaFilePdf } from 'react-icons/fa';
 
 const MonthlyProofs = ({ proofs, ngoId }: { proofs: Proof[], ngoId: string }) => {
     const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());

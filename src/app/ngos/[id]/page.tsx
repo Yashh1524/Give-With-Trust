@@ -1,16 +1,19 @@
 import { getNgoByNgoId } from '@/actions/ngo.action';
+import { getMonthlyWorkProofsByNgoId } from '@/actions/proofs.action';
 import { getDbUserId } from '@/actions/user.action';
 import DonateBox from '@/components/DonateBox';
-import DonationPieChart from '@/components/MonthlyDonationPieChart';
+import MonthlyProofs from '@/components/MonthlyProofs';
 import ProofSection from '@/components/ProofSection';
 
 export default async function NGOProfilePage({ params }: { params: Promise<{ id: string }> }) {
     const ngoId = (await params).id
     const ngo = await getNgoByNgoId(ngoId);
     const userId = await getDbUserId()
-
+    
     if (!ngo) return <div className="text-center py-10 text-red-500">NGO not found.</div>;
-
+    
+    const monthlyWorkProofs = await getMonthlyWorkProofsByNgoId(ngoId)
+    
     return (
         <div className="max-w-6xl mx-auto p-4 sm:p-6 lg:p-8">
             {/* Header */}
@@ -34,7 +37,6 @@ export default async function NGOProfilePage({ params }: { params: Promise<{ id:
                     />
                 )}
             </div>
-
 
             {/* Content */}
             <div className="grid grid-cols-1 gap-6">
@@ -75,8 +77,12 @@ export default async function NGOProfilePage({ params }: { params: Promise<{ id:
                 </div>
             )}
 
-            {/* Work Proof Section */}
-            <ProofSection proofs={ngo?.proofs} />
+            {/* Monthly Work Proofs */}
+            {
+                monthlyWorkProofs.length > 0 && (
+                    <MonthlyProofs proofs={monthlyWorkProofs} ngoId={ngoId}/>
+                )
+            }
 
             {/* Donate Section */}
             {

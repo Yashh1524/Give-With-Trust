@@ -90,3 +90,30 @@ export async function getMonthlyWorkProofs() {
         throw new Error("Failed to fetch monthly work proofs");
     }
 }
+
+export async function getMonthlyWorkProofsByNgoId(ngoId: string) {
+    try {
+        const proofs = await prisma.proof.findMany({
+            where: {ngoId: ngoId},
+            include: {
+                ngo: {
+                    select: {
+                        id: true,
+                        name: true,
+                        logo: true,
+                        email: true,
+                        userId: true,
+                    },
+                },
+            },
+            orderBy: {
+                submittedAt: 'desc',
+            },
+        });
+
+        return proofs;
+    } catch (error) {
+        console.error("Error fetching monthly work proofs:", error);
+        throw new Error("Failed to fetch monthly work proofs");
+    }
+}
