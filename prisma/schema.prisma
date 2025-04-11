@@ -131,7 +131,8 @@ model Proof {
     month       Month
     year        Int
     description String
-    mediaUrls   String[]
+    imageUrl    String[]
+    pdfUrl      String[]
     submittedAt DateTime @default(now())
 
     ngo NGOProfile @relation(fields: [ngoId], references: [id])

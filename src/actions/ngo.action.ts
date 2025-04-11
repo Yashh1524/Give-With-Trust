@@ -86,10 +86,10 @@ export async function updateNgoDetails(ngoId: string, updatedData: Partial<{
     try {
 
         const existingNgo = await prisma.nGOProfile.findUnique({
-            where: {id: ngoId}
+            where: { id: ngoId }
         })
 
-        if(!existingNgo) throw new Error("NGO not found")
+        if (!existingNgo) throw new Error("NGO not found")
 
         const updatedNgo = await prisma.nGOProfile.update({
             where: { id: ngoId },
@@ -175,7 +175,6 @@ export async function getNgoByNgoId(id: string) {
         throw error;
     }
 }
-
 
 export async function calculateAndUpdateRaisedThisMonth(ngoId: string) {
     try {

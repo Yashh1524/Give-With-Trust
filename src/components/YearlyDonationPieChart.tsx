@@ -34,7 +34,7 @@ export default function YearlyDonationPieChart({ yearlyTotals }: { yearlyTotals:
     };
 
     return (
-        <div className="w-60 h-60 sm:w-72 sm:h-72 mx-auto">
+        <div className="w-50 h-50 mx-auto lg:mt-10">
             <Pie data={data} options={options} />
         </div>
     );

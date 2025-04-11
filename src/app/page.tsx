@@ -76,7 +76,7 @@ export default function Home() {
           <div className="absolute right-4 bottom-4 text-6xl opacity-10 select-none">💸</div>
         </motion.div>
 
-        {/* 🌟 Featured NGO */}
+        {/* Featured NGO */}
         <motion.div
           className="lg:col-span-2 rounded-2xl px-6 sm:px-8 py-4 shadow-md hover:scale-[1.01] transition text-gray-900 relative overflow-hidden bg-yellow-100"
           initial={{ opacity: 0, y: 20 }}
@@ -100,7 +100,7 @@ export default function Home() {
           <div className="absolute right-4 bottom-4 text-5xl opacity-10 select-none">🏅</div>
         </motion.div>
 
-        {/* 💼 What We Do */}
+        {/* What We Do */}
         <motion.div
           className="rounded-2xl px-6 sm:px-8 py-4 shadow-md hover:scale-[1.01] transition text-gray-900 relative overflow-hidden bg-cyan-100"
           initial={{ opacity: 0, y: 20 }}
@@ -124,7 +124,7 @@ export default function Home() {
           <div className="absolute right-4 bottom-4 text-5xl opacity-10 select-none">📘</div>
         </motion.div>
 
-        {/* 🏢 All NGOs */}
+        {/* All NGOs */}
         <motion.div
           className="rounded-2xl px-6 sm:px-8 py-4 shadow-md hover:scale-[1.01] transition text-gray-900 relative overflow-hidden bg-emerald-100"
           initial={{ opacity: 0, y: 20 }}
@@ -148,7 +148,7 @@ export default function Home() {
           <div className="absolute right-4 bottom-4 text-5xl opacity-10 select-none">🏷️</div>
         </motion.div>
 
-        {/* 🏅 Top Donors */}
+        {/* Top Donors */}
         <motion.div
           className="rounded-2xl px-6 sm:px-8 py-4 shadow-md hover:scale-[1.01] transition text-gray-900 relative overflow-hidden bg-pink-100"
           initial={{ opacity: 0, y: 20 }}
@@ -172,7 +172,7 @@ export default function Home() {
           <div className="absolute right-4 bottom-4 text-5xl opacity-10 select-none">💖</div>
         </motion.div>
 
-        {/* 🔐 Why Trust Us */}
+        {/* Why Trust Us */}
         <motion.div
           className="relative rounded-2xl px-6 sm:px-8 py-4 bg-[#ffeee8] shadow-md hover:scale-[1.02] transition text-gray-800 border overflow-hidden"
           initial={{ opacity: 0, y: 20 }}

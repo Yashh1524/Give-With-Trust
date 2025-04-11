@@ -1,6 +1,6 @@
 'use client';
 
-import { NGOProfile } from '@prisma/client';
+import { NGOProfile, Proof } from '@prisma/client';
 import { useEffect, useState } from 'react';
 import { getDonationByNgoId } from '@/actions/donation.action';
 import { getMonthlyDonationData, getYearlyDonationTotals } from '@/lib/donationHelpers';
@@ -16,14 +16,25 @@ import {
     BiMedal,
 } from 'react-icons/bi';
 import Link from 'next/link';
+import MonthlyProofs from './MonthlyProofs';
 
-export default function DashboardClient({ ngos }: { ngos: NGOProfile[] }) {
+export default function DashboardClient(
+    { 
+        ngos, 
+        monthlyWorkProofs 
+    }: { 
+        ngos: NGOProfile[], 
+        monthlyWorkProofs: Proof[] 
+    }
+) {
     const [selectedNgoId, setSelectedNgoId] = useState(ngos[0]?.id);
     const selectedNgo = ngos.find((ngo) => ngo.id === selectedNgoId);
     const [donations, setDonations] = useState<any[]>([]);
 
     const monthlyData = getMonthlyDonationData(donations);
     const yearlyData = getYearlyDonationTotals(donations);
+
+    const monthlyWorkProofsByNgoId = monthlyWorkProofs.filter((proof) => proof.ngoId === selectedNgoId)
 
     const fetchDonations = async (ngoId: string) => {
         const data = await getDonationByNgoId(ngoId);
@@ -92,6 +103,19 @@ export default function DashboardClient({ ngos }: { ngos: NGOProfile[] }) {
                 >
                     Edit Details
                 </Link>
+
+                {
+                    selectedNgo?.approved && (
+                        <Link
+                            href={`/upload-monthly-works/${selectedNgoId}`}
+                            className="inline-block px-5 py-2 rounded-lg text-white font-medium transition 
+                                bg-blue-600 hover:bg-blue-700 focus:ring-2 focus:ring-blue-400 focus:outline-none
+                                dark:bg-blue-800 dark:hover:bg-blue-900 dark:focus:ring-blue-500"
+                        >
+                            Upload Monthy Works Proof
+                        </Link>
+                    )
+                }
             </div>
 
             {!selectedNgo?.approved && (
@@ -167,6 +191,13 @@ export default function DashboardClient({ ngos }: { ngos: NGOProfile[] }) {
                     </div>
                 </div>
             )}
+
+            {/* NGO Monthly Works Proofs */}
+            {
+                monthlyWorkProofsByNgoId.length > 0 && (
+                    <MonthlyProofs proofs={monthlyWorkProofsByNgoId} ngoId={selectedNgoId}/>
+                )
+            }
 
             {/* Charts + Top Donors */}
             <div className="flex flex-col gap-6 md:grid md:grid-cols-3">

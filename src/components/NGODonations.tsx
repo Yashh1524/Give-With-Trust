@@ -22,10 +22,9 @@ type NGODonationsProps = {
             image: string | null;
         };
     }[];
-    ngoId: string
 };
 
-export default function NGODonations({ donations, ngoId }: NGODonationsProps) {
+export default function NGODonations({ donations }: NGODonationsProps) {
     const [showMore, setShowMore] = useState(false);
 
     if (donations.length === 0) {

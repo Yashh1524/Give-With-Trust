@@ -47,7 +47,7 @@ const EditProfileDialog: React.FC<Props> = ({ user }) => {
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button className="px-5 py-2 rounded-lg bg-blue-700 hover:bg-blue-800 text-white font-medium shadow transition dark:bg-[#466d92] dark:hover:bg-[#3a5d7d]">
+                <Button className="px-5 py-2 rounded-lg inline-block text-white font-medium transition bg-blue-600 hover:bg-blue-700 focus:ring-2 focus:ring-blue-400 focus:outline-none dark:bg-blue-800 dark:hover:bg-blue-900 dark:focus:ring-blue-500">
                     Edit Profile
                 </Button>
             </DialogTrigger>
@@ -57,7 +57,7 @@ const EditProfileDialog: React.FC<Props> = ({ user }) => {
                     <DialogTitle>Edit Your Profile</DialogTitle>
                 </DialogHeader>
 
-                <div className="space-y-6">
+                <div className="space-y-6 h-[50vh]">
                     {/* Profile Image Upload */}
                     <div className="flex justify-center">
                         {form.image && !showImageUpload ? (
