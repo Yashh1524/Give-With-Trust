@@ -23,16 +23,16 @@ import {
     TbLayoutSidebarLeftExpand,
     TbLayoutSidebarRightExpand,
 } from "react-icons/tb";
-import { useState } from "react";
 import { IoMdNotifications } from 'react-icons/io';
 import { useSidebar } from "@/context/SidebarContext";
 
 interface Props {
+    userId: string | null | undefined,
     isSignedIn: boolean;
     hasNgo: boolean;
 }
 
-const SidebarClient = ({ isSignedIn, hasNgo }: Props) => {
+const SidebarClient = ({ isSignedIn, hasNgo, userId }: Props) => {
     // const [openSidebar, setOpenSidebar] = useState(true);
     const { open, toggle } = useSidebar();
     return (
@@ -109,7 +109,7 @@ const SidebarClient = ({ isSignedIn, hasNgo }: Props) => {
                                     </Button>
                                 </Link>
 
-                                <Link href="/profile">
+                                <Link href={`/profile/${userId}`}>
                                     <Button
                                         variant="ghost"
                                         className="w-full justify-start text-black dark:text-white"

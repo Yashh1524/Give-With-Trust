@@ -11,6 +11,6 @@ export default async function Sidebar() {
         hasNgo = await checkIfUserHasNgo();
     }
 
-    return <SidebarClient isSignedIn={!!userId} hasNgo={hasNgo} />;
+    return <SidebarClient userId={userId} isSignedIn={!!userId} hasNgo={hasNgo} />;
 }
 

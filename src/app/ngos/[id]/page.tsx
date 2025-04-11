@@ -79,7 +79,11 @@ export default async function NGOProfilePage({ params }: { params: Promise<{ id:
             <ProofSection proofs={ngo?.proofs} />
 
             {/* Donate Section */}
-            <DonateBox ngoId={ngoId} userId={userId} />
+            {
+                ngo?.approved && (
+                    <DonateBox ngoId={ngoId} userId={userId} />
+                )
+            }
 
         </div>
     );

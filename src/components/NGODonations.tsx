@@ -1,6 +1,7 @@
 'use client'
 
 import { DonationStatus } from '@prisma/client';
+import Link from 'next/link';
 import { useState } from 'react';
 
 type NGODonationsProps = {
@@ -21,9 +22,10 @@ type NGODonationsProps = {
             image: string | null;
         };
     }[];
+    ngoId: string
 };
 
-export default function NGODonations({ donations }: NGODonationsProps) {
+export default function NGODonations({ donations, ngoId }: NGODonationsProps) {
     const [showMore, setShowMore] = useState(false);
 
     if (donations.length === 0) {
@@ -88,9 +90,9 @@ export default function NGODonations({ donations }: NGODonationsProps) {
                         <div className="flex-1 w-full">
                             <div className="flex items-center justify-between">
                                 <div>
-                                    <p className="font-semibold text-gray-800 dark:text-white">
-                                        {donation.donor.name || 'Anonymous Donor'}
-                                    </p>
+                                    <Link href={`/profile/${donation.donor.id}`} className="font-semibold text-gray-800 dark:text-white">
+                                        {donation.donor.name}
+                                    </Link>
                                 </div>
                                 <div className="text-right">
                                     <p className="text-sm font-semibold text-emerald-600 dark:text-emerald-400">

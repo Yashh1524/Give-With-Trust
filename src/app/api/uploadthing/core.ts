@@ -25,25 +25,45 @@ export const ourFileRouter = {
             }
         }),
 
-        ngoImages: f({
-            image: {
-                maxFileSize: "2MB",
-                maxFileCount: 10,
-            },
+    profileImage: f({
+        image: {
+            maxFileSize: "1MB",
+            maxFileCount: 1,
+        },
+    })
+        .middleware(async () => {
+            const { userId } = await auth();
+            if (!userId) throw new Error("Unauthorized");
+            return { userId };
         })
-            .middleware(async () => {
-                const { userId } = await auth();
-                if (!userId) throw new Error("Unauthorized");
-                return { userId };
-            })
-            .onUploadComplete(async ({ metadata, file }) => {
-                try {
-                    return { fileUrl: file.url };
-                } catch (error) {
-                    console.error("Error in onUploadComplete (postImage):", error);
-                    throw error;
-                }
-            }),
+        .onUploadComplete(async ({ metadata, file }) => {
+            try {
+                return { fileUrl: file.url };
+            } catch (error) {
+                console.error("Error in onUploadComplete (postImage):", error);
+                throw error;
+            }
+        }),
+
+    ngoImages: f({
+        image: {
+            maxFileSize: "2MB",
+            maxFileCount: 10,
+        },
+    })
+        .middleware(async () => {
+            const { userId } = await auth();
+            if (!userId) throw new Error("Unauthorized");
+            return { userId };
+        })
+        .onUploadComplete(async ({ metadata, file }) => {
+            try {
+                return { fileUrl: file.url };
+            } catch (error) {
+                console.error("Error in onUploadComplete (postImage):", error);
+                throw error;
+            }
+        }),
 
     // Endpoint for NGO proof PDF uploads
     ngoProof: f({

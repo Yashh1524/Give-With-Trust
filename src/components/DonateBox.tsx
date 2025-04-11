@@ -188,7 +188,7 @@ export default function DonateBox({ ngoId, userId }: DonateBoxProps) {
       </div>
 
       {/* Donations */}
-      <NGODonations donations={donations} />
+      <NGODonations donations={donations} ngoId={ngoId}/>
     </>
   );
 }

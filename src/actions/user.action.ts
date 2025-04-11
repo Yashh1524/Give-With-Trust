@@ -61,10 +61,10 @@ export async function getDbUserId() {
     if (!clerkId) return null;
 
     const user = await getUserByClerkId(clerkId);
-    
+
     // if (!user) throw new Error("User not found");
-    if(!user) return
-    
+    if (!user) return
+
     return user.id;
 }
 
@@ -79,7 +79,7 @@ export async function checkIfUserHasNgo() {
 
     const result = user?.ngoProfile.length
 
-    if(result === 0) return false
+    if (result === 0) return false
     else return true;
     // return (user?.ngoProfile?.length ?? 0) > 0;
 
@@ -95,6 +95,34 @@ export async function getUserDetails(userId: string) {
 
         return user
     } catch (error) {
-        
+
+    }
+}
+
+export async function updateUserDetails(
+    userId: string,
+    data: {
+        name?: string;
+        username?: string;
+        bio?: string | null;
+        image?: string | null;
+    }
+) {
+    try {
+        const updatedUser = await prisma.user.update({
+            where: { id: userId },
+            data: {
+                name: data.name,
+                username: data.username,
+                bio: data.bio,
+                image: data.image || "/avatar.png",
+            },
+        });
+
+        revalidatePath(`/profile/${userId}`);
+        return updatedUser;
+    } catch (error) {
+        console.error("Failed to update user details:", error);
+        throw new Error("User update failed");
     }
 }

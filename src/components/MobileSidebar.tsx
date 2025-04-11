@@ -28,7 +28,6 @@ import {
 } from "@clerk/nextjs";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { getNgoByUserId } from "@/actions/ngo.action";
 import { checkIfUserHasNgo, getDbUserId } from "@/actions/user.action";
 
 const MobileSidebar = ({
@@ -40,6 +39,14 @@ const MobileSidebar = ({
 }) => {
     const { isSignedIn } = useAuth();
     const [hasNgo, setHasNgo] = useState(false);
+    const [userId, setUserId] = useState("")
+
+    useEffect(() => {
+        
+        return () => {
+            console.log(userId);
+        };
+    }, []);
 
     useEffect(() => {
         const checkNgoStatus = async () => {
@@ -47,6 +54,7 @@ const MobileSidebar = ({
                 const userId = await getDbUserId();
                 if (!userId) return;
                 
+                setUserId(userId)
                 setHasNgo(await checkIfUserHasNgo())
                 
             } catch (error) {
@@ -156,7 +164,7 @@ const MobileSidebar = ({
                                     className="flex items-center gap-3 justify-start"
                                     asChild
                                 >
-                                    <Link href="/profile">
+                                    <Link href={`/profile/${userId}`}>
                                         <UserIcon className="w-4 h-4" />
                                         Profile
                                     </Link>

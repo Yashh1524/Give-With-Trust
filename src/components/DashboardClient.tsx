@@ -21,6 +21,7 @@ export default function DashboardClient({ ngos }: { ngos: NGOProfile[] }) {
     const [selectedNgoId, setSelectedNgoId] = useState(ngos[0]?.id);
     const selectedNgo = ngos.find((ngo) => ngo.id === selectedNgoId);
     const [donations, setDonations] = useState<any[]>([]);
+
     const monthlyData = getMonthlyDonationData(donations);
     const yearlyData = getYearlyDonationTotals(donations);
 
@@ -69,7 +70,7 @@ export default function DashboardClient({ ngos }: { ngos: NGOProfile[] }) {
     return (
         <div className="space-y-6">
             {/* NGO Selector */}
-            <div className="flex gap-3 items-center">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-3">
                 <label className="font-semibold text-lg">Select NGO:</label>
                 <select
                     value={selectedNgoId}
@@ -82,14 +83,26 @@ export default function DashboardClient({ ngos }: { ngos: NGOProfile[] }) {
                         </option>
                     ))}
                 </select>
-                
-                <Link href={`/edit-ngo-details/${selectedNgoId}`} className='bg-blue-800 px-4 py-2 rounded-lg hover:bg-blue-950 cursor-pointer'>
+
+                <Link
+                    href={`/edit-ngo-details/${selectedNgoId}`}
+                    className="inline-block px-5 py-2 rounded-lg text-white font-medium transition 
+                        bg-blue-600 hover:bg-blue-700 focus:ring-2 focus:ring-blue-400 focus:outline-none
+                        dark:bg-blue-800 dark:hover:bg-blue-900 dark:focus:ring-blue-500"
+                >
                     Edit Details
                 </Link>
             </div>
 
+            {!selectedNgo?.approved && (
+                <div className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-800 p-4 rounded-md shadow-sm mb-6">
+                    <h2 className="font-semibold text-lg mb-1">Verification in Progress</h2>
+                    <p>Your NGO registration request is under review. This process typically takes 24 to 48 hours. We appreciate your patience!</p>
+                </div>
+            )}
+
             {/* Summary Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div className="flex flex-col gap-4 md:grid md:grid-cols-4">
                 <StatCard title="Total Raised" value={`₹${totalRaised.toFixed(2)}`} />
                 <StatCard title="Held Donations" value={held.length} />
                 <StatCard title="Released Donations" value={released.length} />
@@ -97,7 +110,7 @@ export default function DashboardClient({ ngos }: { ngos: NGOProfile[] }) {
             </div>
 
             {/* NGO Info Section */}
-            <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 auto-rows-[50px]">
+            <div className="flex flex-col gap-6 lg:grid lg:grid-cols-4 auto-rows-[50px]">
                 <div className="col-span-1 row-span-4 p-6 bg-white dark:bg-[#1f2937] rounded-lg shadow flex flex-col items-center justify-center">
                     {selectedNgo?.logo ? (
                         <img
@@ -146,7 +159,7 @@ export default function DashboardClient({ ngos }: { ngos: NGOProfile[] }) {
             {/* NGO Images */}
             {selectedNgo?.images?.length as number > 0 && (
                 <div className="bg-white dark:bg-[#1f2937] rounded-lg shadow p-6">
-                    <h2 className="text-xl font-semibold mb-4">🖼️ NGO Images</h2>
+                    <h2 className="text-xl font-semibold mb-4">Images</h2>
                     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
                         {selectedNgo?.images.map((img, idx) => (
                             <img key={idx} src={img} alt={`NGO Image ${idx + 1}`} className="rounded-md object-cover w-full h-40" />
@@ -156,20 +169,19 @@ export default function DashboardClient({ ngos }: { ngos: NGOProfile[] }) {
             )}
 
             {/* Charts + Top Donors */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="flex flex-col gap-6 md:grid md:grid-cols-3">
                 {monthlyData.some((m) => m > 0) && (
                     <div className="p-6 bg-white dark:bg-[#1f2937] rounded-lg shadow col-span-1">
-                        <h3 className="font-semibold mb-4">📊 Monthly Donations (This Year)</h3>
+                        <h3 className="font-semibold mb-4">Monthly Donations (This Year)</h3>
                         <MonthlyDonationPieChart monthlyData={monthlyData} />
                     </div>
                 )}
                 {Object.values(yearlyData).some((y) => y > 0) && (
                     <div className="p-6 bg-white dark:bg-[#1f2937] rounded-lg shadow col-span-1">
-                        <h3 className="font-semibold mb-4">📆 Donations by Year</h3>
+                        <h3 className="font-semibold mb-4">Donations by Year</h3>
                         <YearlyDonationPieChart yearlyTotals={yearlyData} />
                     </div>
                 )}
-                {/* Top Donors */}
                 <div className="p-6 bg-white dark:bg-[#1f2937] rounded-lg shadow col-span-1">
                     <h3 className="text-xl font-semibold mb-4 flex items-center gap-2"><BiMedal /> Top Donors</h3>
                     <ul className="space-y-3 text-sm">
@@ -194,7 +206,7 @@ export default function DashboardClient({ ngos }: { ngos: NGOProfile[] }) {
 
             {/* Donation Table */}
             <div className="p-6 bg-white dark:bg-[#1f2937] rounded-lg shadow">
-                <h3 className="text-lg font-semibold mb-4">📄 All Donations</h3>
+                <h3 className="text-lg font-semibold mb-4">All Donations</h3>
                 <NGODonations donations={donations} />
             </div>
         </div>

@@ -176,6 +176,41 @@ export async function getNgoByNgoId(id: string) {
     }
 }
 
+
+export async function calculateAndUpdateRaisedThisMonth(ngoId: string) {
+    try {
+        // Fetch released donations for this month where the NGO was either the original or reassigned recipient
+        const donations = await prisma.donation.findMany({
+            where: {
+                OR: [
+                    { ngoId },
+                    { reAssignedNgoId: ngoId }
+                ]
+            },
+            select: {
+                amount: true,
+            },
+        });
+
+        // Calculate the total amount
+        const totalAmount = donations.reduce((sum, donation) => sum + donation.amount, 0);
+
+        // Update the NGO profile
+        await prisma.nGOProfile.update({
+            where: { id: ngoId },
+            data: {
+                raisedThisMonth: totalAmount,
+            },
+        });
+
+        return { success: true, amount: totalAmount };
+    } catch (error) {
+        console.error("Error calculating raisedThisMonth:", error);
+        return { success: false, error: "Failed to calculate raised amount" };
+    }
+}
+
+
 export async function updateTotamAmountRaisedThisMonth(ngoId: string, amount: number) {
     try {
         await prisma.nGOProfile.update({

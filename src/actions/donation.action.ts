@@ -1,7 +1,7 @@
 "use server"
 
 import { prisma } from '@/lib/prisma';
-import { updateTotamAmountRaisedThisMonth } from './ngo.action';
+import { calculateAndUpdateRaisedThisMonth, updateTotamAmountRaisedThisMonth } from './ngo.action';
 import { revalidatePath } from 'next/cache';
 
 const MONTH_ENUM = [
@@ -50,18 +50,75 @@ export async function createDonation({
         },
     });
 
-    updateTotamAmountRaisedThisMonth(ngoId, amount)
-
+    calculateAndUpdateRaisedThisMonth(ngoId)
     revalidatePath(`/ngos/${ngoId}`)
+
     return donation;
 }
 
 export async function getDonationByNgoId(ngoId: string) {
     try {
+        const [directDonations, reassignedDonations] = await Promise.all([
+            prisma.donation.findMany({
+                where: { ngoId },
+                orderBy: { createdAt: 'desc' },
+                include: {
+                    donor: {
+                        select: {
+                            id: true,
+                            name: true,
+                            email: true,
+                            image: true,
+                        },
+                    },
+                    reAssignedNgo: {
+                        select: {
+                            id: true,
+                            name: true,
+                        },
+                    },
+                    ngo: true,
+                },
+            }),
+            prisma.donation.findMany({
+                where: { reAssignedNgoId: ngoId },
+                orderBy: { createdAt: 'desc' },
+                include: {
+                    donor: {
+                        select: {
+                            id: true,
+                            name: true,
+                            email: true,
+                            image: true,
+                        },
+                    },
+                    reAssignedNgo: {
+                        select: {
+                            id: true,
+                            name: true,
+                        },
+                    },
+                    ngo: true,
+                },
+            }),
+        ]);
+
+        // Combine and sort by createdAt descending
+        const allDonations = [...directDonations, ...reassignedDonations].sort(
+            (a, b) => b.createdAt.getTime() - a.createdAt.getTime()
+        );
+        return allDonations;
+    } catch (error) {
+        console.error('Error fetching donations by NGO ID:', error);
+        throw new Error('Failed to fetch donations');
+    }
+}
+
+
+export async function getDonationByUserId(userId: string) {
+    try {
         const donations = await prisma.donation.findMany({
-            where: {
-                ngoId,
-            },
+            where: {donorId: userId},
             orderBy: {
                 createdAt: 'desc',
             },
@@ -82,11 +139,13 @@ export async function getDonationByNgoId(ngoId: string) {
                 },
                 ngo: true,
             },
-        });
+        })
 
-        return donations;
+        if(!donations) throw new Error("No donation found")
+
+        return donations
     } catch (error) {
-        console.error('Error fetching donations by NGO ID:', error);
+        console.error('Error fetching donations by User ID:', error);
         throw new Error('Failed to fetch donations');
     }
 }
