@@ -7,6 +7,7 @@ import { Card } from '@/components/ui/card'
 import { Users, CheckCircle, Clock } from 'lucide-react'
 import { MdOutlinePendingActions } from "react-icons/md";
 import { SiTicktick } from "react-icons/si";
+import NotifyButton from '@/components/NotifyButton'
 
 const AdminDashboardPage = async () => {
     const ngos = await getAllNgo()
@@ -17,7 +18,7 @@ const AdminDashboardPage = async () => {
     return (
         <div className="p-6 space-y-5">
             <h1 className="text-3xl font-bold">Admin Dashboard</h1>
-
+            <NotifyButton />
             {/* Summary Cards */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 {/* Total NGOs */}
