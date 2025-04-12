@@ -28,7 +28,9 @@ import {
 } from "@clerk/nextjs";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { checkIfUserHasNgo, getDbUserId } from "@/actions/user.action";
+import { checkIfUserHasNgo, getDbUserId, getUserDetails } from "@/actions/user.action";
+import { Role } from "@prisma/client";
+import { RiAdminFill } from "react-icons/ri";
 
 const MobileSidebar = ({
     open,
@@ -40,9 +42,10 @@ const MobileSidebar = ({
     const { isSignedIn } = useAuth();
     const [hasNgo, setHasNgo] = useState(false);
     const [userId, setUserId] = useState("")
+    const [userRole, setUserRole] = useState<Role | undefined>("DONOR")
 
     useEffect(() => {
-        
+
         return () => {
             console.log(userId);
         };
@@ -53,10 +56,10 @@ const MobileSidebar = ({
             try {
                 const userId = await getDbUserId();
                 if (!userId) return;
-                
+                const user = await getUserDetails(userId)
                 setUserId(userId)
                 setHasNgo(await checkIfUserHasNgo())
-                
+                setUserRole(user?.role)
             } catch (error) {
                 console.error("Failed to check NGO status:", error);
                 setHasNgo(false);
@@ -148,6 +151,18 @@ const MobileSidebar = ({
                                     </Button>
                                 )}
 
+                                {
+                                    userRole === "ADMIN" && (
+                                        <Link href="/admin-dashboard">
+                                            <Button
+                                                variant="ghost"
+                                                className="w-full justify-start text-black dark:text-white"
+                                            >
+                                                <RiAdminFill /> Admin Dashboard
+                                            </Button>
+                                        </Link>
+                                    )
+                                }
                                 <Button
                                     variant="ghost"
                                     className="flex items-center gap-3 justify-start"

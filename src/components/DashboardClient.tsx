@@ -19,12 +19,12 @@ import Link from 'next/link';
 import MonthlyProofs from './MonthlyProofs';
 
 export default function DashboardClient(
-    { 
-        ngos, 
-        monthlyWorkProofs 
-    }: { 
-        ngos: NGOProfile[], 
-        monthlyWorkProofs: Proof[] 
+    {
+        ngos,
+        monthlyWorkProofs
+    }: {
+        ngos: NGOProfile[],
+        monthlyWorkProofs: Proof[]
     }
 ) {
     const [selectedNgoId, setSelectedNgoId] = useState(ngos[0]?.id);
@@ -69,7 +69,7 @@ export default function DashboardClient(
 
     const topDonors = Object.entries(donorTotals)
         .sort((a, b) => b[1].amount - a[1].amount)
-        .slice(0, 5);
+        .slice(0, 3);
 
     const getHighestMonth = (data: number[]) => {
         const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -195,7 +195,7 @@ export default function DashboardClient(
             {/* NGO Monthly Works Proofs */}
             {
                 monthlyWorkProofsByNgoId.length > 0 && (
-                    <MonthlyProofs proofs={monthlyWorkProofsByNgoId} ngoId={selectedNgoId}/>
+                    <MonthlyProofs proofs={monthlyWorkProofsByNgoId} ngoId={selectedNgoId} />
                 )
             }
 
@@ -214,25 +214,35 @@ export default function DashboardClient(
                     </div>
                 )}
                 <div className="p-6 bg-white dark:bg-[#1f2937] rounded-lg shadow col-span-1">
-                    <h3 className="text-xl font-semibold mb-4 flex items-center gap-2"><BiMedal /> Top Donors</h3>
-                    <ul className="space-y-3 text-sm">
+                    <h3 className="text-xl font-semibold mb-4 flex items-center gap-2">
+                        <BiMedal /> Top Donors
+                    </h3>
+                    <ul className="space-y-2">
                         {topDonors.map(([id, info]) => (
-                            <li key={id} className="flex items-center justify-between gap-4">
-                                <div className="flex items-center gap-2">
-                                    <img
-                                        src={info.image}
-                                        alt={info.name}
-                                        className="w-8 h-8 rounded-full object-cover"
-                                    />
-                                    <span className="text-gray-800 dark:text-gray-200 font-medium">{info.name}</span>
-                                </div>
-                                <span className="font-semibold text-green-600 dark:text-green-400">
-                                    ₹{info.amount.toFixed(0)}
-                                </span>
+                            <li key={id}>
+                                <Link
+                                    href={`/profile/${id}`}
+                                    className="flex items-center justify-between gap-3 px-3 py-2 rounded-lg transition-colors duration-200 hover:bg-gray-100 dark:hover:bg-[#1a1a22]"
+                                >
+                                    <div className="flex items-center gap-3">
+                                        <img
+                                            src={info.image}
+                                            alt={info.name}
+                                            className="w-9 h-9 rounded-full object-cover border border-gray-300 dark:border-gray-600"
+                                        />
+                                        <span className="font-medium text-sm text-gray-800 dark:text-gray-100 truncate max-w-[120px]">
+                                            {info.name}
+                                        </span>
+                                    </div>
+                                    <span className="font-semibold text-green-600 dark:text-green-400 text-sm whitespace-nowrap">
+                                        ₹{info.amount.toFixed(0)}
+                                    </span>
+                                </Link>
                             </li>
                         ))}
                     </ul>
                 </div>
+
             </div>
 
             {/* Donation Table */}

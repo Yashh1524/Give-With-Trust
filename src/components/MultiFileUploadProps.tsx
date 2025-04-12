@@ -62,7 +62,7 @@ function MultiFileUpload({ endpoint, onChange, value }: MultiFileUploadProps) {
                 onUploadBegin={() => setUploading(true)}
                 onClientUploadComplete={(res) => {
                     setUploading(false);
-                    const urls = res.map((file) => file.url);
+                    const urls = res.map((file) => file.ufsUrl);
                     onChange([...value, ...urls]);
                 }}
                 onUploadError={(error: Error) => {

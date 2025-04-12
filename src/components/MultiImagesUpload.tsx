@@ -45,7 +45,7 @@ export default function MultiImagesUpload({
             <UploadDropzone
                 endpoint={endpoint}
                 onClientUploadComplete={(res) => {
-                    const urls = res.map((file) => file.url);
+                    const urls = res.map((file) => file.ufsUrl);
                     onChange([...value, ...urls]); // append new URLs to existing ones
                 }}
                 onUploadError={(err) => console.error("Upload Error:", err)}

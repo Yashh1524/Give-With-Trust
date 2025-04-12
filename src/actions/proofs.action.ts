@@ -1,39 +1,32 @@
-import { prisma } from "@/lib/prisma";
+"use server"
+
+import { prisma } from '@/lib/prisma';
 import { Month } from "@prisma/client";
+import { updateNgoProofStatus } from './ngo.action';
 
 export async function uploadMonthlyWorkProof(
     ngoId: string,
-    data: Partial<{
+    data: {
         month: string;
         year: string;
         description: string;
         imageUrl: string[];
         proofPdf: string[];
-    }>
+    }
 ) {
     try {
+        console.log(ngoId, data)
 
         const existingNgo = await prisma.nGOProfile.findUnique({
             where: { id: ngoId },
-        });
+        })
 
-        if (!existingNgo) throw new Error('NGO not found');
+        if (!existingNgo) throw new Error('NGO not found')
 
-        if (
-            !data.month ||
-            !data.year ||
-            !data.description ||
-            !data.imageUrl ||
-            !data.proofPdf
-        ) {
-            throw new Error('Missing required proof data');
-        }
+        // Validate month enum
+        const validMonth = Object.values(Month).includes(data.month as Month)
+        if (!validMonth) throw new Error('Invalid month value')
 
-        // Ensure the month enum is valid
-        const validMonth = Object.values(Month).includes(data.month as Month);
-        if (!validMonth) throw new Error('Invalid month value');
-
-        // Upsert to avoid duplicate proofs for same ngo-month-year
         const proof = await prisma.proof.upsert({
             where: {
                 unique_proof_per_month: {
@@ -56,14 +49,24 @@ export async function uploadMonthlyWorkProof(
                 imageUrl: data.imageUrl,
                 pdfUrl: data.proofPdf,
             },
-        });
+        })
 
-        return proof;
+        // ✅ Call updateNgoStatus if this is for the current month and year
+        const now = new Date()
+        const currentMonth = now.toLocaleString('default', { month: 'long' }).toUpperCase() as Month
+        const currentYear = now.getFullYear()
+
+        if (data.month.toUpperCase() === currentMonth && parseInt(data.year) === currentYear) {
+            await updateNgoProofStatus(ngoId, "SUBMITTED")
+        }
+
+        return proof
     } catch (error) {
-        console.error('Failed to upload proofs:', error);
-        throw new Error('Error uploading NGO monthly work proofs');
+        console.error('Failed to upload proofs:', error)
+        throw new Error('Error uploading NGO monthly work proofs')
     }
 }
+
 
 export async function getMonthlyWorkProofs() {
     try {

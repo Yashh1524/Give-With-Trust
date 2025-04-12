@@ -2,6 +2,7 @@
 
 import { prisma } from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
+import { Role } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 
 export const syncUser = async ({
@@ -124,5 +125,17 @@ export async function updateUserDetails(
     } catch (error) {
         console.error("Failed to update user details:", error);
         throw new Error("User update failed");
+    }
+}
+
+export async function updateUserRole(role: Role, userId: string) {
+    try {
+        await prisma.user.update({
+            where: {id: userId},
+            data: {role: role}
+        })
+    } catch (error) {
+        console.error("Failed to update user role")
+        throw new Error("User role update failed")
     }
 }

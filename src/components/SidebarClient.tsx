@@ -25,14 +25,17 @@ import {
 } from "react-icons/tb";
 import { IoMdNotifications } from 'react-icons/io';
 import { useSidebar } from "@/context/SidebarContext";
+import { Role } from "@prisma/client";
+import { RiAdminFill } from "react-icons/ri";
 
 interface Props {
     userId: string | null | undefined,
     isSignedIn: boolean;
     hasNgo: boolean;
+    userRole?: Role;
 }
 
-const SidebarClient = ({ isSignedIn, hasNgo, userId }: Props) => {
+const SidebarClient = ({ isSignedIn, hasNgo, userId, userRole }: Props) => {
     // const [openSidebar, setOpenSidebar] = useState(true);
     const { open, toggle } = useSidebar();
     return (
@@ -99,6 +102,19 @@ const SidebarClient = ({ isSignedIn, hasNgo, userId }: Props) => {
                                         </Button>
                                     </Link>
                                 )}
+
+                                {
+                                    userRole === "ADMIN" && (
+                                        <Link href="/admin-dashboard">
+                                            <Button
+                                                variant="ghost"
+                                                className="w-full justify-start text-black dark:text-white"
+                                            >
+                                                <RiAdminFill /> Admin Dashboard
+                                            </Button>
+                                        </Link>
+                                    )
+                                }
 
                                 <Link href="/notifications">
                                     <Button

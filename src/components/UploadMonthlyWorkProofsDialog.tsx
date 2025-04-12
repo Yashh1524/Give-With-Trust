@@ -1,7 +1,6 @@
 'use client'
 
 import React, { useState } from 'react'
-import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { NGOProfile } from '@prisma/client'
 import { Button } from '@/components/ui/button'
@@ -34,17 +33,22 @@ const UploadMonthlyWorkProofsPage: React.FC<Props> = ({ ngo }) => {
         setForm((prev) => ({ ...prev, [name]: value }));
     };
 
-
-    const handleSubmit = async (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
         if (!ngo) return toast.error('NGO not found')
         if (!form.month || !form.year || !form.description || form.imageUrl.length === 0 || form.proofPdf.length === 0) {
             return toast.error('Please fill all fields and upload files')
         }
-
+    
         try {
             setLoading(true)
-            await uploadMonthlyWorkProof(ngo.id, form)
+            await uploadMonthlyWorkProof(ngo.id, {
+                month: form.month,
+                year: form.year,
+                description: form.description,
+                imageUrl: form.imageUrl,
+                proofPdf: form.proofPdf,
+            })
             toast.success('Proof submitted successfully')
             router.push('/dashboard')
         } catch (err) {
@@ -54,6 +58,26 @@ const UploadMonthlyWorkProofsPage: React.FC<Props> = ({ ngo }) => {
             setLoading(false)
         }
     }
+
+    // const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    //     e.preventDefault()
+    //     if (!ngo) return toast.error('NGO not found')
+    //     if (!form.month || !form.year || !form.description || form.imageUrl.length === 0 || form.proofPdf.length === 0) {
+    //         return toast.error('Please fill all fields and upload files')
+    //     }
+
+    //     try {
+    //         setLoading(true)
+    //         await uploadMonthlyWorkProof(ngo?.id, form)
+    //         toast.success('Proof submitted successfully')
+    //         router.push('/dashboard')
+    //     } catch (err) {
+    //         console.error(err)
+    //         toast.error('Failed to submit proof')
+    //     } finally {
+    //         setLoading(false)
+    //     }
+    // }
 
     return (
         <div className="min-h-screen py-10 px-6 md:px-12 bg-white dark:bg-[#100f1b] text-black dark:text-white">

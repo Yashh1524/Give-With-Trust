@@ -1,8 +1,9 @@
 'use server';
 
 import { prisma } from '@/lib/prisma';
-import { getDbUserId } from './user.action';
+import { getDbUserId, updateUserRole } from './user.action';
 import { revalidatePath } from 'next/cache';
+import { NGOStatus } from '@prisma/client';
 
 export const registerNgo = async ({
     name,
@@ -62,6 +63,9 @@ export const registerNgo = async ({
             images
         },
     });
+
+    // Update user role to NGO
+    await updateUserRole("NGO", userId)
 
     revalidatePath("/");
 };
@@ -141,6 +145,18 @@ export async function getNgoByUserId(userId: string | null | undefined) {
     }
 }
 
+export async function updateNgoProofStatus(ngoId: string, status: NGOStatus) {
+    try {
+        await prisma.nGOProfile.update({
+            where: {id: ngoId},
+            data: {status: status}
+        })
+        
+    } catch (error) {
+        console.error("Failed to update NGO Status:", error)
+        throw new Error("Error updating NGO Status")
+    }
+}
 
 export async function getAllNgo() {
     try {
@@ -226,5 +242,18 @@ export async function updateTotamAmountRaisedThisMonth(ngoId: string, amount: nu
     } catch (error) {
         console.error('Error updating raisedThisMonth:', error);
         return { success: false, error: 'Failed to update raised amount' };
+    }
+}
+
+export async function getPendingNGOForProofs() {
+    try {
+        const ngos = await prisma.nGOProfile.findMany({
+            where: {status: "PENDING"}
+        })
+
+        return ngos
+    } catch (error) {
+        console.error("Error fetching all NGOs with pending proofs:", error);
+        throw new Error("Error fetching all NGOs with pending proofs")
     }
 }

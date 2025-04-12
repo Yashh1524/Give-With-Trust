@@ -125,7 +125,6 @@ export default function DonateBox({ ngoId, userId }: DonateBoxProps) {
 
   return (
     <>
-
       <div className="mt-10 p-6 border rounded-lg bg-gray-50 dark:bg-[#1f2937]">
         <Script src="https://checkout.razorpay.com/v1/checkout.js" />
         <h2 className="text-2xl font-semibold text-gray-800 dark:text-white mb-4">Support this NGO</h2>
@@ -188,7 +187,7 @@ export default function DonateBox({ ngoId, userId }: DonateBoxProps) {
       </div>
 
       {/* Donations */}
-      <NGODonations donations={donations} ngoId={ngoId}/>
+      <NGODonations donations={donations} />
     </>
   );
 }

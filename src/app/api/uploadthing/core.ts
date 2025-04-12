@@ -18,7 +18,7 @@ export const ourFileRouter = {
         })
         .onUploadComplete(async ({ metadata, file }) => {
             try {
-                return { fileUrl: file.url };
+                return { fileUrl: file.ufsUrl };
             } catch (error) {
                 console.error("Error in onUploadComplete (postImage):", error);
                 throw error;
@@ -38,7 +38,7 @@ export const ourFileRouter = {
         })
         .onUploadComplete(async ({ metadata, file }) => {
             try {
-                return { fileUrl: file.url };
+                return { fileUrl: file.ufsUrl };
             } catch (error) {
                 console.error("Error in onUploadComplete (postImage):", error);
                 throw error;
@@ -58,7 +58,7 @@ export const ourFileRouter = {
         })
         .onUploadComplete(async ({ metadata, file }) => {
             try {
-                return { fileUrl: file.url };
+                return { fileUrl: file.ufsUrl };
             } catch (error) {
                 console.error("Error in onUploadComplete (postImage):", error);
                 throw error;
@@ -79,7 +79,7 @@ export const ourFileRouter = {
         })
         .onUploadComplete(async ({ metadata, file }) => {
             try {
-                return { fileUrl: file.url };
+                return { fileUrl: file.ufsUrl };
             } catch (error) {
                 console.error("Error in onUploadComplete (ngoProof):", error);
                 throw error;
@@ -99,7 +99,7 @@ export const ourFileRouter = {
         })
         .onUploadComplete(async ({ metadata, file }) => {
             try {
-                return { fileUrl: file.url };
+                return { fileUrl: file.ufsUrl };
             } catch (error) {
                 console.error("Error in onUploadComplete (ngoProof):", error);
                 throw error;
