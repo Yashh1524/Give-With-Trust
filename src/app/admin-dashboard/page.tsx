@@ -8,6 +8,7 @@ import { Users, CheckCircle, Clock } from 'lucide-react'
 import { MdOutlinePendingActions } from "react-icons/md";
 import { SiTicktick } from "react-icons/si";
 import NotifyButton from '@/components/NotifyButton'
+import Link from 'next/link'
 
 const AdminDashboardPage = async () => {
     const ngos = await getAllNgo()
@@ -22,8 +23,15 @@ const AdminDashboardPage = async () => {
             {/* Buttons */}
             <div>
                 <NotifyButton />
+                <Link
+                    href="/admin-dashboard/send-money"
+                    className="inline-flex items-center justify-center px-6 py-2 rounded-2xl bg-purple-600 hover:bg-purple-700 text-white font-medium shadow-md hover:shadow-lg transition-all duration-300"
+                >
+                    Send Money To NGO
+                </Link>
+
             </div>
-            
+
             {/* Summary Cards */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 {/* Total NGOs */}
@@ -78,7 +86,7 @@ const AdminDashboardPage = async () => {
             {/* Approved NGO List */}
             <section className='dark:bg-[#292739] bg-gray-50 shadow-lg p-4 rounded-xl'>
                 <div className='flex gap-3 item-center text-green-600'>
-                    <SiTicktick size={25}/>
+                    <SiTicktick size={25} />
                     <h2 className="text-xl font-semibold mb-2">Approved NGOs</h2>
                 </div>
                 <AdminNgoList ngos={approvedNgos} />

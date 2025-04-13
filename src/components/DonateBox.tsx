@@ -5,11 +5,7 @@ import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { getNgoByNgoId } from '@/actions/ngo.action';
 import { getDonationByNgoId } from '@/actions/donation.action';
-import NGODonations from './NGODonations'; // ✅ Ensure this component exists
-import DonationPieChart from './MonthlyDonationPieChart';
 import { getMonthlyDonationData, getYearlyDonationTotals } from '@/lib/donationHelpers';
-import YearlyDonationPieChart from './YearlyDonationPieChart';
-import MonthlyDonationPieChart from './MonthlyDonationPieChart';
 
 interface DonateBoxProps {
   ngoId: string;

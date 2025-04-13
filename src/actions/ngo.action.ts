@@ -4,6 +4,7 @@ import { prisma } from '@/lib/prisma';
 import { getDbUserId, updateUserRole } from './user.action';
 import { revalidatePath } from 'next/cache';
 import { AccentTag, NGOStatus } from '@prisma/client';
+import { sendNgoStatusAndAccentTagsUpadateEmail, sendNgoVerificationApprovedEmail } from '@/lib/email';
 
 export const registerNgo = async ({
     name,
@@ -271,6 +272,21 @@ export const updateNgoFieldsByAdmin = async ({
     approved: boolean;
 }) => {
     try {
+
+        const exisingNgo = await prisma.nGOProfile.findUnique({
+            where: {id: ngoId}
+        })
+
+        if(!exisingNgo) throw new Error("No NGO found!")
+
+        // NGO was pending for verification and now Ngo is approved 
+        if(!exisingNgo.approved && approved) {
+            sendNgoVerificationApprovedEmail("yashxerox15@gmail.com", exisingNgo.name)
+        } 
+        if(exisingNgo.approved && (exisingNgo.status !== status || exisingNgo.accentTags !== accentTags)) {
+            sendNgoStatusAndAccentTagsUpadateEmail("yashxerox15@gmail.com", exisingNgo.name, exisingNgo.accentTags, accentTags, exisingNgo.status, status)
+        }
+
         await prisma.nGOProfile.update({
             where: { id: ngoId },
             data: {
@@ -286,3 +302,17 @@ export const updateNgoFieldsByAdmin = async ({
         throw error;
     }
 };
+
+export const getSubmittedNGOs = async () => {
+    try {
+        const submittedNGOs = await prisma.nGOProfile.findMany({
+            where: {status: "SUBMITTED"}
+        })
+        if(!submittedNGOs) throw new Error("No NGO with Submitted Status found")
+
+        return submittedNGOs
+    } catch (error) {
+        console.error("Error fetching all submitted NGOs:", error);
+        throw new Error("Error fetching all submitted NGOs.")
+    }
+}

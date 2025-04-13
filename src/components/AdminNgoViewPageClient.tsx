@@ -16,6 +16,7 @@ import {
 import NGODonationStats from './NGODonationStats';
 import { FaDonate } from 'react-icons/fa';
 import { MdDoNotDisturbAlt, MdOutlinePendingActions, MdSmsFailed } from 'react-icons/md';
+import toast from 'react-hot-toast';
 
 interface AdminNgoViewPageClientProps {
     ngo: {
@@ -51,7 +52,7 @@ interface AdminNgoViewPageClientProps {
         };
     };
     donations: any[];
-    
+
 }
 
 
@@ -101,7 +102,7 @@ export default function AdminNgoViewPageClient({ ngo, donations }: AdminNgoViewP
             approved,
         });
         setIsSaving(false);
-        alert('Updated successfully');
+        toast.success('Updated successfully');
     };
 
     return (
@@ -111,13 +112,18 @@ export default function AdminNgoViewPageClient({ ngo, donations }: AdminNgoViewP
                 <div>
                     <h1 className="text-3xl font-bold text-gray-900 dark:text-white">{ngo.name}</h1>
                     <p className="text-sm text-gray-500">{ngo.email}</p>
-                    <div className="flex flex-wrap gap-2 mt-2">
+                    <div className="flex flex-wrap gap-2 mt-10">
                         {/* Editable status */}
                         <select
                             value={status}
                             onChange={(e) => setStatus(e.target.value as NGOStatus)}
-                            className="px-2 py-1 text-xs rounded bg-blue-100 text-blue-700"
-                        >
+                            className={
+                                `px-2 py-1 text-md rounded 
+                                    ${status === 'SUBMITTED' ? 'bg-green-100 text-green-700' : ''}
+                                    ${status === 'PENDING' ? 'bg-yellow-100 text-yellow-700' : ''}
+                                    ${status === 'NOT_SUBMITTED' ? 'bg-red-100 text-red-700' : ''}
+                                `}
+                            >
                             {Object.values(NGOStatus).map((s) => (
                                 <option key={s} value={s}>{s}</option>
                             ))}
@@ -127,8 +133,14 @@ export default function AdminNgoViewPageClient({ ngo, donations }: AdminNgoViewP
                         <select
                             value={accentTags}
                             onChange={(e) => setAccentTags(e.target.value as AccentTag)}
-                            className="px-2 py-1 text-xs rounded bg-green-100 text-green-700"
-                        >
+                            className={`px-2 py-1 text-md rounded 
+                                    ${accentTags === 'TRUSTED' ? 'bg-blue-100 text-blue-700' : ''}
+                                    ${accentTags === 'FEATURED' ? 'bg-purple-100 text-purple-700' : ''}
+                                    ${accentTags === 'VERIFIED' ? 'bg-green-100 text-green-700' : ''}
+                                    ${accentTags === 'NEW' ? 'bg-yellow-100 text-yellow-700' : ''}
+                                    ${accentTags === 'IMPACTFUL' ? 'bg-pink-100 text-pink-700' : ''}
+                                `}
+                            >
                             {Object.values(AccentTag).map((tag) => (
                                 <option key={tag} value={tag}>{tag}</option>
                             ))}
@@ -138,11 +150,14 @@ export default function AdminNgoViewPageClient({ ngo, donations }: AdminNgoViewP
                         <select
                             value={approved ? 'true' : 'false'}
                             onChange={(e) => setApproved(e.target.value === 'true')}
-                            className="px-2 py-1 text-xs rounded bg-emerald-100 text-emerald-700"
+                            className={`px-2 py-1 text-md rounded 
+        ${approved ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'}
+    `}
                         >
                             <option value="true">Approved</option>
                             <option value="false">Not Approved</option>
                         </select>
+
                     </div>
 
                     <button

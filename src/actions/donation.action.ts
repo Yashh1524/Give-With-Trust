@@ -149,3 +149,14 @@ export async function getDonationByUserId(userId: string) {
         throw new Error('Failed to fetch donations');
     }
 }
+
+export async function getAllHeldDonation() {
+    try {
+        return await prisma.donation.findMany({
+            where: {status: "HELD"}
+        })
+    } catch (error) {
+        console.error('Error fetching all held donations', error);
+        throw new Error('Failed fetching all held donations');
+    }
+}
