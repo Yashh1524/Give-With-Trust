@@ -29,7 +29,7 @@ export async function sendReminderEmail(to: string, ngoName: string) {
             </p>
             <p style="font-size: 15px; color: #444;">
               Best regards,<br/>
-              <strong>NGO Platform Team</strong>
+              <strong>GiveWithTrust</strong>
             </p>
           </div>
         </div>

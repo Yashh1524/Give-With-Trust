@@ -18,7 +18,12 @@ const AdminDashboardPage = async () => {
     return (
         <div className="p-6 space-y-5">
             <h1 className="text-3xl font-bold">Admin Dashboard</h1>
-            <NotifyButton />
+
+            {/* Buttons */}
+            <div>
+                <NotifyButton />
+            </div>
+            
             {/* Summary Cards */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 {/* Total NGOs */}

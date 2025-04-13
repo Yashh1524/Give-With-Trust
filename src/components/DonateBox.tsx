@@ -169,25 +169,6 @@ export default function DonateBox({ ngoId, userId }: DonateBoxProps) {
         </button>
       </div>
 
-      <div className='flex flex-col lg:flex-row items-center justify-evenly'>
-        {/* Yearly Donation Pie Chart */}
-        {monthlyData.some(m => m > 0) && (
-          <div className="my-10">
-            <h2 className="text-lg font-semibold text-gray-800 dark:text-white mb-10">Donations (This Year)</h2>
-            <MonthlyDonationPieChart monthlyData={monthlyData} />
-          </div>
-        )}
-        {/* Yearly Donation Pie Chart */}
-        {Object.values(yearlyData).some(v => v > 0) && (
-          <div className="my-10">
-            <h2 className="text-lg font-semibold text-gray-800 dark:text-white mb-10">Donations by Year</h2>
-            <YearlyDonationPieChart yearlyTotals={yearlyData} />
-          </div>
-        )}
-      </div>
-
-      {/* Donations */}
-      <NGODonations donations={donations} />
     </>
   );
 }

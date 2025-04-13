@@ -50,7 +50,7 @@ const AdminNgoList: React.FC<NgoListProps> = ({ ngos }) => {
                             <Card
                                 key={ngo.id}
                                 className={`flex-shrink-0 w-64 min-h-64 p-4 m-2 cursor-pointer rounded-2xl shadow hover:shadow-lg transition dark:bg-[#1f1d30] border-2 ${ngo.approved ? borderColor : 'border-gray-300'}`}
-                                onClick={() => router.push(`/admin-ngo-view-page/${ngo.id}`)}
+                                onClick={() => router.push(`/admin-dashboard/admin-ngo-view-page/${ngo.id}`)}
                             >
                                 <div className="flex flex-col h-full">
                                     <img

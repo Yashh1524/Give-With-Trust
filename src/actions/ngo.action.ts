@@ -3,7 +3,7 @@
 import { prisma } from '@/lib/prisma';
 import { getDbUserId, updateUserRole } from './user.action';
 import { revalidatePath } from 'next/cache';
-import { NGOStatus } from '@prisma/client';
+import { AccentTag, NGOStatus } from '@prisma/client';
 
 export const registerNgo = async ({
     name,
@@ -148,10 +148,10 @@ export async function getNgoByUserId(userId: string | null | undefined) {
 export async function updateNgoProofStatus(ngoId: string, status: NGOStatus) {
     try {
         await prisma.nGOProfile.update({
-            where: {id: ngoId},
-            data: {status: status}
+            where: { id: ngoId },
+            data: { status: status }
         })
-        
+
     } catch (error) {
         console.error("Failed to update NGO Status:", error)
         throw new Error("Error updating NGO Status")
@@ -177,7 +177,8 @@ export async function getNgoByNgoId(id: string) {
         const ngo = await prisma.nGOProfile.findUnique({
             where: { id },
             include: {
-                proofs: true
+                proofs: true,
+                user: true
             }
         });
 
@@ -248,7 +249,7 @@ export async function updateTotamAmountRaisedThisMonth(ngoId: string, amount: nu
 export async function getPendingNGOForProofs() {
     try {
         const ngos = await prisma.nGOProfile.findMany({
-            where: {status: "PENDING"}
+            where: { status: "PENDING" }
         })
 
         return ngos
@@ -257,3 +258,31 @@ export async function getPendingNGOForProofs() {
         throw new Error("Error fetching all NGOs with pending proofs")
     }
 }
+
+export const updateNgoFieldsByAdmin = async ({
+    ngoId,
+    status,
+    accentTags,
+    approved
+}: {
+    ngoId: string;
+    status: NGOStatus;
+    accentTags: AccentTag;
+    approved: boolean;
+}) => {
+    try {
+        await prisma.nGOProfile.update({
+            where: { id: ngoId },
+            data: {
+                status,
+                accentTags,
+                approved,
+            },
+        });
+        revalidatePath("/admin-dashboard")
+        
+    } catch (error) {
+        console.error("Failed to update NGO:", error);
+        throw error;
+    }
+};

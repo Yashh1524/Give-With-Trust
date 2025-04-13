@@ -1,7 +1,7 @@
 'use client';
 
 import { NGOProfile, Proof } from '@prisma/client';
-import { useEffect, useState } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 import { getDonationByNgoId } from '@/actions/donation.action';
 import { getMonthlyDonationData, getYearlyDonationTotals } from '@/lib/donationHelpers';
 import MonthlyDonationPieChart from './MonthlyDonationPieChart';
@@ -15,8 +15,10 @@ import {
     BiCalendarAlt,
     BiMedal,
 } from 'react-icons/bi';
+import { MdDoNotDisturbAlt, MdOutlinePendingActions, MdSmsFailed } from "react-icons/md";
 import Link from 'next/link';
 import MonthlyProofs from './MonthlyProofs';
+import { FaDonate } from 'react-icons/fa';
 
 export default function DashboardClient(
     {
@@ -127,11 +129,28 @@ export default function DashboardClient(
 
             {/* Summary Cards */}
             <div className="flex flex-col gap-4 md:grid md:grid-cols-4">
-                <StatCard title="Total Raised" value={`₹${totalRaised.toFixed(2)}`} />
-                <StatCard title="Held Donations" value={held.length} />
-                <StatCard title="Released Donations" value={released.length} />
-                <StatCard title="Reassigned Donations" value={reassigned.length} />
+                <StatCard
+                    title="Total Raised"
+                    value={`₹${totalRaised.toFixed(2)}`}
+                    icon={<FaDonate className="text-pink-500 text-2xl" />}
+                />
+                <StatCard
+                    title="Held Donations"
+                    value={held.length}
+                    icon={<MdOutlinePendingActions className="text-yellow-500 text-2xl" />}
+                />
+                <StatCard
+                    title="Released Donations"
+                    value={released.length}
+                    icon={<BiDonateHeart className="text-green-500 text-2xl" />}
+                />
+                <StatCard
+                    title="Reassigned Donations"
+                    value={reassigned.length}
+                    icon={<MdDoNotDisturbAlt  className="text-red-500 text-2xl" />}
+                />
             </div>
+
 
             {/* NGO Info Section */}
             <div className="flex flex-col gap-6 lg:grid lg:grid-cols-4 auto-rows-[50px]">
@@ -254,11 +273,17 @@ export default function DashboardClient(
     );
 }
 
-function StatCard({ title, value }: { title: string; value: string | number }) {
+export function StatCard({ title, value, icon }: { title: string; value: string | number; icon: ReactNode }) {
     return (
-        <div className="p-4 bg-white dark:bg-[#1f2937] rounded-lg shadow text-center">
-            <p className="text-sm text-gray-500">{title}</p>
-            <h3 className="text-lg font-bold mt-1">{value}</h3>
+        <div className="flex items-center gap-4 p-4 bg-white dark:bg-[#1f2937] rounded-lg shadow">
+            <div className="p-3 rounded-full bg-white/10">
+                {icon}
+            </div>
+            <div>
+                <p className="text-sm text-gray-500">{title}</p>
+                <h3 className="text-lg font-bold mt-1">{value}</h3>
+            </div>
         </div>
     );
 }
+
