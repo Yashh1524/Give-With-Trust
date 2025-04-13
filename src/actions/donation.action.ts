@@ -3,6 +3,7 @@
 import { prisma } from '@/lib/prisma';
 import { calculateAndUpdateRaisedThisMonth, updateTotamAmountRaisedThisMonth } from './ngo.action';
 import { revalidatePath } from 'next/cache';
+import { DonationStatus } from '@prisma/client';
 
 const MONTH_ENUM = [
     'JANUARY',
@@ -114,7 +115,6 @@ export async function getDonationByNgoId(ngoId: string) {
     }
 }
 
-
 export async function getDonationByUserId(userId: string) {
     try {
         const donations = await prisma.donation.findMany({
@@ -153,10 +153,32 @@ export async function getDonationByUserId(userId: string) {
 export async function getAllHeldDonation() {
     try {
         return await prisma.donation.findMany({
-            where: {status: "HELD"}
+            where: {status: "HELD"},
+            include: {
+                donor: {
+                    select: {
+                        id: true,
+                        name: true,
+                        email: true,
+                        image: true,
+                    }
+                }
+            }
         })
     } catch (error) {
         console.error('Error fetching all held donations', error);
-        throw new Error('Failed fetching all held donations');
+        throw new Error('Failed fetching all held donations.');
+    }
+}
+
+export async function updateDonationStatus(newStatus: DonationStatus, donationId: string) {
+    try {
+        return await prisma.donation.update({
+            where: {id: donationId},
+            data:{status: newStatus},
+        })
+    } catch (error) {
+        console.error("Error updating status of donation", error)
+        throw new Error("Failed to update donation status.")
     }
 }

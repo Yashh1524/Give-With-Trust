@@ -38,6 +38,31 @@ const ProfileClient: React.FC<Props> = ({ user, currUserId, donations, ngos }) =
     const hasNgos = ngos.length > 0;
     const [selectedTab, setSelectedTab] = useState<'donations' | 'ngos'>('donations');
 
+    const getStatusBadge = (status: string) => {
+        switch (status) {
+            case 'HELD':
+                return (
+                    <span className="text-xs font-medium text-yellow-600 bg-yellow-100 px-2 py-1 rounded">
+                        Held
+                    </span>
+                );
+            case 'RELEASED':
+                return (
+                    <span className="text-xs font-medium text-green-600 bg-green-100 px-2 py-1 rounded">
+                        Released
+                    </span>
+                );
+            case 'REASSIGNED':
+                return (
+                    <span className="text-xs font-medium text-red-600 bg-red-100 px-2 py-1 rounded">
+                        Reassigned
+                    </span>
+                );
+            default:
+                return null;
+        }
+    };
+
     return (
         <div className="space-y-10">
             {/* Header */}
@@ -85,74 +110,46 @@ const ProfileClient: React.FC<Props> = ({ user, currUserId, donations, ngos }) =
                     <TabsContent value="donations" className="mt-6">
                         {donations.length > 0 ? (
                             <div className="space-y-4">
-                                {donations.map((donation) => {
-                                    const getStatusBadge = (status: string) => {
-                                        switch (status) {
-                                            case 'HELD':
-                                                return (
-                                                    <span className="text-xs font-medium text-yellow-600 bg-yellow-100 px-2 py-1 rounded">
-                                                        Held
-                                                    </span>
-                                                );
-                                            case 'RELEASED':
-                                                return (
-                                                    <span className="text-xs font-medium text-green-600 bg-green-100 px-2 py-1 rounded">
-                                                        Released
-                                                    </span>
-                                                );
-                                            case 'REASSIGNED':
-                                                return (
-                                                    <span className="text-xs font-medium text-red-600 bg-red-100 px-2 py-1 rounded">
-                                                        Reassigned
-                                                    </span>
-                                                );
-                                            default:
-                                                return null;
-                                        }
-                                    };
-
-                                    return (
-                                        <div
-                                            key={donation.id}
-                                            className="p-4 bg-white dark:bg-[#1f2937] rounded-lg shadow-md border border-gray-200 dark:border-gray-700"
-                                        >
-                                            <div className="flex justify-between items-center">
-                                                <div className="flex items-center gap-3">
-                                                    {donation.ngo.logo && (
-                                                        <img
-                                                            src={donation.ngo.logo}
-                                                            alt={donation.ngo.name}
-                                                            className="w-10 h-10 rounded-full object-cover border"
-                                                        />
-                                                    )}
-                                                    <div>
-                                                        <Link
-                                                            href={`/ngos/${donation.ngo.id}`}
-                                                            className="text-lg font-semibold text-blue-700 dark:text-blue-300"
-                                                        >
-                                                            {donation.ngo.name}
-                                                        </Link>
-                                                        <p className="text-sm text-gray-500 dark:text-gray-400">
-                                                            {donation.message || 'No message'}
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                                <div className="text-right">
-                                                    <p className="text-xl font-bold">₹{donation.amount}</p>
+                                {donations.map((donation) => (
+                                    <div
+                                        key={donation.id}
+                                        className="p-4 bg-white dark:bg-[#1f2937] rounded-lg shadow-md border border-gray-200 dark:border-gray-700"
+                                    >
+                                        <div className="flex justify-between items-center">
+                                            <div className="flex items-center gap-3">
+                                                {donation.ngo.logo && (
+                                                    <img
+                                                        src={donation.ngo.logo}
+                                                        alt={donation.ngo.name}
+                                                        className="w-10 h-10 rounded-full object-cover border"
+                                                    />
+                                                )}
+                                                <div>
+                                                    <Link
+                                                        href={`/ngos/${donation.ngo.id}`}
+                                                        className="text-lg font-semibold text-blue-700 dark:text-blue-300"
+                                                    >
+                                                        {donation.ngo.name}
+                                                    </Link>
                                                     <p className="text-sm text-gray-500 dark:text-gray-400">
-                                                        {donation.month} {donation.year}
+                                                        {donation.message || 'No message'}
                                                     </p>
-                                                    <div className="mt-1">{getStatusBadge(donation.status)}</div>
                                                 </div>
                                             </div>
+                                            <div className="text-right">
+                                                <p className="text-xl font-bold">₹{donation.amount}</p>
+                                                <p className="text-sm text-gray-500 dark:text-gray-400">
+                                                    {donation.month} {donation.year}
+                                                </p>
+                                                <div className="mt-1">{getStatusBadge(donation.status)}</div>
+                                            </div>
                                         </div>
-                                    );
-                                })}
+                                    </div>
+                                ))}
                             </div>
                         ) : (
                             <div className="text-center py-8 text-muted-foreground">No donations yet</div>
                         )}
-
                     </TabsContent>
 
                     <TabsContent value="ngos" className="mt-6">
@@ -215,6 +212,7 @@ const ProfileClient: React.FC<Props> = ({ user, currUserId, donations, ngos }) =
                                             <p className="text-sm text-gray-500 dark:text-gray-400">
                                                 {donation.month} {donation.year}
                                             </p>
+                                            <div className="mt-1">{getStatusBadge(donation.status)}</div>
                                         </div>
                                     </div>
                                 </div>
