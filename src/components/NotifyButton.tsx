@@ -28,7 +28,7 @@ const NotifyButton = () => {
 
     return (
         <div className="my-4">
-            <Button onClick={handleNotify} disabled={loading}>
+            <Button onClick={handleNotify} disabled={loading} className='w-full lg:w-fit'>
                 {loading ? 'Sending...' : 'Send Notification to Pending NGOs'}
             </Button>
         </div>

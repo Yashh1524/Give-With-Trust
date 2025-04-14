@@ -303,10 +303,10 @@ export const updateNgoFieldsByAdmin = async ({
     }
 };
 
-export const getSubmittedNGOs = async () => {
+export const getNGOsByStatus = async (status: NGOStatus) => {
     try {
         const submittedNGOs = await prisma.nGOProfile.findMany({
-            where: {status: "SUBMITTED"}
+            where: {status: status}
         })
         if(!submittedNGOs) throw new Error("No NGO with Submitted Status found")
 

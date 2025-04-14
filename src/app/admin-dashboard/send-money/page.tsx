@@ -1,5 +1,5 @@
 import { getAllHeldDonation } from '@/actions/donation.action'
-import { getSubmittedNGOs } from '@/actions/ngo.action'
+import { getNGOsByStatus } from '@/actions/ngo.action'
 import React from 'react'
 import NgoSendMoneyCard from '@/components/NgoSendMoneyCard'
 import SendMoneyToAllButton from '@/components/SendMoneyToAllButton'
@@ -9,7 +9,7 @@ import UnauthorizedAccess from '@/components/UnauthorizedAccess'
 const page = async () => {
 
   const userRole = await getCurrentUserRole()
-  const ngoToSendMoney = await getSubmittedNGOs()
+  const ngoToSendMoney = await getNGOsByStatus("SUBMITTED")
   const allHeldDonations = await getAllHeldDonation()
 
   const heldTotalsByNgo: Record<string, number> = {}
