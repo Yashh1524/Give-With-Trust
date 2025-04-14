@@ -6,6 +6,8 @@ import toast from 'react-hot-toast';
 import { getNgoByNgoId } from '@/actions/ngo.action';
 import { getDonationByNgoId } from '@/actions/donation.action';
 import { getMonthlyDonationData, getYearlyDonationTotals } from '@/lib/donationHelpers';
+import NGODonationStats from './NGODonationStats';
+import NGODonations from './NGODonations';
 
 interface DonateBoxProps {
   ngoId: string;
@@ -97,7 +99,7 @@ export default function DonateBox({ ngoId, userId }: DonateBoxProps) {
               toast.success("Donation successful!");
               setAmount('');
               setMessage('');
-              await fetchDonations(); // ✅ Refresh donations after success
+              await fetchDonations();
             } else {
               toast.error("Payment verification failed.");
             }
@@ -164,7 +166,8 @@ export default function DonateBox({ ngoId, userId }: DonateBoxProps) {
           {loading ? "Processing..." : "Donate"}
         </button>
       </div>
-
+      <NGODonationStats ngoId={ngoId} />
+      <NGODonations donations={donations} />
     </>
   );
 }

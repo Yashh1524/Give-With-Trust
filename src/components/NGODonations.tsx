@@ -89,7 +89,7 @@ export default function NGODonations({ donations }: NGODonationsProps) {
                         <div className="flex-1 w-full">
                             <div className="flex items-center justify-between">
                                 <div>
-                                    <Link href={`/profile/${donation.donor.id}`} className="font-semibold text-gray-800 dark:text-white">
+                                    <Link href={`/profile/${donation.donor.id}`} className="font-semibold text-gray-800 dark:text-white hover:text-purple-700">
                                         {donation.donor.name}
                                     </Link>
                                 </div>

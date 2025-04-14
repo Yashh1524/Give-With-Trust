@@ -13,7 +13,7 @@ interface NGODonationStatsProps {
 
 export default function NGODonationStats({ ngoId }: NGODonationStatsProps) {
     const [donations, setDonations] = useState<any[]>([]);
-    const [loading, setLoading] = useState(true); // 🔄 Add loading state
+    const [loading, setLoading] = useState(true);
     const monthlyData = getMonthlyDonationData(donations);
     const yearlyData = getYearlyDonationTotals(donations);
 
@@ -61,9 +61,6 @@ export default function NGODonationStats({ ngoId }: NGODonationStatsProps) {
                     </div>
                 )}
             </div>
-
-            {/* Donations List */}
-            <NGODonations donations={donations} />
         </>
     );
 }

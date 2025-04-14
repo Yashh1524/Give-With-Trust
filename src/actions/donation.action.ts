@@ -53,7 +53,7 @@ export async function createDonation({
 
     calculateAndUpdateRaisedThisMonth(ngoId)
     revalidatePath(`/ngos/${ngoId}`)
-
+    
     return donation;
 }
 
@@ -180,5 +180,19 @@ export async function updateDonationStatus(newStatus: DonationStatus, donationId
     } catch (error) {
         console.error("Error updating status of donation", error)
         throw new Error("Failed to update donation status.")
+    }
+}
+
+export async function updateDonationStatusByNgoId(newStatus: DonationStatus, ngoId: string) {
+    try {
+        const donations = await prisma.donation.updateMany({
+            where: {ngoId: ngoId},
+            data: {status: newStatus}
+        })
+        revalidatePath("/admin-dashboard/send-money")
+        return donations
+    } catch (error) {
+        console.error("Error updating status of donation by ngoId", error)
+        throw new Error("Failed to update donation status by ngoId.")
     }
 }

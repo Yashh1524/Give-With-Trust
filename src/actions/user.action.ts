@@ -131,11 +131,27 @@ export async function updateUserDetails(
 export async function updateUserRole(role: Role, userId: string) {
     try {
         await prisma.user.update({
-            where: {id: userId},
-            data: {role: role}
+            where: { id: userId },
+            data: { role: role }
         })
     } catch (error) {
         console.error("Failed to update user role")
         throw new Error("User role update failed")
+    }
+}
+
+export async function getCurrentUserRole() {
+    try {
+        const { userId: clerkId } = await auth();
+        if (!clerkId) return null;
+
+        const user = await getUserByClerkId(clerkId);
+
+        if (!user) return
+
+        return user.role
+    } catch (error) {
+        console.error("Failed to fetch user role")
+        throw new Error("Fetch User role failed.")
     }
 }

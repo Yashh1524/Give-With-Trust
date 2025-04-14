@@ -3,6 +3,7 @@ import { getNgoByUserId } from '@/actions/ngo.action';
 import DashboardClient from '@/components/DashboardClient';
 import { getMonthlyWorkProofs } from '@/actions/proofs.action';
 import Link from 'next/link';
+import UnauthorizedAccess from '@/components/UnauthorizedAccess';
 
 const Page = async () => {
     const userId = await getDbUserId();
@@ -21,7 +22,15 @@ const Page = async () => {
     return (
         <div className="p-6">
             {ngos && ngos.length > 0 ? (
-                <DashboardClient ngos={ngos} monthlyWorkProofs={monthlyWorkProofs ?? []} />
+                <>
+                    {
+                        ngos[0].userId === userId ? (
+                            <DashboardClient ngos={ngos} monthlyWorkProofs={monthlyWorkProofs ?? []} />
+                        ) : (
+                            <UnauthorizedAccess />
+                        )
+                    }
+                </>
             ) : (
                 <div className="max-w-xl mx-auto bg-yellow-50 dark:bg-[#2a2a30] p-6 rounded-lg border border-yellow-300 dark:border-yellow-700 text-yellow-800 dark:text-yellow-200 shadow">
                     <h2 className="text-xl font-semibold mb-2">No NGO Profile Found</h2>

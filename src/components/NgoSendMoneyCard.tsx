@@ -1,6 +1,6 @@
 'use client'
 
-import { updateDonationStatus } from '@/actions/donation.action'
+import { updateDonationStatus, updateDonationStatusByNgoId } from '@/actions/donation.action'
 import { Donation, DonationStatus, NGOProfile } from '@prisma/client'
 import Link from 'next/link'
 import React, { useState } from 'react'
@@ -37,9 +37,10 @@ const NgoSendMoneyCard: React.FC<NgoSendMoneyCardProps> = ({ ngoDetails, amount,
             })
             const data = await res.json()
             if (data.success) {
-                toast.success(`✅ Sent ₹${amount} to ${ngoDetails.name}`)
+                toast.success(`Sent ₹${amount} to ${ngoDetails.name}`)
                 for (const donation of donations) {
-                    await updateDonationStatus("RELEASED" as DonationStatus, donation.id)
+                    // await updateDonationStatus("RELEASED" as DonationStatus, donation.id)
+                    await updateDonationStatusByNgoId("RELEASED" as DonationStatus, ngoDetails.id)
                 }
             } else {
                 toast.error(`❌ Failed: ${data.error}`)

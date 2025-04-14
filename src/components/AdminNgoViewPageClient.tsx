@@ -1,22 +1,20 @@
 'use client';
 
 import { useState } from 'react';
-import MonthlyProofs from '@/components/MonthlyProofs';
-import DonateBox from '@/components/DonateBox';
-import { AccentTag, Donation, DonationStatus, Month, NGOProfile, NGOStatus, Proof } from '@prisma/client';
+import { AccentTag, NGOStatus, Proof } from '@prisma/client';
 import { updateNgoFieldsByAdmin } from '@/actions/ngo.action';
 import Link from 'next/link';
 import {
     BiSolidDetail,
     BiDonateHeart,
     BiCalendarCheck,
-    BiCalendarAlt,
     BiTrendingUp
 } from 'react-icons/bi';
 import NGODonationStats from './NGODonationStats';
 import { FaDonate } from 'react-icons/fa';
-import { MdDoNotDisturbAlt, MdOutlinePendingActions, MdSmsFailed } from 'react-icons/md';
+import { MdDoNotDisturbAlt, MdOutlinePendingActions } from 'react-icons/md';
 import toast from 'react-hot-toast';
+import NGODonations from './NGODonations';
 
 interface AdminNgoViewPageClientProps {
     ngo: {
@@ -52,7 +50,6 @@ interface AdminNgoViewPageClientProps {
         };
     };
     donations: any[];
-
 }
 
 
@@ -74,12 +71,13 @@ export default function AdminNgoViewPageClient({ ngo, donations }: AdminNgoViewP
         .reduce((sum, d) => sum + d.amount, 0);
 
     // Donors
-    const donorMap: { [key: string]: { name: string; email: string; image: string | undefined; amount: number } } = {};
+    const donorMap: { [key: string]: { id: string; name: string; email: string; image: string | undefined; amount: number } } = {};
 
     donations.forEach((donation) => {
         const donorId = donation.donor.id;
         if (!donorMap[donorId]) {
             donorMap[donorId] = {
+                id: donation.donor.id,
                 name: donation.donor.name || "unknown",
                 email: donation.donor.email,
                 image: donation.donor.image,
@@ -150,9 +148,7 @@ export default function AdminNgoViewPageClient({ ngo, donations }: AdminNgoViewP
                         <select
                             value={approved ? 'true' : 'false'}
                             onChange={(e) => setApproved(e.target.value === 'true')}
-                            className={`px-2 py-1 text-md rounded 
-        ${approved ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'}
-    `}
+                            className={`px-2 py-1 text-md rounded ${approved ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'}`}
                         >
                             <option value="true">Approved</option>
                             <option value="false">Not Approved</option>
@@ -244,7 +240,7 @@ export default function AdminNgoViewPageClient({ ngo, donations }: AdminNgoViewP
                             <FaDonate className="text-pink-400 text-2xl" />
                             <div>
                                 <p className="text-sm font-semibold text-white">Total Raised</p>
-                                <p className="text-green-400 font-medium">₹{totalRaised}</p>
+                                <p className="text-pink-400 font-medium">₹{totalRaised}</p>
                             </div>
                         </div>
 
@@ -262,16 +258,16 @@ export default function AdminNgoViewPageClient({ ngo, donations }: AdminNgoViewP
                             <BiDonateHeart className="text-green-400 text-2xl" />
                             <div>
                                 <p className="text-sm font-semibold text-white">Released Donations</p>
-                                <p className="text-blue-400 font-medium">₹{releasedDonations}</p>
+                                <p className="text-green-400 font-medium">₹{releasedDonations}</p>
                             </div>
                         </div>
 
                         {/* Reassigned Donations */}
                         <div className="bg-[#334155] rounded-xl p-4 flex items-center gap-3">
-                            <MdDoNotDisturbAlt className="text-green-400 text-2xl" />
+                            <MdDoNotDisturbAlt className="text-red-400 text-2xl" />
                             <div>
                                 <p className="text-sm font-semibold text-white">Reassigned Donations</p>
-                                <p className="text-purple-400 font-medium">₹{reassignedDonations}</p>
+                                <p className="text-red-400 font-medium">₹{reassignedDonations}</p>
                             </div>
                         </div>
                     </div>
@@ -294,7 +290,7 @@ export default function AdminNgoViewPageClient({ ngo, donations }: AdminNgoViewP
                                                 className="w-10 h-10 rounded-full object-cover"
                                             />
                                             <div>
-                                                <p className="font-medium text-base">{donor.name}</p>
+                                                <Link href={`/profile/${donor.id}`} className="font-medium text-base hover:text-purple-500">{donor.name}</Link>
                                                 <p className="text-sm text-gray-400 break-all">{donor.email}</p>
                                             </div>
                                         </div>
@@ -308,7 +304,6 @@ export default function AdminNgoViewPageClient({ ngo, donations }: AdminNgoViewP
                             <p className="text-gray-400">No donors yet.</p>
                         )}
                     </div>
-
                 </div>
 
                 {/* NGO Details */}
@@ -364,6 +359,7 @@ export default function AdminNgoViewPageClient({ ngo, donations }: AdminNgoViewP
 
 
             <NGODonationStats ngoId={ngo.id} />
+            <NGODonations donations={donations} />
         </div>
     );
 }
