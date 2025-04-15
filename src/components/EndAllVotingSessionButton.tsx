@@ -1,24 +1,28 @@
-"use client"
+'use client'
 
 import React, { useState } from 'react'
 import { VoteSession } from '@prisma/client';
 import toast from 'react-hot-toast';
 import { endVoteSession } from '@/actions/voting.action';
 
-const EndAllVotingSessionButton = (votingSessions: VoteSession[]) => {
+interface Props {
+    votingSessions: VoteSession[]
+}
+
+const EndAllVotingSessionButton: React.FC<Props> = ({ votingSessions }) => {
 
     const [loading, setLoading] = useState(false)
 
     const handleEndAllSession = async () => {
         try {
             setLoading(true)
-            for(const session of votingSessions) {
-                await endVoteSession(session.id)
+            for (const session of votingSessions) {
+                if (session.isOngoing) await endVoteSession(session.id)
             }
-            toast.success("All voting session ended successfully")
+            toast.success("All voting sessions ended successfully")
         } catch (error) {
-            toast.error("Failed to end all voting session")
-            console.log("Error while ending all voting session:", error);
+            toast.error("Failed to end all voting sessions")
+            console.log("Error while ending all voting sessions:", error);
         } finally {
             setLoading(false)
         }
@@ -36,7 +40,7 @@ const EndAllVotingSessionButton = (votingSessions: VoteSession[]) => {
                     Ending...
                 </div>
             ) : (
-                'End Session'
+                'End All Session'
             )}
         </button>
     )

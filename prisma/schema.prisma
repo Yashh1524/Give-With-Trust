@@ -171,7 +171,7 @@ model Vote {
     createdAt     DateTime @default(now())
 
     user        User        @relation(fields: [userId], references: [id])
-    voteSession VoteSession @relation(fields: [voteSessionId], references: [id])
+    voteSession VoteSession @relation(fields: [voteSessionId], references: [id], onDelete: Cascade)
     selectedNgo NGOProfile  @relation(fields: [selectedNgoId], references: [id])
 
     @@unique([userId, voteSessionId], name: "user_unique_vote_per_session")

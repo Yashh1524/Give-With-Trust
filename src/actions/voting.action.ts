@@ -30,10 +30,11 @@ export async function createVotingSession(session: {
                 voters: true,
                 candidates: true
             }
-
         })
 
         if (!votingSession) throw new Error("Voting session not found")
+
+        // revalidatePath("/admin-dashboard/voting-sessions")
 
         return votingSession
 
@@ -186,8 +187,6 @@ export async function createVote({
             });
         }
         revalidatePath(`/admin-dashboard/voting-sessions`);
-        revalidatePath(`/voting-session/${voteSessionId}`);
-        revalidatePath(`/admin-dashboard/voting-sessions/${voteSessionId}`);
         
     } catch (error) {
         console.error("Error creating vote:", error);
@@ -229,9 +228,10 @@ export async function endVoteSession(voteSessionId: string) {
             },
         });
 
-        revalidatePath(`/voting-session/${voteSessionId}`);
-        revalidatePath(`/admin-dashboard/voting-sessions`);
-        revalidatePath(`/admin-dashboard/voting-sessions/${voteSessionId}`);
+        revalidatePath(`/admin-dashboard/voting-sessions`)
+        // revalidatePath(`/voting-session/${voteSessionId}`);
+        // revalidatePath(`/admin-dashboard/voting-sessions`);
+        // revalidatePath(`/admin-dashboard/voting-sessions/${voteSessionId}`);
 
         return { success: true, winnerNgoId };
     } catch (error) {

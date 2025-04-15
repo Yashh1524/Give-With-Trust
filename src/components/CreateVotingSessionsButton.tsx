@@ -1,6 +1,6 @@
 'use client'
 
-import { createVotingSession } from '@/actions/voting.action'
+import { createVotingSession, getAllVotingSession } from '@/actions/voting.action'
 import { Donation, NGOProfile, VoteSession } from '@prisma/client'
 import React, { useState, useTransition } from 'react'
 import toast from 'react-hot-toast'
@@ -16,13 +16,20 @@ const CreateVotingSessionsButton: React.FC<Props> = ({
     donations,
     notSubmittedWorkNgos,
     submittedNGOs,
-    votingSessions
+    votingSessions,
 }) => {
     const [isPending, startTransition] = useTransition()
     const [loading, setLoading] = useState(false)
     const [dialogOpen, setDialogOpen] = useState(false)
     const [selectedNgos, setSelectedNgos] = useState<string[]>([])
     const [selectAll, setSelectAll] = useState(false)
+    // const [votingSessions, setVotingSessions] = useState<VoteSession[]>([])
+
+    // const fetchAllVotingSessions = async () => {
+        
+    //     setVotingSessions(await getAllVotingSession())
+    // }
+    // fetchAllVotingSessions()
 
     const alreadyCreatedNgoIds = new Set(votingSessions.map(vs => vs.failedNgoId))
     const eligibleNgos = notSubmittedWorkNgos.filter(ngo => !alreadyCreatedNgoIds.has(ngo.id))
@@ -73,6 +80,7 @@ const CreateVotingSessionsButton: React.FC<Props> = ({
                 }
 
                 toast.success("Voting sessions created successfully")
+                // fetchAllVotingSessions()
                 setDialogOpen(false)
                 setSelectedNgos([])
                 setSelectAll(false)
