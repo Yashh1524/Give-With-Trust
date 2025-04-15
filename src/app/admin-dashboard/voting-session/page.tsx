@@ -10,7 +10,6 @@ const Page = async () => {
     const submittedNGOs = await getNGOsByStatus("SUBMITTED")
     const votingSessions = await getAllVotingSession()
     console.log("votingSessions:",votingSessions);
-    
 
     return (
         <div className="p-4">

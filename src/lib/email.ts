@@ -48,7 +48,6 @@ export async function sendReminderEmail(to: string, ngoName: string) {
   }
 }
 
-
 export async function sendNgoVerificationApprovedEmail(to: string, ngoName: string) {
   try {
     const result = await resend.emails.send({

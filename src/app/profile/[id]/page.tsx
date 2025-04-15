@@ -1,6 +1,7 @@
 import { getDonationByUserId } from '@/actions/donation.action';
 import { getNgoByUserId } from '@/actions/ngo.action';
 import { getDbUserId, getUserDetails } from '@/actions/user.action';
+import { getVotingSessionByUserId } from '@/actions/voting.action';
 import ProfileClient from '@/components/ProfileClient';
 import React from 'react';
 
@@ -10,6 +11,8 @@ const page = async ({ params }: { params: Promise<{ id: string }> }) => {
     const user = await getUserDetails(userId);
     const donations = await getDonationByUserId(userId);
     const ngos = await getNgoByUserId(userId);
+    const votingSessions = await getVotingSessionByUserId(userId)
+    console.log(votingSessions);
 
     if (!user) {
         return (
@@ -25,6 +28,7 @@ const page = async ({ params }: { params: Promise<{ id: string }> }) => {
             currUserId={currUserId}
             donations={donations}
             ngos={ngos}
+            votingSessions={votingSessions}
         />
     );
 };

@@ -143,18 +143,19 @@ model Proof {
 }
 
 model VoteSession {
-    id             String      @id @default(cuid())
-    failedNgoId    String
-    month          Month
-    year           Int
-    createdAt      DateTime    @default(now())
-    votes          Vote[]
+    id          String   @id @default(cuid())
+    failedNgoId String
+    month       Month
+    year        Int
+    createdAt   DateTime @default(now())
+    votes       Vote[]
+    isOngoing   Boolean  @default(true)
 
-    failedNgo      NGOProfile   @relation("FailedNgo", fields: [failedNgoId], references: [id])
+    failedNgo NGOProfile @relation("FailedNgo", fields: [failedNgoId], references: [id])
 
-    candidates     NGOProfile[] @relation("VoteSessionCandidates")
+    candidates NGOProfile[] @relation("VoteSessionCandidates")
 
-    voters         User[]       @relation("VoteSessionVoters")
+    voters User[] @relation("VoteSessionVoters")
 
     @@unique([failedNgoId, month, year], name: "unique_vote_session")
     @@index([month, year])
