@@ -37,7 +37,7 @@ export default function NGODonations({ donations }: NGODonationsProps) {
                 return <span className="text-xs font-medium text-yellow-600 bg-yellow-100 px-2 py-1 rounded">Held</span>;
             case 'RELEASED':
                 return <span className="text-xs font-medium text-green-600 bg-green-100 px-2 py-1 rounded">Released</span>;
-            case 'REASSIGNED':
+            case 'REASSIGNED_RELEASED':
                 return <span className="text-xs font-medium text-red-600 bg-red-100 px-2 py-1 rounded">Reassigned</span>;
             default:
                 return null;
@@ -113,7 +113,7 @@ export default function NGODonations({ donations }: NGODonationsProps) {
                                 Donated on {new Date(donation.createdAt).toLocaleString()}
                             </p>
 
-                            {donation.status === 'REASSIGNED' && donation.reAssignedNgo && (
+                            {donation.status === 'REASSIGNED_RELEASED' && donation.reAssignedNgo && (
                                 <p className="text-xs text-red-500 mt-1">
                                     This donation is reassigned to{' '}
                                     <a href={`/ngos/${donation.reAssignedNgo.id}`}>

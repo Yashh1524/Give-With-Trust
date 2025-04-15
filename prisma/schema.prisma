@@ -17,6 +17,7 @@ enum DonationStatus {
     HELD
     RELEASED
     REASSIGNED
+    REASSIGNED_RELEASED
 }
 
 enum NGOStatus {
@@ -94,8 +95,9 @@ model NGOProfile {
     donations           Donation[]    @relation("NgoDonations")
     reassignedDonations Donation[]    @relation("ReassignedDonations")
     voteSessions        VoteSession[] @relation("FailedNgo")
-    votes               Vote[]
     candidateSessions   VoteSession[] @relation("VoteSessionCandidates")
+    winningSessions     VoteSession[] @relation("WinnerNgoRelation") // ✅ Added this
+    votes               Vote[]
 
     user User @relation(fields: [userId], references: [id])
 }
@@ -148,14 +150,14 @@ model VoteSession {
     month       Month
     year        Int
     createdAt   DateTime @default(now())
-    votes       Vote[]
     isOngoing   Boolean  @default(true)
     winnerNgoId String?
 
-    failedNgo NGOProfile @relation("FailedNgo", fields: [failedNgoId], references: [id])
+    failedNgo  NGOProfile   @relation("FailedNgo", fields: [failedNgoId], references: [id])
+    winnerNgo  NGOProfile?  @relation("WinnerNgoRelation", fields: [winnerNgoId], references: [id]) // ✅ Added this
     candidates NGOProfile[] @relation("VoteSessionCandidates")
-
-    voters User[] @relation("VoteSessionVoters")
+    voters     User[]       @relation("VoteSessionVoters")
+    votes      Vote[]
 
     @@unique([failedNgoId, month, year], name: "unique_vote_session")
     @@index([month, year])

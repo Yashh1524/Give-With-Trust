@@ -35,6 +35,7 @@ export default function RootLayout({
         <SidebarProvider>
           <html lang="en">
             <body 
+              suppressHydrationWarning={true}
               className={`${geistSans.variable} ${geistMono.variable} antialiased`}
             >
               <div className="flex flex-col h-screen overflow-y-hidden">

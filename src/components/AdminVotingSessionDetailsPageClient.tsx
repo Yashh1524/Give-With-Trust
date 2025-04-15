@@ -1,36 +1,37 @@
 'use client'
 
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { Progress } from '@/components/ui/progress'
-import { Button } from '@/components/ui/button'
-import toast from 'react-hot-toast'
-import { FaRegClock } from "react-icons/fa"
+import { FaRegClock } from 'react-icons/fa'
 import { LuAlarmClockOff } from 'react-icons/lu'
-import { createVote, endVoteSession } from '@/actions/voting.action'
 import { NGOProfile, User } from '@prisma/client'
+import toast from 'react-hot-toast'
+import { endVoteSession } from '@/actions/voting.action'
+
+interface Vote {
+    selectedNgoId: string
+    userId: string
+}
 
 interface VotingSession {
     id: string
     createdAt: string
     failedNgo?: NGOProfile
-    isOngoing: Boolean
+    isOngoing: boolean
     candidates: NGOProfile[]
     voters: User[]
-    votes: any[]
+    votes: Vote[]
 }
 
-interface VotingPageClientProps {
+interface AdminVotingSessionDetailsPageClientProps {
     voteSession: VotingSession
-    userId: string | null | undefined
 }
 
-const VotingPageClient: React.FC<VotingPageClientProps> = ({ voteSession, userId }) => {
+const AdminVotingSessionDetailsPageClient: React.FC<AdminVotingSessionDetailsPageClientProps> = ({ voteSession }) => {
     const { failedNgo, candidates, voters, votes, createdAt } = voteSession
-    const [selectedNgoId, setSelectedNgoId] = useState<string | null>(null)
-    const [submitting, setSubmitting] = useState(false)
     const [timeLeft, setTimeLeft] = useState<string>('')
-    const endedRef = useRef(false)
+    const [loading, setLoading] = useState(false)
 
     const totalVotes = voters.length
     const voteCounts = candidates.reduce((acc, ngo) => {
@@ -49,62 +50,15 @@ const VotingPageClient: React.FC<VotingPageClientProps> = ({ voteSession, userId
     const winnerNgo = candidates.find(ngo => ngo.id === winnerNgoId)
 
     useEffect(() => {
-        const existingVote = votes.find(v => v.userId === userId)
-        if (existingVote) {
-            setSelectedNgoId(existingVote.selectedNgoId)
-        }
-    }, [userId, votes])
-
-    const handleSubmit = async () => {
-        if (!selectedNgoId) return
-
-        setSubmitting(true)
-        try {
-            await createVote({
-                userId: userId as string,
-                voteSessionId: voteSession.id,
-                selectedNgoId
-            })
-            toast.success('Voted successfully!')
-        } catch (error) {
-            console.error(error)
-            toast.error('Something went wrong. Please try again.')
-        } finally {
-            setSubmitting(false)
-        }
-    }
-
-    useEffect(() => {
         const endTime = new Date(createdAt)
         endTime.setDate(endTime.getDate() + 3)
 
-        const updateTimer = async () => {
+        const updateTimer = () => {
             const now = new Date()
             const diff = endTime.getTime() - now.getTime()
 
             if (diff <= 0) {
                 setTimeLeft('Voting ended')
-
-                if (voteSession.isOngoing && !endedRef.current && candidates.length > 0) {
-                    endedRef.current = true
-                    const winner = candidates.reduce((maxId, ngo) => {
-                        const currentVotes = voteCounts[ngo.id] || 0
-                        const maxVotes = voteCounts[maxId] || 0
-                        return currentVotes > maxVotes ? ngo.id : maxId
-                    }, candidates[0].id)
-
-                    if (winner) {
-                        try {
-                            await endVoteSession({
-                                voteSessionId: voteSession.id,
-                            })
-                            console.log('Voting session ended.')
-                        } catch (error) {
-                            console.error('Failed to end voting session:', error)
-                        }
-                    }
-                }
-
                 return
             }
 
@@ -120,7 +74,21 @@ const VotingPageClient: React.FC<VotingPageClientProps> = ({ voteSession, userId
         const interval = setInterval(updateTimer, 1000)
 
         return () => clearInterval(interval)
-    }, [createdAt, voteSession.isOngoing, voteSession.id, candidates, voteCounts])
+    }, [createdAt])
+
+
+    const handleEndSession = async () => {
+        try {
+            setLoading(true)
+            await endVoteSession(voteSession.id)
+            toast.success("Voting session ended successfully")
+        } catch (error) {
+            toast.error("Failed to end voting session")
+            console.log("Error while ending voting session:", error);
+        } finally {
+            setLoading(false)
+        }
+    }
 
     if (!failedNgo) {
         return <div className="text-center text-red-500">Invalid or missing voting session data</div>
@@ -128,24 +96,38 @@ const VotingPageClient: React.FC<VotingPageClientProps> = ({ voteSession, userId
 
     return (
         <div className="max-w-4xl mx-auto p-6 space-y-8">
-            <h1 className="text-3xl font-bold text-center">Vote for an NGO</h1>
+            <h1 className="text-3xl font-bold text-center">Voting Session Overview</h1>
 
-            {/* Timer */}
-            {
-                voteSession.isOngoing ? (
-                    <div className="flex items-center justify-center gap-3 text-green-600 dark:text-green-400 font-medium text-lg">
+
+            {voteSession.isOngoing ? (
+                <div>
+                    <div className="flex items-center justify-center gap-3 text-green-600 dark:text-green-400 font-medium text-sm md:text-lg">
                         <FaRegClock className="text-xl" />
-                        <span>Time left to vote: <span className="font-bold">{timeLeft}</span></span>
+                        <span>Time left: <span className="font-bold">{timeLeft}</span></span>
                     </div>
-                ) : (
-                    <div className="flex items-center justify-center gap-3 text-red-600 dark:text-red-400 font-medium text-lg">
-                        <LuAlarmClockOff className="text-xl" />
-                        <span>Voting Ended</span>
-                    </div>
-                )
-            }
+                    <button
+                        className={`mt-5 px-4 py-3 rounded-lg text-white font-medium transition-all duration-300 ${loading ? 'bg-red-400 cursor-not-allowed' : 'bg-red-600 hover:bg-red-700'}`}
+                        onClick={handleEndSession}
+                        disabled={loading}
+                    >
+                        {loading ? (
+                            <div className="flex items-center gap-2 justify-center">
+                                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                                Ending...
+                            </div>
+                        ) : (
+                            'End Session'
+                        )}
+                    </button>
 
-            {/* Failed NGO Red Box */}
+                </div>
+            ) : (
+                <div className="flex items-center justify-center gap-3 text-red-600 dark:text-red-400 font-medium text-lg">
+                    <LuAlarmClockOff className="text-xl" />
+                    <span>Voting Ended</span>
+                </div>
+            )}
+
             <div className="bg-red-100 dark:bg-red-900 border border-red-400 p-6 rounded-xl shadow-md">
                 <div className="flex gap-4 items-center mb-3">
                     {failedNgo.logo && (
@@ -159,9 +141,11 @@ const VotingPageClient: React.FC<VotingPageClientProps> = ({ voteSession, userId
                     )}
                     <div>
                         <Link href={`/ngos/${failedNgo.id}`}>
-                            <h2 className="text-2xl font-semibold text-red-700 dark:text-red-300 hover:text-white hover:underline">{failedNgo.name}</h2>
+                            <h2 className="text-2xl font-semibold text-red-700 dark:text-red-300 hover:text-white hover:underline">
+                                {failedNgo.name}
+                            </h2>
                         </Link>
-                        <p className="text-sm text-white-500 dark:text-white-400">Failed to submit monthly work proofs</p>
+                        <p className="text-sm text-white-500 dark:text-white-400">Failed to submit monthly proof</p>
                     </div>
                 </div>
             </div>
@@ -188,20 +172,18 @@ const VotingPageClient: React.FC<VotingPageClientProps> = ({ voteSession, userId
                 </div>
             )}
 
-            {/* Candidate NGOs */}
             <div className="grid gap-6">
                 {candidates.map((ngo) => {
                     const voteCount = voteCounts[ngo.id] || 0
                     const progress = totalVotes ? (voteCount / totalVotes) * 100 : 0
-                    const isSelected = selectedNgoId === ngo.id
 
                     return (
                         <div
                             key={ngo.id}
-                            onClick={() => {
-                                voteSession.isOngoing && setSelectedNgoId(ngo.id)
-                            }}
-                            className={`border p-4 rounded-2xl shadow-sm transition ${voteSession.isOngoing ? 'hover:shadow-md cursor-pointer' : 'cursor-default'} ${isSelected ? 'ring-2 ring-blue-500 border-transparent' : winnerNgoId === ngo.id && !voteSession.isOngoing ? 'border-green-500 ring-2 ring-green-400' : 'border-gray-200 dark:border-gray-700'} bg-white dark:bg-gray-900`}
+                            className={`border p-4 rounded-2xl shadow-sm bg-white dark:bg-gray-900 ${winnerNgoId === ngo.id && !voteSession.isOngoing
+                                ? 'border-green-500 ring-2 ring-green-400'
+                                : 'border-gray-200 dark:border-gray-700'
+                                }`}
                         >
                             <div className="flex justify-between items-center mb-2">
                                 <div className="flex gap-4 items-center">
@@ -232,20 +214,8 @@ const VotingPageClient: React.FC<VotingPageClientProps> = ({ voteSession, userId
                     )
                 })}
             </div>
-
-            {selectedNgoId && (
-                <div className="text-center mt-6">
-                    <Button
-                        onClick={handleSubmit}
-                        disabled={submitting}
-                        className="px-6 py-3 text-lg"
-                    >
-                        {submitting ? 'Submitting...' : 'Submit Vote'}
-                    </Button>
-                </div>
-            )}
         </div>
     )
 }
 
-export default VotingPageClient
+export default AdminVotingSessionDetailsPageClient

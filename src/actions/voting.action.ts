@@ -1,7 +1,7 @@
 "use server"
 
 import { prisma } from "@/lib/prisma"
-import { Month, VoteSession } from '@prisma/client';// ensure you're importing Month enum
+import { Month } from '@prisma/client';// ensure you're importing Month enum
 import { revalidatePath } from "next/cache";
 
 export async function createVotingSession(session: {
@@ -185,18 +185,17 @@ export async function createVote({
                 },
             });
         }
-        revalidatePath(`/voting-session/${voteSessionId}`)
+        revalidatePath(`/voting-session/${voteSessionId}`);
+        revalidatePath(`/admin-dashboard/voting-sessions`);
+        revalidatePath(`/admin-dashboard/voting-sessions/${voteSessionId}`);
+        
     } catch (error) {
         console.error("Error creating vote:", error);
         throw new Error("Failed creating vote");
     }
 }
 
-export async function endVoteSession({
-    voteSessionId,
-}: {
-    voteSessionId: string;
-}) {
+export async function endVoteSession(voteSessionId: string) {
     try {
         const voteSession = await prisma.voteSession.findUnique({
             where: { id: voteSessionId },
@@ -226,12 +225,13 @@ export async function endVoteSession({
             where: { id: voteSessionId },
             data: {
                 isOngoing: false,
-                // Optionally store the winnerNgoId if you added that field to your model
-                // winnerNgoId: winnerNgoId,
+                winnerNgoId: winnerNgoId,
             },
         });
 
         revalidatePath(`/voting-session/${voteSessionId}`);
+        revalidatePath(`/admin-dashboard/voting-sessions`);
+        revalidatePath(`/admin-dashboard/voting-sessions/${voteSessionId}`);
 
         return { success: true, winnerNgoId };
     } catch (error) {
