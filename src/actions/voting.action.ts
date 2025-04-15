@@ -185,8 +185,8 @@ export async function createVote({
                 },
             });
         }
-        revalidatePath(`/voting-session/${voteSessionId}`);
         revalidatePath(`/admin-dashboard/voting-sessions`);
+        revalidatePath(`/voting-session/${voteSessionId}`);
         revalidatePath(`/admin-dashboard/voting-sessions/${voteSessionId}`);
         
     } catch (error) {

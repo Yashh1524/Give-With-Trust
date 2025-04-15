@@ -26,6 +26,7 @@ const Page = async () => {
                                 donations={donations}
                                 notSubmittedWorkNgos={notSubmittedWorkNgos}
                                 submittedNGOs={submittedNGOs}
+                                votingSessions={votingSessions}
                             />
                             <EndAllVotingSessionButton 
                                 votingSessions={votingSessions}

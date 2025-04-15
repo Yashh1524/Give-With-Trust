@@ -11,7 +11,7 @@ import NotifyButton from '@/components/NotifyButton'
 import Link from 'next/link'
 import ApprovedNgoForAdminClient from '@/components/ApprovedNgoForAdminClient'
 import { RxCrossCircled } from "react-icons/rx";
-import { getCurrentUserRole, getDbUserId, getUserDetails } from '@/actions/user.action'
+import { getCurrentUserRole } from '@/actions/user.action'
 import UnauthorizedAccess from '@/components/UnauthorizedAccess'
 
 const AdminDashboardPage = async () => {
