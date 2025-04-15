@@ -192,3 +192,50 @@ export async function createVote({
     }
 }
 
+export async function endVoteSession({
+    voteSessionId,
+}: {
+    voteSessionId: string;
+}) {
+    try {
+        const voteSession = await prisma.voteSession.findUnique({
+            where: { id: voteSessionId },
+            include: {
+                candidates: true,
+                votes: true,
+            },
+        });
+
+        if (!voteSession) throw new Error("Voting session not found");
+
+        // Count the votes per NGO
+        const voteCounts = voteSession.candidates.reduce((acc, ngo) => {
+            acc[ngo.id] = voteSession.votes.filter(v => v.selectedNgoId === ngo.id).length;
+            return acc;
+        }, {} as Record<string, number>);
+
+        // Determine the winner NGO
+        const winnerNgoId = voteSession.candidates.reduce((maxId, ngo) => {
+            const currentVotes = voteCounts[ngo.id] || 0;
+            const maxVotes = voteCounts[maxId] || 0;
+            return currentVotes > maxVotes ? ngo.id : maxId;
+        }, voteSession.candidates[0]?.id || '');
+
+        // Mark session as ended
+        await prisma.voteSession.update({
+            where: { id: voteSessionId },
+            data: {
+                isOngoing: false,
+                // Optionally store the winnerNgoId if you added that field to your model
+                // winnerNgoId: winnerNgoId,
+            },
+        });
+
+        revalidatePath(`/voting-session/${voteSessionId}`);
+
+        return { success: true, winnerNgoId };
+    } catch (error) {
+        console.error("Error ending vote session:", error);
+        throw new Error("Failed ending vote session");
+    }
+}

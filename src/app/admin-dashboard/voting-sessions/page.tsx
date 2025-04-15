@@ -2,6 +2,7 @@ import { getAllHeldDonation } from '@/actions/donation.action'
 import { getNGOsByStatus } from '@/actions/ngo.action'
 import { getAllVotingSession } from '@/actions/voting.action'
 import CreateVotingSessionsButton from '@/components/CreateVotingSessionsButton'
+import VotingSessionsListClient from '@/components/VotingSessionsListClient'
 
 
 const Page = async () => {
@@ -18,6 +19,7 @@ const Page = async () => {
                 notSubmittedWorkNgos={notSubmittedWorkNgos}
                 submittedNGOs={submittedNGOs}
             />
+            <VotingSessionsListClient sessions={votingSessions}/>
         </div>
     )
 }

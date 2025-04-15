@@ -150,9 +150,9 @@ model VoteSession {
     createdAt   DateTime @default(now())
     votes       Vote[]
     isOngoing   Boolean  @default(true)
+    winnerNgoId String?
 
     failedNgo NGOProfile @relation("FailedNgo", fields: [failedNgoId], references: [id])
-
     candidates NGOProfile[] @relation("VoteSessionCandidates")
 
     voters User[] @relation("VoteSessionVoters")

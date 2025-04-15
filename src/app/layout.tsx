@@ -34,7 +34,9 @@ export default function RootLayout({
       <ThemeProvider>
         <SidebarProvider>
           <html lang="en">
-            <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+            <body 
+              className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+            >
               <div className="flex flex-col h-screen overflow-y-hidden">
                 <Navbar />
                 <div className="flex flex-1 bg-white dark:bg-[#100f1b] overflow-hidden">

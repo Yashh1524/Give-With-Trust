@@ -7,7 +7,8 @@ import { Button } from '@/components/ui/button'
 import toast from 'react-hot-toast'
 import { FaRegClock } from "react-icons/fa";
 import { LuAlarmClockOff } from 'react-icons/lu'
-import { createVote } from '@/actions/voting.action'
+import { createVote, endVoteSession } from '@/actions/voting.action'
+import { NGOProfile, User } from '@prisma/client'
 
 interface NGO {
     id: string
@@ -29,10 +30,10 @@ interface Vote {
 interface VotingSession {
     id: string
     createdAt: string
-    failedNgo?: NGO
+    failedNgo?: NGOProfile
     isOngoing: Boolean
-    candidates: NGO[]
-    voters: Voter[]
+    candidates: NGOProfile[]
+    voters: User[]
     votes: Vote[]
 }
 
@@ -54,9 +55,19 @@ const VotingPageClient: React.FC<VotingPageClientProps> = ({ voteSession, userId
         return acc
     }, {} as Record<string, number>)
 
+    const winnerNgoId = !voteSession.isOngoing
+        ? candidates.reduce((maxId, ngo) => {
+            const currentVotes = voteCounts[ngo.id] || 0
+            const maxVotes = voteCounts[maxId] || 0
+            return currentVotes > maxVotes ? ngo.id : maxId
+        }, candidates[0]?.id)
+        : null
+
+    const winnerNgo = candidates.find(ngo => ngo.id === winnerNgoId)
+
     const handleSubmit = async () => {
         if (!selectedNgoId) return
-    
+
         setSubmitting(true)
 
         try {
@@ -77,29 +88,43 @@ const VotingPageClient: React.FC<VotingPageClientProps> = ({ voteSession, userId
     useEffect(() => {
         const endTime = new Date(createdAt)
         endTime.setDate(endTime.getDate() + 3)
-
-        const updateTimer = () => {
+    
+        const updateTimer = async () => {
             const now = new Date()
             const diff = endTime.getTime() - now.getTime()
-
+    
             if (diff <= 0) {
                 setTimeLeft('Voting ended')
+    
+                // Automatically end vote session
+                if (voteSession.isOngoing && winnerNgoId) {
+                    try {
+                        await endVoteSession({
+                            voteSessionId: voteSession.id,
+                        })
+                        console.log('Voting session ended.')
+                    } catch (error) {
+                        console.error('Failed to end voting session:', error)
+                    }
+                }
+    
                 return
             }
-
+    
             const days = Math.floor(diff / (1000 * 60 * 60 * 24))
             const hours = Math.floor((diff / (1000 * 60 * 60)) % 24)
             const minutes = Math.floor((diff / (1000 * 60)) % 60)
             const seconds = Math.floor((diff / 1000) % 60)
-
+    
             setTimeLeft(`${days}d ${hours}h ${minutes}m ${seconds}s`)
         }
-
+    
         updateTimer()
         const interval = setInterval(updateTimer, 1000)
-
+    
         return () => clearInterval(interval)
-    }, [createdAt])
+    }, [createdAt, voteSession.isOngoing, voteSession.id, winnerNgoId])
+    
 
     if (!failedNgo) {
         return <div className="text-center text-red-500">Invalid or missing voting session data</div>
@@ -157,6 +182,16 @@ const VotingPageClient: React.FC<VotingPageClientProps> = ({ voteSession, userId
                 </p>
             </div>
 
+            {!voteSession.isOngoing && winnerNgo && (
+                <div className="bg-green-100 dark:bg-green-900 border border-green-400 p-4 rounded-xl shadow-sm text-sm text-green-800 dark:text-green-200">
+                    <p>
+                        <strong>{winnerNgo.name}</strong> has received the highest number of votes.
+                        <br />
+                        All funds from <strong>{failedNgo.name}</strong> will be reallocated to them.
+                    </p>
+                </div>
+            )}
+
             {/* Candidate NGOs */}
             <div className="grid gap-6">
                 {candidates.map((ngo) => {
@@ -167,8 +202,10 @@ const VotingPageClient: React.FC<VotingPageClientProps> = ({ voteSession, userId
                     return (
                         <div
                             key={ngo.id}
-                            onClick={() => setSelectedNgoId(ngo.id)}
-                            className={`border p-4 rounded-2xl shadow-sm transition hover:shadow-md cursor-pointer ${isSelected ? 'ring-2 ring-blue-500 border-transparent' : 'border-gray-200 dark:border-gray-700'} bg-white dark:bg-gray-900`}
+                            onClick={() => {
+                                voteSession.isOngoing && setSelectedNgoId(ngo.id)
+                            }}
+                            className={`border p-4 rounded-2xl shadow-sm transition ${voteSession.isOngoing ? 'hover:shadow-md cursor-pointer' : 'cursor-default'} ${isSelected ? 'ring-2 ring-blue-500 border-transparent' : winnerNgoId === ngo.id && !voteSession.isOngoing ? 'border-green-500 ring-2 ring-green-400' : 'border-gray-200 dark:border-gray-700'} bg-white dark:bg-gray-900`}
                         >
                             <div className="flex justify-between items-center mb-2">
                                 <div className="flex gap-4 items-center">
