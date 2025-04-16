@@ -5,10 +5,7 @@ import { Donation, NGOProfile, VoteSession } from '@prisma/client'
 import toast from 'react-hot-toast'
 import { createVotingSession, endVoteSession, getAllVotingSession } from '@/actions/voting.action'
 import Link from 'next/link'
-import { sendNewVotingSessionEmail } from '@/lib/email'
 import { getUserDetails } from '@/actions/user.action'
-import { getNgoByNgoId } from '@/actions/ngo.action'
-import { updateDonationStatusByNgoId } from '@/actions/donation.action'
 
 interface Props {
     donations: Donation[]

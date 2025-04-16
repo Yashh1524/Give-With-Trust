@@ -1,12 +1,11 @@
 'use client';
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { NGOProfile, User, VoteSession } from '@prisma/client';
+import { NGOProfile, User } from '@prisma/client';
 import { FileTextIcon, HeartIcon } from 'lucide-react';
 import Link from 'next/link';
 import React, { useState } from 'react';
 import EditProfileDialog from './EditProfileDialog';
-import { format, addDays, isAfter } from "date-fns";
 
 type DonationWithNgo = {
     id: string;
@@ -31,14 +30,11 @@ type DonationWithNgo = {
 type Props = {
     user: User;
     currUserId: string | null | undefined;
-    donations: DonationWithNgo[];
+    donations: any[];
     ngos: NGOProfile[];
-    votingSessions: (VoteSession & {
-        failedNgo: NGOProfile
-    })[]
 };
 
-const ProfileClient: React.FC<Props> = ({ user, currUserId, donations, ngos, votingSessions }) => {
+const ProfileClient: React.FC<Props> = ({ user, currUserId, donations, ngos }) => {
     const hasNgos = ngos.length > 0;
     const [selectedTab, setSelectedTab] = useState<'donations' | 'ngos' | 'votes'>('donations');
 
@@ -108,14 +104,6 @@ const ProfileClient: React.FC<Props> = ({ user, currUserId, donations, ngos, vot
                         >
                             <FileTextIcon className={`size-4 ${selectedTab === 'ngos' ? 'dark:fill-white dark:text-black fill-black text-white' : ''}`} />
                             Your NGOs
-                        </TabsTrigger>
-
-                        <TabsTrigger
-                            value="votes"
-                            className="flex items-center gap-2 rounded-none data-[state=active]:border-b-2 data-[state=active]:border-primary data-[state=active]:bg-transparent px-6 font-semibold"
-                        >
-                            <FileTextIcon className={`size-4 ${selectedTab === 'votes' ? 'dark:fill-white dark:text-black fill-black text-white' : ''}`} />
-                            Votes
                         </TabsTrigger>
                     </TabsList>
 
@@ -187,58 +175,6 @@ const ProfileClient: React.FC<Props> = ({ user, currUserId, donations, ngos, vot
                         )}
                     </TabsContent>
 
-                    <TabsContent value="votes" className="mt-6">
-                        {votingSessions.length > 0 ? (
-                            <div className="space-y-4">
-                                {votingSessions.map((session) => {
-                                    const createdDate = new Date(session.createdAt);
-                                    // const isFinished = isAfter(new Date(), addDays(createdDate, 3));
-
-                                    return (
-                                        <div
-                                            key={session.id}
-                                            className="p-4 bg-white dark:bg-[#1f2937] rounded-lg shadow-md border border-gray-200 dark:border-gray-700"
-                                        >
-                                            <Link  
-                                                href={`/voting-session/${session.id}`}
-                                                className="flex justify-between items-center"
-                                            >
-                                                <div className="flex items-center gap-3">
-                                                    {session.failedNgo.logo && (
-                                                        <img
-                                                            src={session.failedNgo.logo}
-                                                            alt={session.failedNgo.name}
-                                                            className="w-10 h-10 rounded-full object-cover border"
-                                                        />
-                                                    )}
-                                                    <div>
-                                                        <p
-                                                            className="text-lg font-semibold text-blue-700 dark:text-blue-300"
-                                                        >
-                                                            {session.failedNgo.name}
-                                                        </p>
-                                                        <p className="text-sm text-muted-foreground">
-                                                            Voting Started on:{" "}
-                                                            {format(createdDate, "MMMM d, yyyy 'at' h:mm a")}
-                                                        </p>
-                                                        <p className="text-sm text-muted-foreground">
-                                                            Month: <span className="font-medium">{session.month}</span> &nbsp;
-                                                            Year: <span className="font-medium">{session.year}</span>
-                                                        </p>
-                                                        <p className={`text-sm font-semibold ${session.isOngoing ? "text-green-500-500" : "text-red-500"}`}>
-                                                            Status: {session.isOngoing ? "Ongoing" : "Finished"}
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                            </Link>
-                                        </div>
-                                    );
-                                })}
-                            </div>
-                        ) : (
-                            <div className="text-center py-8 text-muted-foreground">No votes yet</div>
-                        )}
-                    </TabsContent>
                 </Tabs>
             ) : (
                 // Only Donations

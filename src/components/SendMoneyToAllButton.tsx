@@ -20,7 +20,6 @@ const SendMoneyToAllButton = ({ ngos, donations, heldTotalsByNgo }: SendMoneyToA
         try {
             for (const ngo of ngos) {
                 if (ngo.status !== "SUBMITTED") continue;
-
                 const amount = heldTotalsByNgo[ngo.id];
                 if (!amount || amount <= 0) continue;
 

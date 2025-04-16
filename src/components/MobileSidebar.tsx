@@ -1,7 +1,6 @@
 "use client";
 
 import {
-    BellIcon,
     HomeIcon,
     LogOutIcon,
     UserIcon,
@@ -31,6 +30,7 @@ import { useEffect, useState } from "react";
 import { checkIfUserHasNgo, getDbUserId, getUserDetails } from "@/actions/user.action";
 import { Role } from "@prisma/client";
 import { RiAdminFill } from "react-icons/ri";
+import { FaVoteYea } from "react-icons/fa";
 
 const MobileSidebar = ({
     open,
@@ -169,8 +169,8 @@ const MobileSidebar = ({
                                     asChild
                                 >
                                     <Link href="/notifications">
-                                        <BellIcon className="w-4 h-4" />
-                                        Notifications
+                                        <FaVoteYea className="w-4 h-4" />
+                                        Voting Sessions
                                     </Link>
                                 </Button>
 

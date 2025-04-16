@@ -11,8 +11,6 @@ const page = async ({ params }: { params: Promise<{ id: string }> }) => {
     const user = await getUserDetails(userId);
     const donations = await getDonationByUserId(userId);
     const ngos = await getNgoByUserId(userId);
-    const votingSessions = await getVotingSessionByUserId(userId)
-    console.log(votingSessions);
 
     if (!user) {
         return (
@@ -28,7 +26,6 @@ const page = async ({ params }: { params: Promise<{ id: string }> }) => {
             currUserId={currUserId}
             donations={donations}
             ngos={ngos}
-            votingSessions={votingSessions}
         />
     );
 };

@@ -12,14 +12,15 @@ const page = async () => {
   const allHeldDonations = await getAllDonationByStatus("HELD")
   const allReassignedDonations = await getAllDonationByStatus("REASSIGNED")
 
-  console.log(allReassignedDonations);
-  
+  // console.log(allReassignedDonations);
+  console.log("allHeldDonations:", allHeldDonations)
 
   const heldTotalsByNgo: Record<string, number> = {}
   allHeldDonations.forEach(donation => {
     const id = donation.ngoId
     heldTotalsByNgo[id] = (heldTotalsByNgo[id] || 0) + donation.amount
   })
+  console.log("heldTotalsByNgo:", heldTotalsByNgo)
 
   const reassignedTotalsByNgo: Record<string, number> = {}
   allReassignedDonations.forEach(donation => {

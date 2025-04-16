@@ -50,14 +50,16 @@ const SendMoneyPageClient = ({
                                     <NgoSendMoneyCard
                                         key={ngo.id}
                                         ngoDetails={ngo}
-                                        amount={reassignedTotalsByNgo[ngo.id] || 0}
+                                        amount={heldTotalsByNgo[ngo.id] || 0}
                                         donations={heldDonations.filter((donation) => donation.ngoId === ngo.id)}
                                     />
                                 ))}
                             </ul>
                         </div>
                     ) : (
-                        <div className="p-10 mt-10 flex flex-col items-center justify-center text-center bg-gray-50 dark:bg-[#2E2B4B] rounded-xl shadow-sm">
+                        <div 
+                            className="p-10 mt-10 flex flex-col items-center justify-center text-center bg-gray-50 dark:bg-[#2E2B4B] rounded-xl shadow-sm"
+                        >
                             <h2 className="text-lg font-semibold text-gray-700 dark:text-white">No NGOs found</h2>
                         </div>
                     )

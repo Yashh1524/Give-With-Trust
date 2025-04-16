@@ -1,6 +1,5 @@
 'use client'
 
-import { updateDonationStatusByNgoId } from '@/actions/donation.action'
 import { endVoteSession } from '@/actions/voting.action'
 import { VoteSession } from '@prisma/client'
 import Link from 'next/link'
@@ -20,7 +19,7 @@ const VotingSessionsListClient = ({ sessions }: VotingSessionsListClientProps) =
 
         useEffect(() => {
             const date = new Date(dateString)
-            setFormattedDate(date.toLocaleString()) // ensures it's rendered on the client
+            setFormattedDate(date.toLocaleString())
         }, [dateString])
 
         return <span>{formattedDate}</span>

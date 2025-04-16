@@ -16,7 +16,7 @@ import {
     MdDashboard,
 } from "react-icons/md";
 import { PiBuildingOfficeFill } from "react-icons/pi";
-import { FaUser, FaPlus } from "react-icons/fa";
+import { FaUser, FaPlus, FaVoteYea } from "react-icons/fa";
 import {
     TbLogin2,
     TbLogout2,
@@ -116,12 +116,12 @@ const SidebarClient = ({ isSignedIn, hasNgo, userId, userRole }: Props) => {
                                     )
                                 }
 
-                                <Link href="/notifications">
+                                <Link href="/voting-session">
                                     <Button
                                         variant="ghost"
                                         className="w-full justify-start text-black dark:text-white"
                                     >
-                                        <IoMdNotifications /> Notifications
+                                        <FaVoteYea /> Voting Sessions
                                     </Button>
                                 </Link>
 
