@@ -7,6 +7,7 @@ import { getMonthlyDonationData, getYearlyDonationTotals } from '@/lib/donationH
 import MonthlyDonationPieChart from './MonthlyDonationPieChart';
 import YearlyDonationPieChart from './YearlyDonationPieChart';
 import NGODonations from './NGODonations';
+import { format } from 'date-fns'
 import {
     BiSolidDetail,
     BiTrendingUp,
@@ -15,10 +16,11 @@ import {
     BiCalendarAlt,
     BiMedal,
 } from 'react-icons/bi';
-import { MdDoNotDisturbAlt, MdOutlinePendingActions, MdSmsFailed } from "react-icons/md";
+import { MdDoNotDisturbAlt, MdOutlinePendingActions } from "react-icons/md";
 import Link from 'next/link';
 import MonthlyProofs from './MonthlyProofs';
 import { FaDonate } from 'react-icons/fa';
+import { getPayoutsByNgoId } from '@/actions/payout.action';
 
 export default function DashboardClient(
     {
@@ -32,6 +34,7 @@ export default function DashboardClient(
     const [selectedNgoId, setSelectedNgoId] = useState(ngos[0]?.id);
     const selectedNgo = ngos.find((ngo) => ngo.id === selectedNgoId);
     const [donations, setDonations] = useState<any[]>([]);
+    const [payouts, setPayouts] = useState<any[]>([]);
 
     const monthlyData = getMonthlyDonationData(donations);
     const yearlyData = getYearlyDonationTotals(donations);
@@ -43,9 +46,15 @@ export default function DashboardClient(
         setDonations(data);
     };
 
+    const fetchPayouts = async (ngoId: string) => {
+        const data = await getPayoutsByNgoId(ngoId)
+        setPayouts(data)
+    }
+
     useEffect(() => {
         if (selectedNgoId) {
             fetchDonations(selectedNgoId);
+            fetchPayouts(selectedNgoId)
         }
     }, [selectedNgoId]);
 
@@ -147,7 +156,7 @@ export default function DashboardClient(
                 <StatCard
                     title="Reassigned Donations"
                     value={reassigned.length}
-                    icon={<MdDoNotDisturbAlt  className="text-red-500 text-2xl" />}
+                    icon={<MdDoNotDisturbAlt className="text-red-500 text-2xl" />}
                 />
             </div>
 
@@ -268,6 +277,33 @@ export default function DashboardClient(
             <div className="p-6 bg-white dark:bg-[#1f2937] rounded-lg shadow">
                 <h3 className="text-lg font-semibold mb-4">All Donations</h3>
                 <NGODonations donations={donations} />
+            </div>
+
+            <div className='p-6 bg-white dark:bg-[#1f2937] rounded-lg shadow'>
+                <h2 className="text-xl font-bold text-gray-800 dark:text-white mb-4">Payout History</h2>
+                <ul className="grid grid-cols-1 w-full gap-6">
+                    {payouts.map(payout => (
+                        <li key={payout.id} className="bg-white dark:bg-gray-900 rounded-xl shadow p-5 border dark:border-gray-700">
+                            <div className="flex items-center gap-4 mb-4">
+                                <img
+                                    src={payout.ngo.logo as string}
+                                    alt={payout.ngo.name}
+                                    className="rounded-full object-cover border h-10 w-10"
+                                />
+                                <div>
+                                    <h2 className="font-semibold text-lg">{payout.ngo.name}</h2>
+                                    <p className="text-sm text-gray-500">{payout.ngo.address}</p>
+                                </div>
+                            </div>
+
+                            <div className="text-sm text-gray-600 dark:text-gray-300 space-y-1">
+                                <p><strong>Amount:</strong> ₹{payout.amount}</p>
+                                <p><strong>Payout ID:</strong> {payout.razorpayPayoutId}</p>
+                                <p><strong>Date:</strong> {format(new Date(payout.createdAt), 'PPP p')}</p>
+                            </div>
+                        </li>
+                    ))}
+                </ul>
             </div>
         </div>
     );

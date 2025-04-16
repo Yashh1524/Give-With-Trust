@@ -18,7 +18,39 @@ export async function createPayout(
         
         return payout
     } catch (error) {
-        console.error("Error in creating Payout", error)
+        console.error("Error in creating Payout:", error)
         throw new Error("Failed to create payout")
+    }
+}
+
+export async function getAllPayouts() {
+    try {
+        return await prisma.payout.findMany({
+            include: {
+                ngo: true
+            }
+        })
+    } catch (error) {
+        console.error("Error in fetching all payouts:", error)
+        throw new Error("Failed to fetch all payouts")
+    }
+}
+
+export async function getPayoutsByNgoId(ngoId: string) {
+    try {
+        const payout = await prisma.payout.findMany({
+            where: {ngoId: ngoId},
+            include: {
+                ngo: true
+            }
+        })
+
+        if(!payout) throw new Error("No payout found.")
+
+        return payout
+
+    } catch (error) {
+        console.error("Error in fetching payouts by ngoId:", error)
+        throw new Error("Failed to fetch payouts by ngoId")
     }
 }

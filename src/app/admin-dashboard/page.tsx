@@ -47,6 +47,12 @@ const AdminDashboardPage = async () => {
                                 >
                                     Voting Sessions
                                 </Link>
+                                <Link
+                                    href="/admin-dashboard/payouts"
+                                    className="inline-flex items-center justify-center px-6 py-2 rounded-lg bg-purple-600 hover:bg-purple-700 text-white font-medium shadow-md hover:shadow-lg transition-all duration-300"
+                                >
+                                    Payouts
+                                </Link>
                             </div>
                         </div>
 
