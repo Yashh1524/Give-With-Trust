@@ -5,6 +5,9 @@ import { Donation, NGOProfile, VoteSession } from '@prisma/client'
 import toast from 'react-hot-toast'
 import { createVotingSession, endVoteSession, getAllVotingSession } from '@/actions/voting.action'
 import Link from 'next/link'
+import { sendNewVotingSessionEmail } from '@/lib/email'
+import { getUserDetails } from '@/actions/user.action'
+import { getNgoByNgoId } from '@/actions/ngo.action'
 
 interface Props {
     donations: Donation[]
@@ -32,7 +35,7 @@ const VotingSessionListAdminClient: React.FC<Props> = ({
             const sessions = await getAllVotingSession()
             setVotingSessions(sessions)
             console.log(sessions);
-            
+
         } catch (error) {
             toast.error("Failed to fetch voting sessions")
         } finally {
@@ -53,7 +56,7 @@ const VotingSessionListAdminClient: React.FC<Props> = ({
         )
     }
 
-    function ClientDate({ dateString }: { dateString: string | Date}) {
+    function ClientDate({ dateString }: { dateString: string | Date }) {
         const [formattedDate, setFormattedDate] = useState("")
 
         useEffect(() => {
@@ -89,44 +92,69 @@ const VotingSessionListAdminClient: React.FC<Props> = ({
 
     const handleCreateVotingSessions = () => {
         startTransition(async () => {
-            setCreateSessionLoading(true)
+            setCreateSessionLoading(true);
             try {
                 const getRandomNgoIds = (ngos: NGOProfile[], count = 3) => {
-                    const shuffled = [...ngos].sort(() => 0.5 - Math.random())
-                    return shuffled.slice(0, count).map(ngo => ngo.id)
-                }
+                    const shuffled = [...ngos].sort(() => 0.5 - Math.random());
+                    return shuffled.slice(0, count).map(ngo => ngo.id);
+                };
 
                 for (const ngo of eligibleNgos.filter(n => selectedNgos.includes(n.id))) {
                     const relatedDonation = donations.filter(
                         donation => donation.ngoId === ngo.id
-                    )
-                    const voters = [...new Set(relatedDonation.map(donation => donation.donorId))]
-                    if (voters.length === 0) continue
+                    );
+                    const voters = [...new Set(relatedDonation.map(donation => donation.donorId))];
+                    if (voters.length === 0) continue;
 
                     const selectedNgoIds = getRandomNgoIds(
                         submittedNGOs.filter(n => n.id !== ngo.id),
                         3
-                    )
+                    );
 
-                    await createVotingSession({
+                    const createdSession = await createVotingSession({
                         failedNgoId: ngo.id,
                         voters,
                         candidates: selectedNgoIds,
-                    })
+                    });
+
+                    console.log("Created session", createdSession);
+
+                    const emailed = new Set<string>();
+                    for (const voter of voters) {
+                        if (emailed.has(voter)) continue;
+                        emailed.add(voter);
+
+                        const voterDetails = await getUserDetails(voter);
+                        if (!voterDetails?.email) continue;
+
+                        await fetch('/api/send-new-voting-session-email', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                to: voterDetails.email,
+                                failedNgoName: ngo.name,
+                                sessionId: createdSession.id,
+                            }),
+                        });
+
+                        await new Promise(res => setTimeout(res, 500));
+                    }
                 }
 
-                toast.success("Voting sessions created successfully")
-                fetchAllVotingSessions()
-                setDialogOpen(false)
-                setSelectedNgos([])
-                setSelectAll(false)
+                toast.success("Voting sessions created successfully");
+                fetchAllVotingSessions();
+                setDialogOpen(false);
+                setSelectedNgos([]);
+                setSelectAll(false);
             } catch (error) {
-                toast.error("Failed to create voting session")
+                toast.error("Failed to create voting session");
+                console.error(error);
             } finally {
-                setCreateSessionLoading(false)
+                setCreateSessionLoading(false);
             }
-        })
-    }
+        });
+    };
+
 
     const handleEndAllSession = async () => {
         try {

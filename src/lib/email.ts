@@ -53,7 +53,7 @@ export async function sendNgoVerificationApprovedEmail(to: string, ngoName: stri
     const result = await resend.emails.send({
       from: 'GiveWithTrust <noreply@yashh1524.com>',
       to,
-      subject: '✅ You’re NGO is Now Verified on GiveWithTrust!',
+      subject: 'You’re NGO is Now Verified on GiveWithTrust!',
       html: `
         <div style="font-family: Arial, sans-serif; padding: 24px; max-width: 600px; margin: auto; background-color: #f4fdfc; border-radius: 12px; border: 1px solid #cceeed;">
           <div style="text-align: center; margin-bottom: 20px;">
@@ -116,7 +116,7 @@ export async function sendNgoStatusAndAccentTagsUpadateEmail(
     const result = await resend.emails.send({
       from: 'GiveWithTrust <noreply@yashh1524.com>',
       to,
-      subject: '🔄 NGO Profile Update: Changes to Your Account',
+      subject: 'NGO Profile Update: Changes to Your Account',
       html: `
         <div style="font-family: Arial, sans-serif; padding: 24px; max-width: 600px; margin: auto; background-color: #f4fdfc; border-radius: 12px; border: 1px solid #cceeed;">
           <div style="text-align: center; margin-bottom: 20px;">
@@ -154,6 +154,54 @@ export async function sendNgoStatusAndAccentTagsUpadateEmail(
     return result;
   } catch (err) {
     console.error('Status/Tags Update Email error:', err);
+    throw err;
+  }
+}
+
+export async function sendNewVotingSessionEmail(
+  to: string,
+  failedNgoName: string,
+  sessionId: string
+) {
+  try {
+    const result = await resend.emails.send({
+      from: 'GiveWithTrust <noreply@yashh1524.com>',
+      to,
+      subject: `Vote Needed: Reallocate ${failedNgoName}'s Donations`,
+      html: `
+        <div style="font-family: Arial, sans-serif; padding: 24px; max-width: 600px; margin: auto; background-color: #f4fdfc; border-radius: 12px; border: 1px solid #cceeed;">
+          <div style="text-align: center; margin-bottom: 20px;">
+            <img src="https://i.postimg.cc/bNnQZ9DT/logo.png" alt="GiveWithTrust Logo" style="width: 80px; height: auto; margin-bottom: 10px;" />
+            <h2 style="color: #007a78;">Your Vote is Needed</h2>
+          </div>
+
+          <div style="background-color: #ffffff; padding: 20px 24px; border-radius: 10px; border: 1px solid #e0f1f1;">
+            <p style="font-size: 16px; color: #333;">Hi there,</p>
+            <p style="font-size: 15px; color: #444; line-height: 1.6;">
+              <strong>${failedNgoName}</strong> did not upload their monthly work proof.
+              As a result, their donations will be reallocated — and we need <strong>your vote</strong> to decide which NGO should receive the funds.
+            </p>
+
+            <a href="${process.env.WEBSITE_LINK}/voting-session/${sessionId}" style="display: inline-block; margin: 20px 0; padding: 12px 24px; background-color: #00bfa5; color: white; text-decoration: none; border-radius: 6px; font-weight: bold;">
+              Cast Your Vote
+            </a>
+
+            <p style="font-size: 14px; color: #666; margin-top: 30px;">
+              Your voice matters. Help us make donation allocation fair and community-driven.
+            </p>
+
+            <p style="font-size: 15px; color: #444;">
+              Thank you for being a part of <strong>GiveWithTrust</strong>,<br/>
+              <strong>The GiveWithTrust Team</strong>
+            </p>
+          </div>
+        </div>
+      `,
+    });
+
+    return result;
+  } catch (err) {
+    console.error('Voting Session Email error:', err);
     throw err;
   }
 }
