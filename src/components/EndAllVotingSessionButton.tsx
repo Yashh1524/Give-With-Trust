@@ -4,6 +4,7 @@ import React, { useState } from 'react'
 import { VoteSession } from '@prisma/client';
 import toast from 'react-hot-toast';
 import { endVoteSession } from '@/actions/voting.action';
+import { updateDonationStatusByNgoId } from '@/actions/donation.action';
 
 interface Props {
     votingSessions: VoteSession[]
@@ -17,7 +18,10 @@ const EndAllVotingSessionButton: React.FC<Props> = ({ votingSessions }) => {
         try {
             setLoading(true)
             for (const session of votingSessions) {
-                if (session.isOngoing) await endVoteSession(session.id)
+                if (session.isOngoing){
+                    await endVoteSession(session.id)
+                    // await updateDonationStatusByNgoId("REASSIGNED", session.failedNgoId, session.winnerNgoId)
+                }
             }
             toast.success("All voting sessions ended successfully")
         } catch (error) {

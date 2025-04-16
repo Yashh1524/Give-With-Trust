@@ -9,6 +9,7 @@ import { FaRegClock } from "react-icons/fa"
 import { LuAlarmClockOff } from 'react-icons/lu'
 import { createVote, endVoteSession } from '@/actions/voting.action'
 import { NGOProfile, User } from '@prisma/client'
+import { updateDonationStatusByNgoId } from '@/actions/donation.action'
 
 interface VotingSession {
     id: string
@@ -95,9 +96,8 @@ const VotingPageClient: React.FC<VotingPageClientProps> = ({ voteSession, userId
 
                     if (winner) {
                         try {
-                            await endVoteSession({
-                                voteSessionId: voteSession.id,
-                            })
+                            await endVoteSession(voteSession.id)
+                            // await updateDonationStatusByNgoId("REASSIGNED", voteSession.failedNgo?.id as string, winner)
                             console.log('Voting session ended.')
                         } catch (error) {
                             console.error('Failed to end voting session:', error)

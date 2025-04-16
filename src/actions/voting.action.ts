@@ -3,6 +3,7 @@
 import { prisma } from "@/lib/prisma"
 import { Month } from '@prisma/client';
 import { revalidatePath } from "next/cache";
+import { updateDonationStatusByNgoId } from "./donation.action";
 
 export async function createVotingSession(session: {
     failedNgoId: string,
@@ -201,6 +202,8 @@ export async function endVoteSession(voteSessionId: string) {
             include: {
                 candidates: true,
                 votes: true,
+                failedNgo: true,
+                winnerNgo: true
             },
         });
 
@@ -218,7 +221,8 @@ export async function endVoteSession(voteSessionId: string) {
             const maxVotes = voteCounts[maxId] || 0;
             return currentVotes > maxVotes ? ngo.id : maxId;
         }, voteSession.candidates[0]?.id || '');
-
+        console.log("winnerNgoId:", winnerNgoId);
+        
         // Mark session as ended
         await prisma.voteSession.update({
             where: { id: voteSessionId },
@@ -228,10 +232,9 @@ export async function endVoteSession(voteSessionId: string) {
             },
         });
 
+        await updateDonationStatusByNgoId("REASSIGNED", voteSession.failedNgo.id, winnerNgoId)
+
         revalidatePath(`/admin-dashboard/voting-sessions`)
-        // revalidatePath(`/voting-session/${voteSessionId}`);
-        // revalidatePath(`/admin-dashboard/voting-sessions`);
-        // revalidatePath(`/admin-dashboard/voting-sessions/${voteSessionId}`);
 
         return { success: true, winnerNgoId };
     } catch (error) {

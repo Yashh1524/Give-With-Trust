@@ -8,6 +8,7 @@ import { LuAlarmClockOff } from 'react-icons/lu'
 import { NGOProfile, User } from '@prisma/client'
 import toast from 'react-hot-toast'
 import { endVoteSession } from '@/actions/voting.action'
+import { updateDonationStatusByNgoId } from '@/actions/donation.action'
 
 interface Vote {
     selectedNgoId: string
@@ -81,6 +82,7 @@ const AdminVotingSessionDetailsPageClient: React.FC<AdminVotingSessionDetailsPag
         try {
             setLoading(true)
             await endVoteSession(voteSession.id)
+            // await updateDonationStatusByNgoId("REASSIGNED", voteSession.failedNgo?.id as string, winnerNgoId)
             toast.success("Voting session ended successfully")
         } catch (error) {
             toast.error("Failed to end voting session")

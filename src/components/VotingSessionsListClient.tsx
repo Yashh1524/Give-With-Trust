@@ -1,6 +1,8 @@
 'use client'
 
+import { updateDonationStatusByNgoId } from '@/actions/donation.action'
 import { endVoteSession } from '@/actions/voting.action'
+import { VoteSession } from '@prisma/client'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import toast from 'react-hot-toast'
@@ -24,10 +26,11 @@ const VotingSessionsListClient = ({ sessions }: VotingSessionsListClientProps) =
         return <span>{formattedDate}</span>
     }
 
-    const handleEndSession = async (sessionId: string) => { 
+    const handleEndSession = async (session: VoteSession) => { 
         try {
             setLoading(true)
-            await endVoteSession(sessionId)
+            await endVoteSession(session.id)
+            // await updateDonationStatusByNgoId("REASSIGNED", session.failedNgoId, session.winnerNgoId)
             toast.success("Voting session ended successfully")
         } catch (error) {
             toast.error("Failed to end voting session")
@@ -52,7 +55,7 @@ const VotingSessionsListClient = ({ sessions }: VotingSessionsListClientProps) =
                         session.isOngoing && (
                             <button
                                 className={`my-3 px-4 py-3 rounded-lg text-white font-medium transition-all duration-300 ${loading ? 'bg-red-400 cursor-not-allowed' : 'bg-red-600 hover:bg-red-700'}`}
-                                onClick={() => handleEndSession(session.id)}
+                                onClick={() => handleEndSession(session)}
                                 disabled={loading}
                             >
                                 {loading ? (

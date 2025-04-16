@@ -171,11 +171,18 @@ export async function getAllDonationByStatus(status: DonationStatus) {
     }
 }
 
-export async function updateDonationStatus(newStatus: DonationStatus, donationId: string) {
+export async function updateDonationStatus(
+    newStatus: DonationStatus, 
+    donationId: string, 
+    reassignedNgoId: string | null
+) {
     try {
         return await prisma.donation.update({
             where: {id: donationId},
-            data:{status: newStatus},
+            data:{
+                status: newStatus,
+                reAssignedNgoId: reassignedNgoId || null
+            },
         })
     } catch (error) {
         console.error("Error updating status of donation", error)
@@ -183,11 +190,18 @@ export async function updateDonationStatus(newStatus: DonationStatus, donationId
     }
 }
 
-export async function updateDonationStatusByNgoId(newStatus: DonationStatus, ngoId: string) {
+export async function updateDonationStatusByNgoId(
+    newStatus: DonationStatus, 
+    ngoId: string,
+    reassignedNgoId?: string | null
+) {
     try {
         const donations = await prisma.donation.updateMany({
             where: {ngoId: ngoId},
-            data: {status: newStatus}
+            data: {
+                status: newStatus,
+                reAssignedNgoId: reassignedNgoId 
+            }
         })
         revalidatePath("/admin-dashboard/send-money")
         return donations

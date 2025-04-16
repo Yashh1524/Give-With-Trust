@@ -27,6 +27,8 @@ type NGODonationsProps = {
 export default function NGODonations({ donations }: NGODonationsProps) {
     const [showMore, setShowMore] = useState(false);
 
+    // console.log(donations)
+
     if (donations.length === 0) {
         return <p className="text-sm text-gray-500 mt-4">No donations yet for this NGO.</p>;
     }
@@ -38,6 +40,8 @@ export default function NGODonations({ donations }: NGODonationsProps) {
             case 'RELEASED':
                 return <span className="text-xs font-medium text-green-600 bg-green-100 px-2 py-1 rounded">Released</span>;
             case 'REASSIGNED_RELEASED':
+                return <span className="text-xs font-medium text-red-600 bg-red-100 px-2 py-1 rounded">Reassigned</span>;
+            case 'REASSIGNED':
                 return <span className="text-xs font-medium text-red-600 bg-red-100 px-2 py-1 rounded">Reassigned</span>;
             default:
                 return null;
@@ -113,14 +117,16 @@ export default function NGODonations({ donations }: NGODonationsProps) {
                                 Donated on {new Date(donation.createdAt).toLocaleString()}
                             </p>
 
-                            {donation.status === 'REASSIGNED_RELEASED' && donation.reAssignedNgo && (
-                                <p className="text-xs text-red-500 mt-1">
-                                    This donation is reassigned to{' '}
-                                    <a href={`/ngos/${donation.reAssignedNgo.id}`}>
-                                        <span className="font-semibold underline">{donation.reAssignedNgo.name}</span>.
-                                    </a>
-                                </p>
-                            )}
+                            {
+                                (donation.status === 'REASSIGNED_RELEASED' || donation.status === 'REASSIGNED') && donation.reAssignedNgo && (
+                                    <p className="text-xs text-red-500 mt-1">
+                                        This donation is reassigned to{' '}
+                                        <a href={`/ngos/${donation.reAssignedNgo.id}`}>
+                                            <span className="font-semibold underline">{donation.reAssignedNgo.name}</span>.
+                                        </a>
+                                    </p>
+                                )
+                            }
                         </div>
                     </li>
                 ))}

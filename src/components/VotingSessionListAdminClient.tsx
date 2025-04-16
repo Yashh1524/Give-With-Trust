@@ -8,6 +8,7 @@ import Link from 'next/link'
 import { sendNewVotingSessionEmail } from '@/lib/email'
 import { getUserDetails } from '@/actions/user.action'
 import { getNgoByNgoId } from '@/actions/ngo.action'
+import { updateDonationStatusByNgoId } from '@/actions/donation.action'
 
 interface Props {
     donations: Donation[]
@@ -67,10 +68,11 @@ const VotingSessionListAdminClient: React.FC<Props> = ({
         return <span>{formattedDate}</span>
     }
 
-    const handleEndSession = async (sessionId: string) => {
+    const handleEndSession = async (session: VoteSession) => {
         try {
             setLoading(true)
-            await endVoteSession(sessionId)
+            await endVoteSession(session.id)
+            // await updateDonationStatusByNgoId("REASSIGNED", session.failedNgoId, session.winnerNgoId)
             toast.success("Voting session ended successfully")
             fetchAllVotingSessions()
         } catch (error) {
@@ -291,7 +293,7 @@ const VotingSessionListAdminClient: React.FC<Props> = ({
                             session.isOngoing && (
                                 <button
                                     className={`my-3 px-4 py-3 rounded-lg text-white font-medium transition-all duration-300 ${loading ? 'bg-red-400 cursor-not-allowed' : 'bg-red-600 hover:bg-red-700'}`}
-                                    onClick={() => handleEndSession(session.id)}
+                                    onClick={() => handleEndSession(session)}
                                     disabled={loading}
                                 >
                                     {loading ? (
