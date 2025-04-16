@@ -96,8 +96,9 @@ model NGOProfile {
     reassignedDonations Donation[]    @relation("ReassignedDonations")
     voteSessions        VoteSession[] @relation("FailedNgo")
     candidateSessions   VoteSession[] @relation("VoteSessionCandidates")
-    winningSessions     VoteSession[] @relation("WinnerNgoRelation") // ✅ Added this
+    winningSessions     VoteSession[] @relation("WinnerNgoRelation")
     votes               Vote[]
+    payouts             Payout[]
 
     user User @relation(fields: [userId], references: [id])
 }
@@ -177,4 +178,16 @@ model Vote {
     @@unique([userId, voteSessionId], name: "user_unique_vote_per_session")
     @@index([voteSessionId])
     @@index([selectedNgoId])
+}
+
+model Payout {
+    id               String   @id @default(cuid())
+    ngoId            String
+    amount           Float
+    razorpayPayoutId String   @unique
+    createdAt        DateTime @default(now())
+
+    ngo NGOProfile @relation(fields: [ngoId], references: [id], onDelete: Cascade)
+
+    @@index([ngoId])
 }

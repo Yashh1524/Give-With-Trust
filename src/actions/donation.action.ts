@@ -150,10 +150,10 @@ export async function getDonationByUserId(userId: string) {
     }
 }
 
-export async function getAllHeldDonation() {
+export async function getAllDonationByStatus(status: DonationStatus) {
     try {
         return await prisma.donation.findMany({
-            where: {status: "HELD"},
+            where: {status: status},
             include: {
                 donor: {
                     select: {
