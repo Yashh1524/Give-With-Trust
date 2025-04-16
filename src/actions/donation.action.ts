@@ -162,7 +162,8 @@ export async function getAllDonationByStatus(status: DonationStatus) {
                         email: true,
                         image: true,
                     }
-                }
+                },
+                reAssignedNgo: true
             }
         })
     } catch (error) {

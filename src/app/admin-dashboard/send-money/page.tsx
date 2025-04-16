@@ -12,10 +12,19 @@ const page = async () => {
   const allHeldDonations = await getAllDonationByStatus("HELD")
   const allReassignedDonations = await getAllDonationByStatus("REASSIGNED")
 
+  console.log(allReassignedDonations);
+  
+
   const heldTotalsByNgo: Record<string, number> = {}
   allHeldDonations.forEach(donation => {
     const id = donation.ngoId
     heldTotalsByNgo[id] = (heldTotalsByNgo[id] || 0) + donation.amount
+  })
+
+  const reassignedTotalsByNgo: Record<string, number> = {}
+  allReassignedDonations.forEach(donation => {
+    const id = donation.ngoId
+    reassignedTotalsByNgo[id] = (reassignedTotalsByNgo[id] || 0) + donation.amount
   })
 
   if (userRole !== "ADMIN") return <UnauthorizedAccess />
@@ -27,6 +36,7 @@ const page = async () => {
       heldDonations={allHeldDonations}
       reassignedDonations={allReassignedDonations}
       heldTotalsByNgo={heldTotalsByNgo}
+      reassignedTotalsByNgo={reassignedTotalsByNgo}
     />
   )
 }
