@@ -281,10 +281,10 @@ export const updateNgoFieldsByAdmin = async ({
 
         // NGO was pending for verification and now Ngo is approved 
         if(!exisingNgo.approved && approved) {
-            sendNgoVerificationApprovedEmail("yashxerox15@gmail.com", exisingNgo.name)
+            sendNgoVerificationApprovedEmail(exisingNgo.email, exisingNgo.name)
         } 
         if(exisingNgo.approved && (exisingNgo.status !== status || exisingNgo.accentTags !== accentTags)) {
-            sendNgoStatusAndAccentTagsUpadateEmail("yashxerox15@gmail.com", exisingNgo.name, exisingNgo.accentTags, accentTags, exisingNgo.status, status)
+            sendNgoStatusAndAccentTagsUpadateEmail(exisingNgo.email, exisingNgo.name, exisingNgo.accentTags, accentTags, exisingNgo.status, status)
         }
 
         await prisma.nGOProfile.update({

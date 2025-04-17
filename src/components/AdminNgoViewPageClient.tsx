@@ -391,7 +391,7 @@ export default function AdminNgoViewPageClient({ ngo, donations, payouts }: Admi
                 {ngo.images?.length > 0 && (
                     <div className="col-span-2 overflow-x-auto w-full bg-[#1e293b] rounded-2xl p-6 shadow text-white">
                         <h2 className="text-xl font-semibold mb-4">Images</h2>
-                        <div className="flex gap-2 md:grid md:grid-cols-4 gap-4">
+                        <div className="flex gap-2 md:grid md:grid-cols-4">
                             {ngo.images.map((img, idx) => (
                                 <img
                                     key={idx}
