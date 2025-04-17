@@ -13,6 +13,7 @@ const Page = async () => {
     // const votingSessions = await getAllVotingSession()
     const userRole = await getCurrentUserRole()
     // console.log("votingSessions:",votingSessions);
+    // console.log("donations:",donations);
 
     return (
         <>

@@ -52,9 +52,9 @@ const RegisterNgoPage = () => {
         setForm((prev) => ({ ...prev, [name]: value }))
     }
 
-    useEffect(() => {
-        console.log(form)
-    }, [form])
+    // useEffect(() => {
+    //     console.log(form)
+    // }, [form])
 
     const isValidPaymentInfo = () => {
         const hasUpi = form.upiId.trim() !== ''
@@ -286,7 +286,7 @@ const RegisterNgoPage = () => {
                                 endpoint="ngoImages"
                                 value={form.images}
                                 onChange={(urls) => {
-                                    console.log("Received from MultiImagesUpload:", urls)
+                                    // console.log("Received from MultiImagesUpload:", urls)
                                     setForm((prev) => ({
                                         ...prev,
                                         images: urls,

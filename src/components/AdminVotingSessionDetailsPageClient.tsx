@@ -79,7 +79,7 @@ const AdminVotingSessionDetailsPageClient: React.FC<AdminVotingSessionDetailsPag
     const { failedNgo, candidates, voters, votes, createdAt } = voteSession
     const [timeLeft, setTimeLeft] = useState<string>('')
     const [loading, setLoading] = useState(false)
-    console.log(voteSession);
+    // console.log(voteSession);
 
     const totalVotes = voters.length
     const voteCounts = candidates.reduce((acc, ngo) => {

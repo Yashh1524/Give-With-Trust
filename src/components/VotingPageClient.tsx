@@ -97,7 +97,7 @@ const VotingPageClient: React.FC<VotingPageClientProps> = ({ voteSession, userId
                         try {
                             await endVoteSession(voteSession.id)
                             // await updateDonationStatusByNgoId("REASSIGNED", voteSession.failedNgo?.id as string, winner)
-                            console.log('Voting session ended.')
+                            // console.log('Voting session ended.')
                         } catch (error) {
                             console.error('Failed to end voting session:', error)
                         }

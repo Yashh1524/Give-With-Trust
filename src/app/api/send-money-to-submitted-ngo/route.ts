@@ -38,8 +38,8 @@ export async function POST(req: Request) {
             contact: ngo.contactInfo,
             type: 'vendor',
         });
-        console.log("ngo.name:", ngo.name);
-        console.log("contact:", contact);
+        // console.log("ngo.name:", ngo.name);
+        // console.log("contact:", contact);
         
 
         // Step 2: Create Fund Account
@@ -84,7 +84,7 @@ export async function POST(req: Request) {
             queue_if_low_balance: true,
         });
 
-        console.log(`✅ ₹${amount} sent to ${ngo.name}:`, payout.id);
+        // console.log(`₹${amount} sent to ${ngo.name}:`, payout.id);
 
         return NextResponse.json({
             success: true,

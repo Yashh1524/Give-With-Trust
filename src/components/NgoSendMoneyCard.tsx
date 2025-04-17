@@ -39,9 +39,9 @@ const NgoSendMoneyCard: React.FC<NgoSendMoneyCardProps> = ({ ngoDetails, amount,
                 body: JSON.stringify({ ngo: ngoDetails, amount }),
             })
             const data = await res.json()
-            console.log(data);
-            console.log(ngoDetails);
-            console.log(amount)
+            // console.log(data);
+            // console.log(ngoDetails);
+            // console.log(amount)
 
             if (data.success) {
                 await createPayout(ngoDetails.id, amount, data.payoutId)

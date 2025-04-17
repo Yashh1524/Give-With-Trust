@@ -1,3 +1,4 @@
+import { getDbUserId } from '@/actions/user.action'
 import { getAllVotingSession } from '@/actions/voting.action'
 import { format } from 'date-fns'
 import Link from 'next/link'
@@ -5,23 +6,27 @@ import React from 'react'
 
 const page = async () => {
 
-    const votingSessions = await getAllVotingSession()
+    const votingSessions = await getAllVotingSession() //array of sessions
+    const userId = await getDbUserId()
 
     return (
         <>
-            <h1 className='text-lg md:text-xl my-10'>Voting Sessions</h1>
+            <h1 className='text-xl md:text-2xl my-10 text-white'>Voting Sessions</h1>
             {votingSessions.length > 0 ? (
                 <div className="space-y-4">
                     {votingSessions.map((session) => {
+                        const isVoter = session.voters?.some(voter => voter.id === userId)
                         const createdDate = new Date(session.createdAt);
                         // const isFinished = isAfter(new Date(), addDays(createdDate, 3));
+
+                        if (!isVoter) return <div className="text-center py-8 text-muted-foreground">No voting sessions yet</div>
 
                         return (
                             <div
                                 key={session.id}
                                 className="p-4 bg-white dark:bg-[#1f2937] rounded-lg shadow-md border border-gray-200 dark:border-gray-700"
                             >
-                                <Link  
+                                <Link
                                     href={`/voting-session/${session.id}`}
                                     className="flex justify-between items-center"
                                 >

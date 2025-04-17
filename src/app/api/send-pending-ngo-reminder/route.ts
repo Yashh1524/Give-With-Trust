@@ -10,7 +10,7 @@ export async function POST() {
         for (const ngo of ngos) {
             if (ngo.email) {
                 await sendReminderEmail("yashxerox1524@gmail.com", ngo.name)
-                console.log(`✅ Sent email to ${ngo.email}`)
+                // console.log(`Sent email to ${ngo.email}`)
             }
         }
 

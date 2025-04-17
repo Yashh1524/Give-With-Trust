@@ -160,7 +160,7 @@ model VoteSession {
     voters     User[]       @relation("VoteSessionVoters")
     votes      Vote[]
 
-    @@unique([failedNgoId, month, year], name: "unique_vote_session")
+    // @@unique([failedNgoId, month, year], name: "unique_vote_session")
     @@index([month, year])
 }
 

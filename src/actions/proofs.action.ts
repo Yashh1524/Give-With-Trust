@@ -15,7 +15,7 @@ export async function uploadMonthlyWorkProof(
     }
 ) {
     try {
-        console.log(ngoId, data)
+        // console.log(ngoId, data)
 
         const existingNgo = await prisma.nGOProfile.findUnique({
             where: { id: ngoId },

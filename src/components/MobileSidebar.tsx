@@ -45,13 +45,6 @@ const MobileSidebar = ({
     const [userRole, setUserRole] = useState<Role | undefined>("DONOR")
 
     useEffect(() => {
-
-        return () => {
-            console.log(userId);
-        };
-    }, []);
-
-    useEffect(() => {
         const checkNgoStatus = async () => {
             try {
                 const userId = await getDbUserId();

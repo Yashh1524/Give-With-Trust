@@ -15,7 +15,7 @@ export async function POST(req: NextRequest) {
             amount,
             message,
         } = body;
-        console.log("body:", body);
+        // console.log("body:", body);
         
         // Validate all required values exist
         if (

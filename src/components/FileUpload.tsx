@@ -40,7 +40,7 @@ function FileUpload({ endpoint, onChange, value }: FileUploadProps) {
                 onUploadBegin={() => setUploading(true)}
                 onClientUploadComplete={(res) => {
                     setUploading(false);
-                    console.log('Upload complete:', res);
+                    // console.log('Upload complete:', res);
                     if (res && res.length > 0) {
                         onChange(res[0].url);
                     }

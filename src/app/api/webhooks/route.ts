@@ -50,11 +50,11 @@ export async function POST(req: Request) {
     // For this guide, log payload to console
     const { id } = evt.data
     const eventType = evt.type
-    console.log(`Received webhook with ID ${id} and event type of ${eventType}`)
-    console.log('Webhook payload:', body)
-    if (evt.type === 'user.created') {
-        console.log('userId:', evt.data.id)
-    }
+    // console.log(`Received webhook with ID ${id} and event type of ${eventType}`)
+    // console.log('Webhook payload:', body)
+    // if (evt.type === 'user.created') {
+    //     console.log('userId:', evt.data.id)
+    // }
     try {
         if (evt.type === "user.created" || evt.type === "user.updated") {
             const { id, first_name, last_name, email_addresses, image_url, username } = evt.data;
@@ -68,7 +68,7 @@ export async function POST(req: Request) {
                 username: username,
             });
 
-            console.log(`User ${id} ${evt.type === "user.created" ? "created" : "updated"} in database.`);
+            // console.log(`User ${id} ${evt.type === "user.created" ? "created" : "updated"} in database.`);
         }
 
 

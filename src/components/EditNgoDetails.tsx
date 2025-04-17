@@ -289,7 +289,7 @@ const EditNgoDetail = ({ ngo, ngoId }: EditNgoDetailProps) => {
                                 endpoint="ngoImages"
                                 value={form.images}
                                 onChange={(urls) => {
-                                    console.log("Received from MultiImagesUpload:", urls)
+                                    // console.log("Received from MultiImagesUpload:", urls)
                                     setForm((prev) => ({
                                         ...prev,
                                         images: urls,

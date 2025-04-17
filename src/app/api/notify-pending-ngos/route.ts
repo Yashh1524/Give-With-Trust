@@ -15,7 +15,7 @@ export async function GET() {
             for (const ngo of pendingNgos) {
                 if (ngo.email) {
                     await sendReminderEmail(ngo.email, ngo.name)
-                    console.log(`📧 Email sent to ${ngo.email}`)
+                    // console.log(`📧 Email sent to ${ngo.email}`)
                 }
             }
 

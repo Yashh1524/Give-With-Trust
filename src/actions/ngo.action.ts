@@ -39,7 +39,7 @@ export const registerNgo = async ({
 }) => {
     // const { userId } = await  auth();
     const userId = await getDbUserId()
-    console.log(userId);
+    // console.log(userId);
 
     if (!userId) throw new Error('Not authenticated');
 

@@ -20,7 +20,7 @@ const VotingSessionListAdminClient: React.FC<Props> = ({
 }) => {
     const [votingSessions, setVotingSessions] = useState<VoteSession[]>([])
     const [isPending, startTransition] = useTransition()
-    const [loading, setLoading] = useState(false)
+    const [loadingSessionId, setLoadingSessionId] = useState<string | null>(null)
     const [initialLoading, setInitialLoading] = useState(true)
     const [endSessionLoading, setEndSessionLoading] = useState(false)
     const [createSessionLoading, setCreateSessionLoading] = useState(false)
@@ -32,7 +32,7 @@ const VotingSessionListAdminClient: React.FC<Props> = ({
         try {
             const sessions = await getAllVotingSession()
             setVotingSessions(sessions)
-            console.log(sessions);
+            // console.log(sessions);
 
         } catch (error) {
             toast.error("Failed to fetch voting sessions")
@@ -41,12 +41,16 @@ const VotingSessionListAdminClient: React.FC<Props> = ({
         }
     }
 
+
     useEffect(() => {
         fetchAllVotingSessions()
     }, [])
 
-    const alreadyCreatedNgoIds = new Set(votingSessions.map(vs => vs.failedNgoId))
-    const eligibleNgos = notSubmittedWorkNgos.filter(ngo => !alreadyCreatedNgoIds.has(ngo.id))
+    // const alreadyCreatedNgoIds = new Set(votingSessions.map(vs => vs.failedNgoId))
+    // const notSubmittedWorkNgos = notSubmittedWorkNgos.filter(ngo => !alreadyCreatedNgoIds.has(ngo.id))
+    const notSubmittedNgoHasHeldDonation = notSubmittedWorkNgos.filter(ngo =>
+        donations.some(donation => donation.ngoId === ngo.id && donation.status === "HELD")
+    )
 
     const toggleNgo = (id: string) => {
         setSelectedNgos(prev =>
@@ -65,10 +69,10 @@ const VotingSessionListAdminClient: React.FC<Props> = ({
         return <span>{formattedDate}</span>
     }
 
-    const handleEndSession = async (session: VoteSession) => {
+    const handleEndSession = async (sessionId: string) => {
         try {
-            setLoading(true)
-            await endVoteSession(session.id)
+            setLoadingSessionId(sessionId)
+            await endVoteSession(sessionId)
             // await updateDonationStatusByNgoId("REASSIGNED", session.failedNgoId, session.winnerNgoId)
             toast.success("Voting session ended successfully")
             fetchAllVotingSessions()
@@ -76,7 +80,7 @@ const VotingSessionListAdminClient: React.FC<Props> = ({
             toast.error("Failed to end voting session")
             console.log("Error while ending voting session:", error)
         } finally {
-            setLoading(false)
+            setLoadingSessionId(null)
         }
     }
 
@@ -84,7 +88,7 @@ const VotingSessionListAdminClient: React.FC<Props> = ({
         if (selectAll) {
             setSelectedNgos([])
         } else {
-            setSelectedNgos(eligibleNgos.map(ngo => ngo.id))
+            setSelectedNgos(notSubmittedNgoHasHeldDonation.map(ngo => ngo.id))
         }
         setSelectAll(!selectAll)
     }
@@ -98,7 +102,7 @@ const VotingSessionListAdminClient: React.FC<Props> = ({
                     return shuffled.slice(0, count).map(ngo => ngo.id);
                 };
 
-                for (const ngo of eligibleNgos.filter(n => selectedNgos.includes(n.id))) {
+                for (const ngo of notSubmittedNgoHasHeldDonation.filter(n => selectedNgos.includes(n.id))) {
                     const relatedDonation = donations.filter(
                         donation => donation.ngoId === ngo.id
                     );
@@ -116,7 +120,7 @@ const VotingSessionListAdminClient: React.FC<Props> = ({
                         candidates: selectedNgoIds,
                     });
 
-                    console.log("Created session", createdSession);
+                    // console.log("Created session", createdSession);
 
                     const emailed = new Set<string>();
                     for (const voter of voters) {
@@ -198,7 +202,7 @@ const VotingSessionListAdminClient: React.FC<Props> = ({
                             <div className="bg-white dark:bg-[#2b2a40] rounded-xl p-6 w-full max-w-lg space-y-4">
                                 <h2 className="text-xl font-semibold">Select NGOs to Create Voting Sessions</h2>
 
-                                {eligibleNgos.length === 0 ? (
+                                {notSubmittedNgoHasHeldDonation.length === 0 ? (
                                     <p className="text-sm text-gray-600 dark:text-gray-300">
                                         No NGO found with pending monthly proof submission or they already have voting sessions.
                                     </p>
@@ -214,7 +218,7 @@ const VotingSessionListAdminClient: React.FC<Props> = ({
                                         </div>
 
                                         <div className="max-h-60 overflow-y-auto border p-3 rounded-lg space-y-2">
-                                            {eligibleNgos.map(ngo => (
+                                            {notSubmittedNgoHasHeldDonation.map(ngo => (
                                                 <div key={ngo.id} className="flex items-center gap-2">
                                                     <input
                                                         type="checkbox"
@@ -289,18 +293,14 @@ const VotingSessionListAdminClient: React.FC<Props> = ({
                         {
                             session.isOngoing && (
                                 <button
-                                    className={`my-3 px-4 py-3 rounded-lg text-white font-medium transition-all duration-300 ${loading ? 'bg-red-400 cursor-not-allowed' : 'bg-red-600 hover:bg-red-700'}`}
-                                    onClick={() => handleEndSession(session)}
-                                    disabled={loading}
+                                    className={`my-3 px-4 py-3 rounded-lg text-white font-medium transition-all duration-300 ${loadingSessionId === session.id
+                                            ? 'bg-red-400 cursor-not-allowed'
+                                            : 'bg-red-600 hover:bg-red-700'
+                                        }`}
+                                    onClick={() => handleEndSession(session.id)}
+                                    disabled={loadingSessionId === session.id}
                                 >
-                                    {loading ? (
-                                        <div className="flex items-center gap-2 justify-center">
-                                            <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                                            Ending...
-                                        </div>
-                                    ) : (
-                                        'End Session'
-                                    )}
+                                    {loadingSessionId === session.id ? 'Ending...' : 'End Session'}
                                 </button>
                             )
                         }

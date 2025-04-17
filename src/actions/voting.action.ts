@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma"
 import { Month } from '@prisma/client';
 import { revalidatePath } from "next/cache";
 import { updateDonationStatusByNgoId } from "./donation.action";
+import { updateNgoProofStatus } from "./ngo.action";
 
 export async function createVotingSession(session: {
     failedNgoId: string,
@@ -11,6 +12,7 @@ export async function createVotingSession(session: {
     candidates: string[]
 }) {
     try {
+        // console.log("session:", session)
         const now = new Date()
         const month = Month[now.toLocaleString("default", { month: "long" }).toUpperCase() as keyof typeof Month]
         const year = now.getFullYear()
@@ -215,14 +217,19 @@ export async function endVoteSession(voteSessionId: string) {
             return acc;
         }, {} as Record<string, number>);
 
-        // Determine the winner NGO
-        const winnerNgoId = voteSession.candidates.reduce((maxId, ngo) => {
-            const currentVotes = voteCounts[ngo.id] || 0;
-            const maxVotes = voteCounts[maxId] || 0;
-            return currentVotes > maxVotes ? ngo.id : maxId;
-        }, voteSession.candidates[0]?.id || '');
-        console.log("winnerNgoId:", winnerNgoId);
-        
+        // Find the max vote count
+        const maxVoteCount = Math.max(...Object.values(voteCounts));
+
+        // Filter candidates who have the max vote count
+        const topCandidates = voteSession.candidates.filter(ngo => voteCounts[ngo.id] === maxVoteCount);
+
+        // Choose winner randomly among top candidates (handles tie or no votes)
+        const winnerNgoId = topCandidates[Math.floor(Math.random() * topCandidates.length)]?.id;
+
+        // console.log("Vote counts:", voteCounts);
+        // console.log("Top candidates:", topCandidates.map(n => n.name));
+        // console.log("Selected winnerNgoId:", winnerNgoId);
+
         // Mark session as ended
         await prisma.voteSession.update({
             where: { id: voteSessionId },
@@ -232,9 +239,10 @@ export async function endVoteSession(voteSessionId: string) {
             },
         });
 
-        await updateDonationStatusByNgoId("REASSIGNED", voteSession.failedNgo.id, winnerNgoId)
+        await updateDonationStatusByNgoId("REASSIGNED", voteSession.failedNgo.id, winnerNgoId);
+        await updateNgoProofStatus(voteSession.failedNgo.id, "PENDING");
 
-        revalidatePath(`/admin-dashboard/voting-sessions`)
+        revalidatePath(`/admin-dashboard/voting-sessions`);
 
         return { success: true, winnerNgoId };
     } catch (error) {
