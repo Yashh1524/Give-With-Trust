@@ -5,6 +5,7 @@ import {
     SignOutButton,
     SignInButton,
     SignUpButton,
+    useAuth,
 } from "@clerk/nextjs";
 import { Button } from "./ui/button";
 import {
@@ -27,17 +28,38 @@ import { IoMdNotifications } from 'react-icons/io';
 import { useSidebar } from "@/context/SidebarContext";
 import { Role } from "@prisma/client";
 import { RiAdminFill } from "react-icons/ri";
+import { useEffect, useState } from "react";
+import { checkIfUserHasNgo, getDbUserId, getUserDetails } from "@/actions/user.action";
 
-interface Props {
-    userId: string | null | undefined,
-    isSignedIn: boolean;
-    hasNgo: boolean;
-    userRole?: Role;
-}
-
-const SidebarClient = ({ isSignedIn, hasNgo, userId, userRole }: Props) => {
+const SidebarClient = () => {
     // const [openSidebar, setOpenSidebar] = useState(true);
     const { open, toggle } = useSidebar();
+    const { isSignedIn } = useAuth();
+    const [hasNgo, setHasNgo] = useState(false);
+    const [userId, setUserId] = useState("")
+    const [userRole, setUserRole] = useState<Role | undefined>("DONOR")
+
+    useEffect(() => {
+        const checkNgoStatus = async () => {
+            try {
+                const userId = await getDbUserId();
+                if (!userId) return;
+                const user = await getUserDetails(userId)
+                setUserId(userId)
+                setHasNgo(await checkIfUserHasNgo())
+                setUserRole(user?.role)
+            } catch (error) {
+                console.error("Failed to check NGO status:", error);
+                setHasNgo(false);
+            }
+        };
+
+        if (isSignedIn) {
+            checkNgoStatus();
+        }
+    }, [isSignedIn]);
+
+
     return (
         <div className="relative h-[90vh]">
             {open && (

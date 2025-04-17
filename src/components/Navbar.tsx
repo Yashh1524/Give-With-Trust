@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import MobileSidebar from "./MobileSidebar";
 import ToggleDarkModeButton from "./ToggleDarkModelButton";
 import { UserButton } from "@clerk/nextjs";
+import SidebarClient from "./SidebarClient";
 
 const Navbar = () => {
     const [mobileOpen, setMobileOpen] = useState(false);

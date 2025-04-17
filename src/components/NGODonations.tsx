@@ -15,7 +15,7 @@ type FullDonation = Donation & {
 export default function NGODonations({ donations }: { donations: FullDonation[] }) {
     const [showMore, setShowMore] = useState(false);
 
-    console.log(donations)
+    // console.log(donations)
 
     if (donations.length === 0) {
         return <p className="text-sm text-gray-500 mt-4">No donations yet for this NGO.</p>;
