@@ -8,8 +8,7 @@ import toast from 'react-hot-toast'
 import { FaRegClock } from "react-icons/fa"
 import { LuAlarmClockOff } from 'react-icons/lu'
 import { createVote, endVoteSession } from '@/actions/voting.action'
-import { NGOProfile, User } from '@prisma/client'
-import { updateDonationStatusByNgoId } from '@/actions/donation.action'
+import { NGOProfile, User, Vote } from '@prisma/client'
 
 interface VotingSession {
     id: string
@@ -18,7 +17,7 @@ interface VotingSession {
     isOngoing: Boolean
     candidates: NGOProfile[]
     voters: User[]
-    votes: any[]
+    votes: Vote[]
 }
 
 interface VotingPageClientProps {
