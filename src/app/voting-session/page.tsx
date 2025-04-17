@@ -8,18 +8,17 @@ const page = async () => {
 
     const votingSessions = await getAllVotingSession() //array of sessions
     const userId = await getDbUserId()
+    const userVotingSessions = votingSessions.filter(session => session.voters?.some(voter => voter.id === userId))
 
     return (
         <>
             <h1 className='text-xl md:text-2xl my-10 text-white'>Voting Sessions</h1>
-            {votingSessions.length > 0 ? (
+            {userVotingSessions.length > 0 ? (
                 <div className="space-y-4">
-                    {votingSessions.map((session) => {
+                    {userVotingSessions.map((session) => {
                         const isVoter = session.voters?.some(voter => voter.id === userId)
                         const createdDate = new Date(session.createdAt);
                         // const isFinished = isAfter(new Date(), addDays(createdDate, 3));
-
-                        if (!isVoter) return <div className="text-center py-8 text-muted-foreground">No voting sessions yet</div>
 
                         return (
                             <div
@@ -63,7 +62,7 @@ const page = async () => {
                     })}
                 </div>
             ) : (
-                <div className="text-center py-8 text-muted-foreground">No votes yet</div>
+                <div className="text-center py-8 text-muted-foreground">No voting sessions yet</div>
             )}
         </>
     )
