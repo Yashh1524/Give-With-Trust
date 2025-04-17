@@ -75,12 +75,7 @@ export async function getDonationByNgoId(ngoId: string) {
                             image: true,
                         },
                     },
-                    reAssignedNgo: {
-                        select: {
-                            id: true,
-                            name: true,
-                        },
-                    },
+                    reAssignedNgo: true,
                     ngo: true,
                 },
             }),

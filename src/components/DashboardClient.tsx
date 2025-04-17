@@ -179,6 +179,7 @@ export default function DashboardClient(
                     )}
                 </div>
 
+                {/* NGO Details */}
                 <div className="p-6 bg-white dark:bg-[#1f2937] rounded-lg shadow col-span-3 row-span-4">
                     <h2 className="flex gap-2 items-center text-xl font-semibold mb-2">
                         <BiSolidDetail /> NGO Details
@@ -188,7 +189,7 @@ export default function DashboardClient(
                         <p><strong>Address:</strong> {selectedNgo?.address}</p>
                         <p><strong>Contact:</strong> {selectedNgo?.contactInfo}</p>
                         <p><strong>Established:</strong> {selectedNgo?.establishedDate ? new Date(selectedNgo.establishedDate).toDateString() : 'N/A'}</p>
-                        <p><strong>Email:</strong> {selectedNgo?.email}</p>
+                        <p className='flex flex-col'><strong>Email:</strong> {selectedNgo?.email}</p>
                         <p><strong>Website:</strong> {selectedNgo?.website || 'N/A'}</p>
                     </div>
                 </div>
@@ -276,7 +277,7 @@ export default function DashboardClient(
                 </div>
 
                 {/* Anonymous Donations */}
-                <div className="p-6 rounded-2xl shadow-md bg-[#1e293b] border border-gray-700 col-span-4 flex items-center justify-between hover:shadow-lg transition-all duration-200">
+                <div className="p-6 rounded-2xl shadow-md bg-[#1e293b] border border-gray-700 col-span-4 flex items-center justify-between hover:shadow-lg transition-all duration-200 flex-col">
                     <div className="flex items-center gap-4">
                         <div className="bg-yellow-100 dark:bg-yellow-900 p-3 rounded-full">
                             <BiMedal className="text-yellow-500 text-2xl" />
@@ -311,6 +312,7 @@ export default function DashboardClient(
                 <NGODonations donations={donations} />
             </div>
 
+            {/* Payouts */}
             <div className='p-6 bg-white dark:bg-[#1f2937] rounded-lg shadow'>
                 <h2 className="text-xl font-bold text-gray-800 dark:text-white mb-4">Payout History</h2>
                 <ul className="grid grid-cols-1 w-full gap-6">

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { AccentTag, Donation, NGOProfile, NGOStatus, Proof, User } from '@prisma/client';
+import { AccentTag, Donation, NGOProfile, NGOStatus, Payout, Proof, User } from '@prisma/client';
 import { updateNgoFieldsByAdmin } from '@/actions/ngo.action';
 import Link from 'next/link';
 import {
@@ -16,12 +16,13 @@ import { FaDonate } from 'react-icons/fa';
 import { MdDoNotDisturbAlt, MdOutlinePendingActions } from 'react-icons/md';
 import toast from 'react-hot-toast';
 import NGODonations from './NGODonations';
+import { format } from 'date-fns';
 
 type FullDonation = Donation & {
     donor: User;
     reAssignedNgo: NGOProfile | null;
     ngo: NGOProfile;
-  };
+};
 
 interface AdminNgoViewPageClientProps {
     ngo: {
@@ -36,14 +37,13 @@ interface AdminNgoViewPageClientProps {
         contactInfo: string;
         description: string;
         images: string[];
-        logo: string | null; // added logo field
+        logo: string | null;
         accentTags: AccentTag;
         approved: boolean;
         accountNumber: string | null;
         bankName: string | null;
         ifscCode: string | null;
         accountHolderName: string | null;
-        isAnonymousDonation: boolean;
         upiId: string | null;
         website: string | null;
         proofs: Proof[];
@@ -58,10 +58,10 @@ interface AdminNgoViewPageClientProps {
         };
     };
     donations: (Donation & { donor: User })[];
+    payouts: (Payout & { ngo: NGOProfile })[]
 }
 
-
-export default function AdminNgoViewPageClient({ ngo, donations }: AdminNgoViewPageClientProps) {
+export default function AdminNgoViewPageClient({ ngo, donations, payouts }: AdminNgoViewPageClientProps) {
     const [status, setStatus] = useState<NGOStatus>(ngo.status);
     const [accentTags, setAccentTags] = useState<AccentTag>(ngo.accentTags);
     const [approved, setApproved] = useState<boolean>(ngo.approved);
@@ -250,11 +250,11 @@ export default function AdminNgoViewPageClient({ ngo, donations }: AdminNgoViewP
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {/* Key Insights */}
-                <div className="col-span-1 lg:col-span-2 p-6 bg-[#1e293b] rounded-2xl shadow space-y-4">
+                <div className="col-span-2 lg:col-span-2 p-6 bg-[#1e293b] rounded-2xl shadow space-y-4">
                     <h2 className="text-xl font-semibold flex items-center gap-2 text-white">
                         <BiCalendarCheck /> Key Insights
                     </h2>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-4">
                         {/* Total Raised */}
                         <div className="bg-[#334155] rounded-xl p-4 flex items-center gap-3">
                             <FaDonate className="text-pink-400 text-2xl" />
@@ -291,6 +291,7 @@ export default function AdminNgoViewPageClient({ ngo, donations }: AdminNgoViewP
                             </div>
                         </div>
                     </div>
+
                     {/* Top Donors */}
                     <div className="bg-[#1e293b] rounded-2xl p-6 shadow space-y-4 text-white">
                         <h2 className="text-xl font-semibold flex items-center gap-2">
@@ -324,12 +325,10 @@ export default function AdminNgoViewPageClient({ ngo, donations }: AdminNgoViewP
                             <p className="text-gray-400">No donors yet.</p>
                         )}
                     </div>
-
                 </div>
 
-
                 {/* Anonymous Donations */}
-                <div className="p-6 rounded-2xl shadow-md bg-[#1e293b] border border-gray-700 col-span-2 flex items-center justify-between hover:shadow-lg transition-all duration-200">
+                <div className="p-6 rounded-2xl shadow-md bg-[#1e293b] border border-gray-700 col-span-2 flex flex-col items-center justify-between hover:shadow-lg transition-all duration-200">
                     <div className="flex items-center gap-4">
                         <div className="bg-yellow-100 dark:bg-yellow-900 p-3 rounded-full">
                             <BiMedal className="text-yellow-500 text-2xl" />
@@ -357,8 +356,8 @@ export default function AdminNgoViewPageClient({ ngo, donations }: AdminNgoViewP
                 </div>
 
                 {/* NGO Details */}
-                <div className="bg-[#1e293b] rounded-2xl p-6 shadow space-y-2 text-sm text-white">
-                    <h2 className="text-xl font-semibold flex items-center gap-2 mb-2">
+                <div className="col-span-2 bg-[#1e293b] rounded-2xl p-6 shadow space-y-2 text-sm text-white">
+                    <h2 className="text-xl font-semibold flex items-center gap-2 mb-2 col-span-2">
                         <BiSolidDetail /> NGO Details
                     </h2>
                     <p>{ngo.description}</p>
@@ -377,7 +376,7 @@ export default function AdminNgoViewPageClient({ ngo, donations }: AdminNgoViewP
                 </div>
 
                 {/* Payment Details */}
-                <div className="bg-[#1e293b] rounded-2xl p-6 shadow space-y-2 text-sm text-white">
+                <div className="col-span-2 bg-[#1e293b] rounded-2xl p-6 shadow space-y-2 text-sm text-white">
                     <h2 className="text-xl font-semibold flex items-center gap-2 mb-2">
                         <BiDonateHeart /> Payment Details
                     </h2>
@@ -390,9 +389,9 @@ export default function AdminNgoViewPageClient({ ngo, donations }: AdminNgoViewP
 
                 {/* Images */}
                 {ngo.images?.length > 0 && (
-                    <div className="col-span-1 lg:col-span-2 bg-[#1e293b] rounded-2xl p-6 shadow text-white">
+                    <div className="col-span-2 overflow-x-auto w-full bg-[#1e293b] rounded-2xl p-6 shadow text-white">
                         <h2 className="text-xl font-semibold mb-4">Images</h2>
-                        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                        <div className="flex gap-2 md:grid md:grid-cols-4 gap-4">
                             {ngo.images.map((img, idx) => (
                                 <img
                                     key={idx}
@@ -406,10 +405,36 @@ export default function AdminNgoViewPageClient({ ngo, donations }: AdminNgoViewP
                 )}
             </div>
 
-
-
             <NGODonationStats ngoId={ngo.id} />
             <NGODonations donations={fullDonations as FullDonation[]} />
+
+            {/* Payouts */}
+            <div className='mt-10 p-6 bg-white dark:bg-[#1f2937] rounded-lg shadow'>
+                <h2 className="text-xl font-bold text-gray-800 dark:text-white mb-4">Payout History</h2>
+                <ul className="grid grid-cols-1 w-full gap-6">
+                    {payouts.map(payout => (
+                        <li key={payout.id} className="bg-white dark:bg-gray-900 rounded-xl shadow p-5 border dark:border-gray-700">
+                            <div className="flex items-center gap-4 mb-4">
+                                <img
+                                    src={payout.ngo.logo as string}
+                                    alt={payout.ngo.name}
+                                    className="rounded-full object-cover border h-10 w-10"
+                                />
+                                <div>
+                                    <h2 className="font-semibold text-lg">{payout.ngo.name}</h2>
+                                    <p className="text-sm text-gray-500">{payout.ngo.address}</p>
+                                </div>
+                            </div>
+
+                            <div className="text-sm text-gray-600 dark:text-gray-300 space-y-1">
+                                <p><strong>Amount:</strong> ₹{payout.amount}</p>
+                                <p><strong>Payout ID:</strong> {payout.razorpayPayoutId}</p>
+                                <p><strong>Date:</strong> {format(new Date(payout.createdAt), 'PPP p')}</p>
+                            </div>
+                        </li>
+                    ))}
+                </ul>
+            </div>
         </div>
     );
 }

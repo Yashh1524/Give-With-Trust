@@ -1,6 +1,7 @@
 "use server"
 
 import { prisma } from "@/lib/prisma"
+import { updateNgoProofStatus } from "./ngo.action"
 
 export async function createPayout(
     ngoId: string,
@@ -16,6 +17,8 @@ export async function createPayout(
             }
         })  
         
+        await updateNgoProofStatus(ngoId, "PENDING")
+
         return payout
     } catch (error) {
         console.error("Error in creating Payout:", error)

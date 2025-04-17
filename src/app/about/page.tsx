@@ -92,7 +92,7 @@ const AboutPage = () => {
             </motion.section>
 
             {/* Buttons with animation */}
-            <div className="flex gap-4 flex-wrap items-center justify-center">
+            <div className="flex gap-10 flex-wrap items-center justify-center">
                 <motion.div
                     whileHover={{ scale: 1.05, boxShadow: '0px 4px 20px rgba(59, 130, 246, 0.4)' }}
                     whileTap={{ scale: 0.95 }}
