@@ -66,7 +66,7 @@ export default function DashboardClient(
     const donorTotals: Record<string, { amount: number; name: string; image: string }> = {};
     donations.forEach((donation) => {
         const donorId = donation.donorId;
-        if (!donorId) return;
+        if (!donorId || donation.isAnonymousDonation) return;
 
         if (!donorTotals[donorId]) {
             donorTotals[donorId] = {
@@ -77,6 +77,10 @@ export default function DashboardClient(
         }
         donorTotals[donorId].amount += donation.amount;
     });
+
+    const anonymousDonationTotal = donations
+        .filter(d => d.isAnonymousDonation)
+        .reduce((sum, d) => sum + d.amount, 0);
 
     const topDonors = Object.entries(donorTotals)
         .sort((a, b) => b[1].amount - a[1].amount)
@@ -227,7 +231,7 @@ export default function DashboardClient(
                 )
             }
 
-            {/* Charts + Top Donors */}
+            {/* Charts*/}
             <div className="flex flex-col gap-6 md:grid md:grid-cols-3">
                 {monthlyData.some((m) => m > 0) && (
                     <div className="p-6 bg-white dark:bg-[#1f2937] rounded-lg shadow col-span-1">
@@ -241,7 +245,7 @@ export default function DashboardClient(
                         <YearlyDonationPieChart yearlyTotals={yearlyData} />
                     </div>
                 )}
-                <div className="p-6 bg-white dark:bg-[#1f2937] rounded-lg shadow col-span-1">
+                <div className="p-6 bg-white dark:bg-[#1f2937] rounded-lg shadow col-span-2">
                     <h3 className="text-xl font-semibold mb-4 flex items-center gap-2">
                         <BiMedal /> Top Donors
                     </h3>
@@ -269,6 +273,34 @@ export default function DashboardClient(
                             </li>
                         ))}
                     </ul>
+                </div>
+
+                {/* Anonymous Donations */}
+                <div className="p-6 rounded-2xl shadow-md bg-[#1e293b] border border-gray-700 col-span-4 flex items-center justify-between hover:shadow-lg transition-all duration-200">
+                    <div className="flex items-center gap-4">
+                        <div className="bg-yellow-100 dark:bg-yellow-900 p-3 rounded-full">
+                            <BiMedal className="text-yellow-500 text-2xl" />
+                        </div>
+                        <div>
+                            <h3 className="text-lg font-semibold text-white tracking-wide">
+                                Anonymous Donations
+                            </h3>
+                            <p className="text-sm text-gray-400">
+                                Total received from anonymous contributors
+                            </p>
+                        </div>
+                    </div>
+
+                    <div className="flex items-center gap-3 bg-gray-800 px-4 py-2 rounded-full">
+                        <img
+                            src="/avatar.png"
+                            alt="Anonymous Avatar"
+                            className="w-8 h-8 rounded-full object-cover"
+                        />
+                        <span className="text-white font-bold text-lg">
+                            ₹{anonymousDonationTotal.toLocaleString()}
+                        </span>
+                    </div>
                 </div>
 
             </div>

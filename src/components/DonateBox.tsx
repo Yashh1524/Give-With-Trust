@@ -5,22 +5,22 @@ import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { getNgoByNgoId } from '@/actions/ngo.action';
 import { getDonationByNgoId } from '@/actions/donation.action';
-import { getMonthlyDonationData, getYearlyDonationTotals } from '@/lib/donationHelpers';
 import NGODonationStats from './NGODonationStats';
 import NGODonations from './NGODonations';
+import { Switch } from './ui/switch';
 
 interface DonateBoxProps {
   ngoId: string;
   userId: string | null | undefined;
 }
 
+
 export default function DonateBox({ ngoId, userId }: DonateBoxProps) {
   const [amount, setAmount] = useState('');
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
   const [donations, setDonations] = useState<any[]>([]);
-  const monthlyData = getMonthlyDonationData(donations);
-  const yearlyData = getYearlyDonationTotals(donations);
+  const [isAnonymousDonation, setIsAnonymousDonation] = useState(false)
 
   const fetchDonations = async () => {
     try {
@@ -57,6 +57,7 @@ export default function DonateBox({ ngoId, userId }: DonateBoxProps) {
           ngoId,
           userId,
           message,
+          isAnonymousDonation
         }),
       });
 
@@ -92,6 +93,7 @@ export default function DonateBox({ ngoId, userId }: DonateBoxProps) {
                 userId,
                 amount: parseInt(amount),
                 message,
+                isAnonymousDonation
               }),
             });
 
@@ -157,6 +159,17 @@ export default function DonateBox({ ngoId, userId }: DonateBoxProps) {
           rows={4}
           className="mb-4 w-full px-3 py-2 border rounded-md"
         />
+
+        <div className="flex items-center mb-4">
+          <Switch
+            checked={isAnonymousDonation}
+            onCheckedChange={setIsAnonymousDonation}
+            id="anonymous"
+          />
+          <label htmlFor="anonymous" className="ml-2 text-md text-gray-700 dark:text-gray-300">
+            Donate anonymously
+          </label>
+        </div>
 
         <button
           onClick={handleDonation}

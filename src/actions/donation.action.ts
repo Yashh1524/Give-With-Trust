@@ -27,6 +27,7 @@ export async function createDonation({
     donorId,
     amount,
     message,
+    isAnonymousDonation,
 }: {
     orderId: string;
     paymentId: string;
@@ -34,6 +35,7 @@ export async function createDonation({
     donorId: string;
     amount: number;
     message?: string;
+    isAnonymousDonation: boolean
 }) {
     const now = new Date();
     const currentMonth = MONTH_ENUM[now.getMonth()];
@@ -48,6 +50,7 @@ export async function createDonation({
             message,
             month: currentMonth,
             year: now.getFullYear(),
+            isAnonymousDonation,
         },
     });
 

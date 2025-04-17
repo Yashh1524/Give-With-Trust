@@ -59,26 +59,6 @@ const UploadMonthlyWorkProofsPage: React.FC<Props> = ({ ngo }) => {
         }
     }
 
-    // const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    //     e.preventDefault()
-    //     if (!ngo) return toast.error('NGO not found')
-    //     if (!form.month || !form.year || !form.description || form.imageUrl.length === 0 || form.proofPdf.length === 0) {
-    //         return toast.error('Please fill all fields and upload files')
-    //     }
-
-    //     try {
-    //         setLoading(true)
-    //         await uploadMonthlyWorkProof(ngo?.id, form)
-    //         toast.success('Proof submitted successfully')
-    //         router.push('/dashboard')
-    //     } catch (err) {
-    //         console.error(err)
-    //         toast.error('Failed to submit proof')
-    //     } finally {
-    //         setLoading(false)
-    //     }
-    // }
-
     return (
         <div className="min-h-screen py-10 px-6 md:px-12 bg-white dark:bg-[#100f1b] text-black dark:text-white">
             <div className="max-w-2xl mx-auto bg-white dark:bg-[#1f1f2b] p-8 shadow-md rounded-xl">

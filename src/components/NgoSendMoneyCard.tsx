@@ -1,6 +1,6 @@
 'use client'
 
-import { updateDonationStatus, updateDonationStatusByNgoId } from '@/actions/donation.action'
+import { updateDonationStatusByNgoId } from '@/actions/donation.action'
 import { createPayout } from '@/actions/payout.action'
 import { Donation, DonationStatus, NGOProfile } from '@prisma/client'
 import Link from 'next/link'
@@ -128,19 +128,34 @@ const NgoSendMoneyCard: React.FC<NgoSendMoneyCardProps> = ({ ngoDetails, amount,
                             >
                                 {/* Donor Avatar */}
                                 <div className="w-12 h-12 rounded-full overflow-hidden border shrink-0">
-                                    {donation.donor.image ? (
-                                        <img src={donation.donor.image} alt={donation.donor.name || 'Donor'} className="object-cover w-full h-full" />
+                                    {donation.isAnonymousDonation ? (
+                                        <img
+                                            src="/avatar.png"
+                                            alt={'Anonymous Donor'}
+                                            className="object-cover w-full h-full"
+                                        />
                                     ) : (
-                                        <div className="bg-gray-200 w-full h-full flex items-center justify-center text-gray-500 text-sm">?</div>
+                                        <img src={donation.donor.image || "/avatar.png"}
+                                            alt={donation.donor.name || 'Donor'}
+                                            className="object-cover w-full h-full"
+                                        />
                                     )}
                                 </div>
 
                                 {/* Donor Info */}
                                 <div className="flex-1 w-full">
                                     <div className="flex justify-between flex-wrap gap-2 items-start sm:items-center">
-                                        <Link href={`/profile/${donation.donorId}`} className="font-semibold text-gray-800 dark:text-white">
-                                            {donation.donor?.name || 'Anonymous'}
-                                        </Link>
+                                        {
+                                            donation.isAnonymousDonation ? (
+                                                <p className="font-semibold text-gray-800 dark:text-white">
+                                                    *Anonymous Donor*
+                                                </p>
+                                            ) : (
+                                                <Link href={`/profile/${donation.donorId}`} className="font-semibold text-gray-800 dark:text-white">
+                                                    {donation.donor?.name || 'donor'}
+                                                </Link>
+                                            )
+                                        }
 
                                         <div className="text-right">
                                             <p className="text-sm font-semibold text-emerald-600 dark:text-emerald-400">

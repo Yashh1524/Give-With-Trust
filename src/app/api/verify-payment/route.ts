@@ -14,6 +14,7 @@ export async function POST(req: NextRequest) {
             userId,
             amount,
             message,
+            isAnonymousDonation,
         } = body;
         // console.log("body:", body);
         
@@ -49,6 +50,7 @@ export async function POST(req: NextRequest) {
             donorId: userId,
             amount,
             message,
+            isAnonymousDonation
         });
 
         return NextResponse.json({ success: true });

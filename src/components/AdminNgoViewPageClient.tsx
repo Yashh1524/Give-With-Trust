@@ -1,20 +1,27 @@
 'use client';
 
 import { useState } from 'react';
-import { AccentTag, NGOStatus, Proof } from '@prisma/client';
+import { AccentTag, Donation, NGOProfile, NGOStatus, Proof, User } from '@prisma/client';
 import { updateNgoFieldsByAdmin } from '@/actions/ngo.action';
 import Link from 'next/link';
 import {
     BiSolidDetail,
     BiDonateHeart,
     BiCalendarCheck,
-    BiTrendingUp
+    BiTrendingUp,
+    BiMedal
 } from 'react-icons/bi';
 import NGODonationStats from './NGODonationStats';
 import { FaDonate } from 'react-icons/fa';
 import { MdDoNotDisturbAlt, MdOutlinePendingActions } from 'react-icons/md';
 import toast from 'react-hot-toast';
 import NGODonations from './NGODonations';
+
+type FullDonation = Donation & {
+    donor: User;
+    reAssignedNgo: NGOProfile | null;
+    ngo: NGOProfile;
+  };
 
 interface AdminNgoViewPageClientProps {
     ngo: {
@@ -36,6 +43,7 @@ interface AdminNgoViewPageClientProps {
         bankName: string | null;
         ifscCode: string | null;
         accountHolderName: string | null;
+        isAnonymousDonation: boolean;
         upiId: string | null;
         website: string | null;
         proofs: Proof[];
@@ -49,7 +57,7 @@ interface AdminNgoViewPageClientProps {
             createdAt: Date;
         };
     };
-    donations: any[];
+    donations: (Donation & { donor: User })[];
 }
 
 
@@ -74,18 +82,25 @@ export default function AdminNgoViewPageClient({ ngo, donations }: AdminNgoViewP
     const donorMap: { [key: string]: { id: string; name: string; email: string; image: string | undefined; amount: number } } = {};
 
     donations.forEach((donation) => {
+        if (donation.isAnonymousDonation) return; // skip anonymous donations
+
         const donorId = donation.donor.id;
         if (!donorMap[donorId]) {
             donorMap[donorId] = {
                 id: donation.donor.id,
                 name: donation.donor.name || "unknown",
                 email: donation.donor.email,
-                image: donation.donor.image,
+                image: donation.donor.image || "/avatar.png",
                 amount: 0
             };
         }
         donorMap[donorId].amount += donation.amount;
     });
+
+
+    const anonymousDonationTotal = donations
+        .filter(d => d.isAnonymousDonation)
+        .reduce((sum, d) => sum + d.amount, 0);
 
     const topDonors = Object.values(donorMap)
         .sort((a, b) => b.amount - a.amount)
@@ -102,6 +117,12 @@ export default function AdminNgoViewPageClient({ ngo, donations }: AdminNgoViewP
         setIsSaving(false);
         toast.success('Updated successfully');
     };
+
+    const fullDonations = donations.map((d) => ({
+        ...d,
+        reAssignedNgoId: d.reAssignedNgoId ?? null,
+        ngoId: d.ngoId, // or d.ngo ?? {} if it's possibly missing
+    }));
 
     return (
         <div className="max-w-6xl mx-auto p-4 sm:p-6 lg:p-8">
@@ -121,7 +142,7 @@ export default function AdminNgoViewPageClient({ ngo, donations }: AdminNgoViewP
                                     ${status === 'PENDING' ? 'bg-yellow-100 text-yellow-700' : ''}
                                     ${status === 'NOT_SUBMITTED' ? 'bg-red-100 text-red-700' : ''}
                                 `}
-                            >
+                        >
                             {Object.values(NGOStatus).map((s) => (
                                 <option key={s} value={s}>{s}</option>
                             ))}
@@ -138,7 +159,7 @@ export default function AdminNgoViewPageClient({ ngo, donations }: AdminNgoViewP
                                     ${accentTags === 'NEW' ? 'bg-yellow-100 text-yellow-700' : ''}
                                     ${accentTags === 'IMPACTFUL' ? 'bg-pink-100 text-pink-700' : ''}
                                 `}
-                            >
+                        >
                             {Object.values(AccentTag).map((tag) => (
                                 <option key={tag} value={tag}>{tag}</option>
                             ))}
@@ -228,7 +249,6 @@ export default function AdminNgoViewPageClient({ ngo, donations }: AdminNgoViewP
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-
                 {/* Key Insights */}
                 <div className="col-span-1 lg:col-span-2 p-6 bg-[#1e293b] rounded-2xl shadow space-y-4">
                     <h2 className="text-xl font-semibold flex items-center gap-2 text-white">
@@ -304,6 +324,36 @@ export default function AdminNgoViewPageClient({ ngo, donations }: AdminNgoViewP
                             <p className="text-gray-400">No donors yet.</p>
                         )}
                     </div>
+
+                </div>
+
+
+                {/* Anonymous Donations */}
+                <div className="p-6 rounded-2xl shadow-md bg-[#1e293b] border border-gray-700 col-span-2 flex items-center justify-between hover:shadow-lg transition-all duration-200">
+                    <div className="flex items-center gap-4">
+                        <div className="bg-yellow-100 dark:bg-yellow-900 p-3 rounded-full">
+                            <BiMedal className="text-yellow-500 text-2xl" />
+                        </div>
+                        <div>
+                            <h3 className="text-lg font-semibold text-white tracking-wide">
+                                Anonymous Donations
+                            </h3>
+                            <p className="text-sm text-gray-400">
+                                Total received from anonymous contributors
+                            </p>
+                        </div>
+                    </div>
+
+                    <div className="flex items-center gap-3 bg-gray-800 px-4 py-2 rounded-full">
+                        <img
+                            src="/avatar.png"
+                            alt="Anonymous Avatar"
+                            className="w-8 h-8 rounded-full object-cover"
+                        />
+                        <span className="text-white font-bold text-lg">
+                            ₹{anonymousDonationTotal.toLocaleString()}
+                        </span>
+                    </div>
                 </div>
 
                 {/* NGO Details */}
@@ -359,7 +409,7 @@ export default function AdminNgoViewPageClient({ ngo, donations }: AdminNgoViewP
 
 
             <NGODonationStats ngoId={ngo.id} />
-            <NGODonations donations={donations} />
+            <NGODonations donations={fullDonations as FullDonation[]} />
         </div>
     );
 }

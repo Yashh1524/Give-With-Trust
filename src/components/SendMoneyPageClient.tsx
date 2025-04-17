@@ -4,7 +4,7 @@ import React from 'react'
 import NgoSendMoneyCard from '@/components/NgoSendMoneyCard'
 import SendMoneyToAllButton from '@/components/SendMoneyToAllButton'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
-import { Donation, NGOProfile } from '@prisma/client'
+import { NGOProfile } from '@prisma/client'
 
 interface Props {
     submittedNgos: NGOProfile[]

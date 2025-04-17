@@ -104,18 +104,19 @@ model NGOProfile {
 }
 
 model Donation {
-    id              String         @id @default(cuid())
-    orderId         String
-    paymentId       String
-    donorId         String
-    ngoId           String
-    amount          Float
-    message         String?
-    createdAt       DateTime       @default(now())
-    month           Month
-    year            Int
-    status          DonationStatus @default(HELD)
-    reAssignedNgoId String?
+    id                  String         @id @default(cuid())
+    orderId             String
+    paymentId           String
+    donorId             String
+    ngoId               String
+    amount              Float
+    message             String?
+    createdAt           DateTime       @default(now())
+    month               Month
+    year                Int
+    status              DonationStatus @default(HELD)
+    reAssignedNgoId     String?
+    isAnonymousDonation Boolean        @default(false)
 
     donor         User        @relation("DonorDonations", fields: [donorId], references: [id])
     ngo           NGOProfile  @relation("NgoDonations", fields: [ngoId], references: [id])
@@ -155,7 +156,7 @@ model VoteSession {
     winnerNgoId String?
 
     failedNgo  NGOProfile   @relation("FailedNgo", fields: [failedNgoId], references: [id])
-    winnerNgo  NGOProfile?  @relation("WinnerNgoRelation", fields: [winnerNgoId], references: [id]) // ✅ Added this
+    winnerNgo  NGOProfile?  @relation("WinnerNgoRelation", fields: [winnerNgoId], references: [id])
     candidates NGOProfile[] @relation("VoteSessionCandidates")
     voters     User[]       @relation("VoteSessionVoters")
     votes      Vote[]

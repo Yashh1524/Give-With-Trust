@@ -1,33 +1,21 @@
 'use client'
 
-import { DonationStatus } from '@prisma/client';
+import { Donation, DonationStatus, User, NGOProfile } from '@prisma/client';
 import Link from 'next/link';
 import { useState } from 'react';
 
-type NGODonationsProps = {
-    donations: {
-        id: string;
-        amount: number;
-        message?: string | null;
-        createdAt: Date;
-        status: DonationStatus;
-        reAssignedNgo?: {
-            id: string;
-            name: string;
-        } | null;
-        donor: {
-            id: string;
-            name: string | null;
-            email: string;
-            image: string | null;
-        };
-    }[];
+
+type FullDonation = Donation & {
+    donor: User;
+    reAssignedNgo: NGOProfile | null;
+    ngo: NGOProfile;
 };
 
-export default function NGODonations({ donations }: NGODonationsProps) {
+
+export default function NGODonations({ donations }: { donations: FullDonation[] }) {
     const [showMore, setShowMore] = useState(false);
 
-    // console.log(donations)
+    console.log(donations)
 
     if (donations.length === 0) {
         return <p className="text-sm text-gray-500 mt-4">No donations yet for this NGO.</p>;
@@ -77,25 +65,36 @@ export default function NGODonations({ donations }: NGODonationsProps) {
                         className="flex flex-col md:flex-row items-start gap-4 p-4 rounded-md border bg-white dark:bg-gray-900 dark:border-gray-700 shadow-sm"
                     >
                         <div className="w-12 h-12 rounded-full overflow-hidden border">
-                            {donation.donor.image ? (
+                            {donation.isAnonymousDonation ? (
                                 <img
-                                    src={donation.donor.image}
-                                    alt={donation.donor.name || 'Donor'}
+                                    src="/avatar.png"
+                                    alt='Anonymous Donor'
                                     className="object-cover w-full h-full"
                                 />
                             ) : (
-                                <div className="bg-gray-200 w-full h-full flex items-center justify-center text-gray-500 text-sm">
-                                    ?
-                                </div>
+                                <img
+                                    src={donation.donor.image || "/avatar.png"}
+                                    alt={donation.donor.name || 'Donor'}
+                                    className="object-cover w-full h-full"
+                                />
                             )}
                         </div>
 
                         <div className="flex-1 w-full">
                             <div className="flex items-center justify-between">
                                 <div>
-                                    <Link href={`/profile/${donation.donor.id}`} className="font-semibold text-gray-800 dark:text-white hover:text-purple-700">
-                                        {donation.donor.name}
-                                    </Link>
+                                    {
+                                        donation.isAnonymousDonation ? (
+                                            <p className="font-semibold text-gray-800 dark:text-white select-none">
+                                                *Anonymous Donor*
+                                            </p>
+
+                                        ) : (
+                                            <Link href={`/profile/${donation.donor.id}`} className="font-semibold text-gray-800 dark:text-white hover:text-purple-700">
+                                                {donation.donor.name}
+                                            </Link>
+                                        )
+                                    }
                                 </div>
                                 <div className="text-right">
                                     <p className="text-sm font-semibold text-emerald-600 dark:text-emerald-400">

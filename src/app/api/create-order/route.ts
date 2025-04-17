@@ -10,7 +10,7 @@ const razorpay = new Razorpay({
 export async function POST(req: NextRequest) {
     try {
         const body = await req.json();
-        const { amount, userId, ngoId, message } = body;
+        const { amount, userId, ngoId, message, isAnonymousDonation } = body;
 
         if (!amount || !userId || !ngoId) {
             return NextResponse.json(
@@ -28,6 +28,7 @@ export async function POST(req: NextRequest) {
                 ngoId,
                 message,
                 purpose: "donation",
+                isAnonymousDonation,
             },
         });
 
