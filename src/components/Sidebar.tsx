@@ -3,11 +3,11 @@
 import { useEffect, useState } from "react"
 import { checkIfUserHasNgo, getDbUserId, getUserDetails } from "@/actions/user.action"
 import { Role } from "@prisma/client"
-import { useAuth } from "@clerk/nextjs"
+import { useUser } from "@clerk/nextjs"  // Use useUser instead of useAuth for better reactivity
 import SidebarClient from "./SidebarClient"
 
 export default function Sidebar() {
-    const { isSignedIn } = useAuth()
+    const { isSignedIn, isLoaded } = useUser()  // isLoaded ensures Clerk state is ready
 
     const [userId, setUserId] = useState<string | null>(null)
     const [hasNgo, setHasNgo] = useState(false)
@@ -32,15 +32,23 @@ export default function Sidebar() {
             }
         }
 
-        if (isSignedIn) {
-            fetchUserData()
+        // Only fetch user data if Clerk's isLoaded state is true (i.e., Clerk is initialized)
+        if (isLoaded) {
+            if (isSignedIn) {
+                fetchUserData()
+            } else {
+                // Reset user data when signed out
+                setUserId(null)
+                setHasNgo(false)
+                setUserRole(undefined)
+            }
         }
-    }, [isSignedIn])
+    }, [isSignedIn, isLoaded])  // Re-run effect when isSignedIn or isLoaded changes
 
     return (
         <SidebarClient
             userId={userId}
-            isSignedIn={!!userId}
+            isSignedIn={!!userId}  // Make sure to pass boolean indicating if signed in
             hasNgo={hasNgo}
             userRole={userRole}
         />
