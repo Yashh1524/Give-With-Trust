@@ -142,7 +142,12 @@ export async function updateUserRole(role: Role, userId: string) {
 
 export async function getCurrentUserRole() {
     try {
+        // const userId = await getDbUserId()
+        // const use = await getUserDetails(userId)
+        // return "ADMIN"
+
         const { userId: clerkId } = await auth();
+        
         if (!clerkId) return null;
 
         const user = await getUserByClerkId(clerkId);
@@ -152,6 +157,7 @@ export async function getCurrentUserRole() {
         return user.role
     } catch (error) {
         console.error("Failed to fetch user role")
-        throw new Error("Fetch User role failed.")
+        // throw new Error("Fetch User role failed.")
+        return
     }
 }

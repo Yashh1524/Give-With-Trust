@@ -1,11 +1,11 @@
 "use client"
 
-import { NGOProfile } from '@prisma/client';
+import { NGOProfile, User } from '@prisma/client';
 import React, { useState } from 'react';
 import AdminNgoList from './AdminNgoList';
 
 interface NgoListProps {
-    ngos: NGOProfile[];
+    ngos: (NGOProfile & {user: User})[];
 }
 
 const ApprovedNgoForAdminClient: React.FC<NgoListProps> = ({ ngos }) => {
