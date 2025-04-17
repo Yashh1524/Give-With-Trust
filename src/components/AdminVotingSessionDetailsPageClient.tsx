@@ -5,34 +5,81 @@ import Link from 'next/link'
 import { Progress } from '@/components/ui/progress'
 import { FaRegClock } from 'react-icons/fa'
 import { LuAlarmClockOff } from 'react-icons/lu'
-import { NGOProfile, User } from '@prisma/client'
 import toast from 'react-hot-toast'
 import { endVoteSession } from '@/actions/voting.action'
-import { updateDonationStatusByNgoId } from '@/actions/donation.action'
+import { NGOStatus, Role } from '@prisma/client'
 
-interface Vote {
-    selectedNgoId: string
-    userId: string
+export interface VoteSession {
+    id: string;
+    failedNgoId: string;
+    month: string;
+    year: number;
+    createdAt: Date | string;
+    isOngoing: boolean;
+    winnerNgoId: string | null;
+    failedNgo: NGODetails;
+    candidates: NGODetails[];
+    voters: UserDetails[];
+    votes: Vote[];
 }
 
-interface VotingSession {
-    id: string
-    createdAt: string
-    failedNgo?: NGOProfile
-    isOngoing: boolean
-    candidates: NGOProfile[]
-    voters: User[]
-    votes: Vote[]
+export interface NGODetails {
+    id: string;
+    userId: string;
+    name: string;
+    email: string;
+    establishedDate: string;
+    address: string;
+    contactInfo: string;
+    description: string;
+    approved: boolean;
+    createdAt: Date | string;
+    raisedThisMonth: number;
+    status: NGOStatus;
+    accentTags: string;
+    website: string | null;
+    accountNumber: string;
+    bankName: string;
+    ifscCode: string;
+    accountHolderName: string;
+    upiId: string;
+    logo: string;
+    proofPdf: string;
+    images: string[];
+    user: UserDetails;
+}
+
+export interface UserDetails {
+    id: string;
+    clerkId: string;
+    email: string;
+    username: string;
+    name: string | null;
+    bio: string | null;
+    image: string;
+    role: Role;
+    createdAt: Date | string;
+}
+
+export interface Vote {
+    id: string;
+    userId: string;
+    voteSessionId: string;
+    selectedNgoId: string;
+    createdAt: Date | string;
+    user: UserDetails;
+    selectedNgo: NGODetails;
 }
 
 interface AdminVotingSessionDetailsPageClientProps {
-    voteSession: VotingSession
+    voteSession: VoteSession
 }
 
 const AdminVotingSessionDetailsPageClient: React.FC<AdminVotingSessionDetailsPageClientProps> = ({ voteSession }) => {
     const { failedNgo, candidates, voters, votes, createdAt } = voteSession
     const [timeLeft, setTimeLeft] = useState<string>('')
     const [loading, setLoading] = useState(false)
+    console.log(voteSession);
 
     const totalVotes = voters.length
     const voteCounts = candidates.reduce((acc, ngo) => {

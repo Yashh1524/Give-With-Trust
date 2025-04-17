@@ -3,8 +3,8 @@ import { getVotingSessionBySessionId } from '@/actions/voting.action'
 import { getDbUserId } from '@/actions/user.action'
 import UnauthorizedAccess from '@/components/UnauthorizedAccess'
 
-const page = async ({ params }: { params: { id: string } }) => {
-    const sessionId = params.id
+const page = async ({ params }: { params: Promise<{id: string}> }) => {
+    const sessionId = (await params).id
     const voteSession = await getVotingSessionBySessionId(sessionId)
     const userId = await getDbUserId()
 
