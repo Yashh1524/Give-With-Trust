@@ -24,9 +24,9 @@ const SendMoneyPageClient = ({
     reassignedTotalsByNgo
 }: Props) => {
 
-    console.log("notSubmittedNgos:", notSubmittedNgos);
-    console.log("reassignedDonations:", reassignedDonations);
-    console.log("reassignedTotalsByNgo:", reassignedTotalsByNgo);
+    // console.log("notSubmittedNgos:", notSubmittedNgos);
+    // console.log("reassignedDonations:", reassignedDonations);
+    // console.log("reassignedTotalsByNgo:", reassignedTotalsByNgo);
 
     return (
         <Tabs defaultValue="submitted" className="w-full">

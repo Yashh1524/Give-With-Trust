@@ -33,7 +33,7 @@ export const syncUser = async ({
         }
         revalidatePath("/")
         // If user does not exist, create new user in DB
-        return await prisma.user.create({
+        await prisma.user.create({
             data: {
                 clerkId,
                 name: `${firstName || ""} ${lastName || ""}`.trim(),
@@ -43,6 +43,8 @@ export const syncUser = async ({
                 role: "DONOR"
             },
         });
+        revalidatePath("/")
+
     } catch (error) {
         console.error("Error in syncUser:", error);
         throw new Error("Database operation failed");

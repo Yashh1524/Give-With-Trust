@@ -138,7 +138,7 @@ const SidebarClient = ({ isSignedIn, hasNgo, userId, userRole }: Props) => {
 
                         <div className="mt-4">
                             {isSignedIn ? (
-                                <SignOutButton>
+                                <SignOutButton redirectUrl="/">
                                     <Button
                                         variant="ghost"
                                         className="w-full justify-start text-black dark:text-white"
