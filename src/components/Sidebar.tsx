@@ -1,17 +1,48 @@
+"use client"
 
-import { checkIfUserHasNgo, getDbUserId, getUserDetails } from "@/actions/user.action";
-import SidebarClient from "./SidebarClient";
+import { useEffect, useState } from "react"
+import { checkIfUserHasNgo, getDbUserId, getUserDetails } from "@/actions/user.action"
+import { Role } from "@prisma/client"
+import { useAuth } from "@clerk/nextjs"
+import SidebarClient from "./SidebarClient"
 
-export default async function Sidebar() {
+export default function Sidebar() {
+    const { isSignedIn } = useAuth()
 
-    const userId = await getDbUserId()
-    let hasNgo = false;
+    const [userId, setUserId] = useState<string | null>(null)
+    const [hasNgo, setHasNgo] = useState(false)
+    const [userRole, setUserRole] = useState<Role | undefined>(undefined)
 
-    if (userId) {
-        hasNgo = await checkIfUserHasNgo();
-    }
-    const user = await getUserDetails(userId as string)
+    useEffect(() => {
+        const fetchUserData = async () => {
+            try {
+                const id = await getDbUserId()
+                if (!id) return
+                const user = await getUserDetails(id)
+                const hasNgo = await checkIfUserHasNgo()
 
-    return <SidebarClient userId={userId} isSignedIn={!!userId} hasNgo={hasNgo} userRole={user?.role}/>;
+                setUserId(id)
+                setHasNgo(hasNgo)
+                setUserRole(user?.role)
+            } catch (error) {
+                console.error("Error fetching user data for sidebar:", error)
+                setUserId(null)
+                setHasNgo(false)
+                setUserRole(undefined)
+            }
+        }
+
+        if (isSignedIn) {
+            fetchUserData()
+        }
+    }, [isSignedIn])
+
+    return (
+        <SidebarClient
+            userId={userId}
+            isSignedIn={!!userId}
+            hasNgo={hasNgo}
+            userRole={userRole}
+        />
+    )
 }
-
