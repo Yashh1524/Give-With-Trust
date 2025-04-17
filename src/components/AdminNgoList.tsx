@@ -4,11 +4,12 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Input } from '@/components/ui/input'
 import { Card } from './ui/card'
-import { NGOProfile } from '@prisma/client'
+import { NGOProfile, User } from '@prisma/client'
 
 interface NgoListProps {
-    ngos: NGOProfile[]
+    ngos: (NGOProfile & { user: { name: string | null } })[]; 
 }
+
 
 const AdminNgoList: React.FC<NgoListProps> = ({ ngos }) => {
     const [searchTerm, setSearchTerm] = useState('')
@@ -18,6 +19,7 @@ const AdminNgoList: React.FC<NgoListProps> = ({ ngos }) => {
         ngo.name.toLowerCase().includes(searchTerm.toLowerCase())
     )
 
+    
     return (
         <div>
             <Input
@@ -62,7 +64,7 @@ const AdminNgoList: React.FC<NgoListProps> = ({ ngos }) => {
                                     />
                                     <div className="font-bold text-lg truncate">{ngo.name}</div>
                                     <div className="text-sm text-gray-600 truncate">
-                                        Owner: {ngo.user.name || 'N/A'}
+                                        Owner: {ngo.user?.name|| 'N/A'}
                                     </div>
                                     {ngo.approved && (
                                         <div className={`mt-auto pt-3 text-sm font-semibold ${statusColor}`}>
