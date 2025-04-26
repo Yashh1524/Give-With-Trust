@@ -38,6 +38,10 @@ const ProfileClient: React.FC<Props> = ({ user, currUserId, donations, ngos }) =
     const hasNgos = ngos.length > 0;
     const [selectedTab, setSelectedTab] = useState<'donations' | 'ngos' | 'votes'>('donations');
 
+    const filteredDonations = currUserId === user.id
+        ? donations
+        : donations.filter((donation) => donation.isAnonymousDonation === false);
+
     const getStatusBadge = (status: string) => {
         switch (status) {
             case 'HELD':
@@ -53,6 +57,12 @@ const ProfileClient: React.FC<Props> = ({ user, currUserId, donations, ngos }) =
                     </span>
                 );
             case 'REASSIGNED':
+                return (
+                    <span className="text-xs font-medium text-red-600 bg-red-100 px-2 py-1 rounded">
+                        Reassigned
+                    </span>
+                );
+            case 'REASSIGNED_RELEASED':
                 return (
                     <span className="text-xs font-medium text-red-600 bg-red-100 px-2 py-1 rounded">
                         Reassigned
@@ -108,45 +118,53 @@ const ProfileClient: React.FC<Props> = ({ user, currUserId, donations, ngos }) =
                     </TabsList>
 
                     <TabsContent value="donations" className="mt-6">
-                        {donations.length > 0 ? (
-                            <div className="space-y-4">
-                                {donations.map((donation) => (
-                                    <div
-                                        key={donation.id}
-                                        className="p-4 bg-white dark:bg-[#1f2937] rounded-lg shadow-md border border-gray-200 dark:border-gray-700"
-                                    >
-                                        <div className="flex justify-between items-center">
-                                            <div className="flex items-center gap-3">
-                                                {donation.ngo.logo && (
-                                                    <img
-                                                        src={donation.ngo.logo}
-                                                        alt={donation.ngo.name}
-                                                        className="w-10 h-10 rounded-full object-cover border"
-                                                    />
-                                                )}
-                                                <div>
-                                                    <Link
-                                                        href={`/ngos/${donation.ngo.id}`}
-                                                        className="text-lg font-semibold text-blue-700 dark:text-blue-300"
-                                                    >
-                                                        {donation.ngo.name}
-                                                    </Link>
+                        {filteredDonations.length > 0 ? (
+                            <>
+                                <div className="bg-yellow-50 dark:bg-yellow-900 border border-yellow-300 dark:border-yellow-700 p-4 rounded-xl shadow-sm text-sm text-yellow-800 dark:text-yellow-200 mb-5 font-bold">
+                                        Anonymous Donations are only visible for you
+                                </div>
+                                <div className="space-y-4">
+                                    {filteredDonations.map((donation) => (
+                                        <div
+                                            key={donation.id}
+                                            className="p-4 bg-white dark:bg-[#1f2937] rounded-lg shadow-md border border-gray-200 dark:border-gray-700"
+                                        >
+                                            <div className="flex justify-between items-center">
+                                                <div className="flex items-center gap-3">
+                                                    {donation.ngo.logo && (
+                                                        <img
+                                                            src={donation.ngo.logo}
+                                                            alt={donation.ngo.name}
+                                                            className="w-10 h-10 rounded-full object-cover border"
+                                                        />
+                                                    )}
+                                                    <div>
+                                                        <Link
+                                                            href={`/ngos/${donation.ngo.id}`}
+                                                            className="text-lg font-semibold text-blue-700 dark:text-blue-300"
+                                                        >
+                                                            {donation.ngo.name}
+                                                        </Link>
+                                                        <p className="text-sm text-gray-500 dark:text-gray-400">
+                                                            {donation.message || 'No message'}
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                                <div className="text-right">
+                                                    <p className="text-xl font-bold">₹{donation.amount}</p>
                                                     <p className="text-sm text-gray-500 dark:text-gray-400">
-                                                        {donation.message || 'No message'}
+                                                        {donation.month} {donation.year}
                                                     </p>
+                                                    <div className="mt-1">{getStatusBadge(donation.status)}</div>
+                                                    {donation.isAnonymousDonation && (
+                                                        <div className="mt-1">Anonymous Donation</div>
+                                                    )}
                                                 </div>
                                             </div>
-                                            <div className="text-right">
-                                                <p className="text-xl font-bold">₹{donation.amount}</p>
-                                                <p className="text-sm text-gray-500 dark:text-gray-400">
-                                                    {donation.month} {donation.year}
-                                                </p>
-                                                <div className="mt-1">{getStatusBadge(donation.status)}</div>
-                                            </div>
                                         </div>
-                                    </div>
-                                ))}
-                            </div>
+                                    ))}
+                                </div>
+                            </>
                         ) : (
                             <div className="text-center py-8 text-muted-foreground">No donations yet</div>
                         )}
@@ -180,45 +198,53 @@ const ProfileClient: React.FC<Props> = ({ user, currUserId, donations, ngos }) =
                 // Only Donations
                 <div>
                     <h2 className="text-2xl font-semibold text-gray-800 dark:text-white mb-4">Donation History</h2>
-                    {donations.length > 0 ? (
-                        <div className="space-y-4">
-                            {donations.map((donation) => (
-                                <div
-                                    key={donation.id}
-                                    className="p-4 bg-white dark:bg-[#1f2937] rounded-lg shadow-md border border-gray-200 dark:border-gray-700"
-                                >
-                                    <div className="flex justify-between items-center">
-                                        <div className="flex items-center gap-3">
-                                            {donation.ngo.logo && (
-                                                <img
-                                                    src={donation.ngo.logo}
-                                                    alt={donation.ngo.name}
-                                                    className="w-10 h-10 rounded-full object-cover border"
-                                                />
-                                            )}
-                                            <div>
-                                                <Link
-                                                    href={`/ngos/${donation.ngo.id}`}
-                                                    className="text-lg font-semibold text-blue-700 dark:text-blue-300"
-                                                >
-                                                    {donation.ngo.name}
-                                                </Link>
+                    {filteredDonations.length > 0 ? (
+                        <>
+                            <div className="bg-yellow-50 dark:bg-yellow-900 border border-yellow-300 dark:border-yellow-700 p-4 rounded-xl shadow-sm text-sm text-yellow-800 dark:text-yellow-200 mb-5 font-bold">
+                                Anonymous Donations are only visible for you
+                            </div>
+                            <div className="space-y-4">
+                                {filteredDonations.map((donation) => (
+                                    <div
+                                        key={donation.id}
+                                        className="p-4 bg-white dark:bg-[#1f2937] rounded-lg shadow-md border border-gray-200 dark:border-gray-700"
+                                    >
+                                        <div className="flex justify-between items-center">
+                                            <div className="flex items-center gap-3">
+                                                {donation.ngo.logo && (
+                                                    <img
+                                                        src={donation.ngo.logo}
+                                                        alt={donation.ngo.name}
+                                                        className="w-10 h-10 rounded-full object-cover border"
+                                                    />
+                                                )}
+                                                <div>
+                                                    <Link
+                                                        href={`/ngos/${donation.ngo.id}`}
+                                                        className="text-lg font-semibold text-blue-700 dark:text-blue-300"
+                                                    >
+                                                        {donation.ngo.name}
+                                                    </Link>
+                                                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                                                        {donation.message || 'No message'}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <div className="text-right">
+                                                <p className="text-xl font-bold">₹{donation.amount}</p>
                                                 <p className="text-sm text-gray-500 dark:text-gray-400">
-                                                    {donation.message || 'No message'}
+                                                    {donation.month} {donation.year}
                                                 </p>
+                                                <div className="mt-1">{getStatusBadge(donation.status)}</div>
+                                                {donation.isAnonymousDonation && (
+                                                    <div className="mt-1">Anonymous Donation</div>
+                                                )}
                                             </div>
                                         </div>
-                                        <div className="text-right">
-                                            <p className="text-xl font-bold">₹{donation.amount}</p>
-                                            <p className="text-sm text-gray-500 dark:text-gray-400">
-                                                {donation.month} {donation.year}
-                                            </p>
-                                            <div className="mt-1">{getStatusBadge(donation.status)}</div>
-                                        </div>
                                     </div>
-                                </div>
-                            ))}
-                        </div>
+                                ))}
+                            </div>
+                        </>
                     ) : (
                         <div className="text-center py-8 text-muted-foreground">No donations yet</div>
                     )}

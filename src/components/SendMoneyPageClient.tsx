@@ -37,7 +37,7 @@ const SendMoneyPageClient = ({
 
             <TabsContent value="submitted">
                 {
-                    heldDonations.length > 0 ? (
+                    submittedNgos.length > 0 ? (
                         <div className="p-6">
                             <h1 className="text-xl font-semibold mb-4">Monthly Work Proof Submitted NGOs</h1>
                             <SendMoneyToAllButton
@@ -72,14 +72,13 @@ const SendMoneyPageClient = ({
                     reassignedDonations.length > 0 ? (
                         <div className="p-6">
                             <h1 className="text-xl font-semibold mb-10">Reassigned Donations from NGOs that Didn't Submit Proof</h1>
-
                             {/* List cards where each notSubmittedNgo's donation goes to a reAssignedNgo */}
                             <ul className="space-y-3">
                                 {notSubmittedNgos.map(notSubmittedNgo => {
                                     // Get all donations originally meant for this not-submitted NGO
                                     const relatedDonations = reassignedDonations.filter(
                                         (donation) => donation.ngoId === notSubmittedNgo.id
-                                    );
+                                    ); 
 
                                     // All reassigned donations for this NGO go to one reassigned NGO
                                     const reAssignedNgo = relatedDonations[0]?.reAssignedNgo;
