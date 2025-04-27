@@ -161,7 +161,7 @@ const MobileSidebar = ({
                                     className="flex items-center gap-3 justify-start"
                                     asChild
                                 >
-                                    <Link href="/notifications">
+                                    <Link href="/voting-session">
                                         <FaVoteYea className="w-4 h-4" />
                                         Voting Sessions
                                     </Link>
