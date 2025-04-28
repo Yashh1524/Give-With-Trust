@@ -114,41 +114,45 @@ const VotingSessionListAdminClient: React.FC<Props> = ({
                         3
                     );
 
-                    const createdSession = await createVotingSession({
-                        failedNgoId: ngo.id,
-                        voters,
-                        candidates: selectedNgoIds,
-                    });
-
-                    // console.log("Created session", createdSession);
-
-                    const emailed = new Set<string>();
-                    for (const voter of voters) {
-                        if (emailed.has(voter)) continue;
-                        emailed.add(voter);
-
-                        const voterDetails = await getUserDetails(voter);
-                        if (!voterDetails?.email) continue;
-
-                        await fetch('/api/send-new-voting-session-email', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({
-                                to: voterDetails.email,
-                                failedNgoName: ngo.name,
-                                sessionId: createdSession.id,
-                            }),
+                    if (selectedNgoIds.length === 0) {
+                        toast.error("No subbmitted NGOs found")
+                    } else {
+                        const createdSession = await createVotingSession({
+                            failedNgoId: ngo.id,
+                            voters,
+                            candidates: selectedNgoIds,
                         });
 
-                        await new Promise(res => setTimeout(res, 500));
+                        // console.log("Created session", createdSession);
+
+                        const emailed = new Set<string>();
+                        for (const voter of voters) {
+                            if (emailed.has(voter)) continue;
+                            emailed.add(voter);
+
+                            const voterDetails = await getUserDetails(voter);
+                            if (!voterDetails?.email) continue;
+
+                            await fetch('/api/send-new-voting-session-email', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({
+                                    to: voterDetails.email,
+                                    failedNgoName: ngo.name,
+                                    sessionId: createdSession.id,
+                                }),
+                            });
+
+                            await new Promise(res => setTimeout(res, 500));
+                        }
+                        toast.success("Voting sessions created successfully");
+                        fetchAllVotingSessions();
+                        setDialogOpen(false);
+                        setSelectedNgos([]);
+                        setSelectAll(false);
                     }
                 }
 
-                toast.success("Voting sessions created successfully");
-                fetchAllVotingSessions();
-                setDialogOpen(false);
-                setSelectedNgos([]);
-                setSelectAll(false);
             } catch (error) {
                 toast.error("Failed to create voting session");
                 console.error(error);
@@ -294,8 +298,8 @@ const VotingSessionListAdminClient: React.FC<Props> = ({
                             session.isOngoing && (
                                 <button
                                     className={`my-3 px-4 py-3 rounded-lg text-white font-medium transition-all duration-300 ${loadingSessionId === session.id
-                                            ? 'bg-red-400 cursor-not-allowed'
-                                            : 'bg-red-600 hover:bg-red-700'
+                                        ? 'bg-red-400 cursor-not-allowed'
+                                        : 'bg-red-600 hover:bg-red-700'
                                         }`}
                                     onClick={() => handleEndSession(session.id)}
                                     disabled={loadingSessionId === session.id}

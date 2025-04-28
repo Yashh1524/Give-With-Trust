@@ -17,6 +17,8 @@ export async function createVotingSession(session: {
         const month = Month[now.toLocaleString("default", { month: "long" }).toUpperCase() as keyof typeof Month]
         const year = now.getFullYear()
 
+        if(session.candidates.length === 0) throw new Error ("No submitted NGO found")
+
         const votingSession = await prisma.voteSession.create({
             data: {
                 failedNgoId: session.failedNgoId,
