@@ -120,9 +120,13 @@ const ProfileClient: React.FC<Props> = ({ user, currUserId, donations, ngos }) =
                     <TabsContent value="donations" className="mt-6">
                         {filteredDonations.length > 0 ? (
                             <>
-                                <div className="bg-yellow-50 dark:bg-yellow-900 border border-yellow-300 dark:border-yellow-700 p-4 rounded-xl shadow-sm text-sm text-yellow-800 dark:text-yellow-200 mb-5 font-bold">
-                                        Anonymous Donations are only visible for you
-                                </div>
+                                {
+                                    currUserId === user.id && (
+                                        <div className="bg-yellow-50 dark:bg-yellow-900 border border-yellow-300 dark:border-yellow-700 p-4 rounded-xl shadow-sm text-sm text-yellow-800 dark:text-yellow-200 mb-5 font-bold">
+                                                Anonymous Donations are only visible for you
+                                        </div>
+                                    )
+                                }
                                 <div className="space-y-4">
                                     {filteredDonations.map((donation) => (
                                         <div
@@ -200,9 +204,13 @@ const ProfileClient: React.FC<Props> = ({ user, currUserId, donations, ngos }) =
                     <h2 className="text-2xl font-semibold text-gray-800 dark:text-white mb-4">Donation History</h2>
                     {filteredDonations.length > 0 ? (
                         <>
-                            <div className="bg-yellow-50 dark:bg-yellow-900 border border-yellow-300 dark:border-yellow-700 p-4 rounded-xl shadow-sm text-sm text-yellow-800 dark:text-yellow-200 mb-5 font-bold">
-                                Anonymous Donations are only visible for you
-                            </div>
+                            {
+                                currUserId === user.id && (
+                                    <div className="bg-yellow-50 dark:bg-yellow-900 border border-yellow-300 dark:border-yellow-700 p-4 rounded-xl shadow-sm text-sm text-yellow-800 dark:text-yellow-200 mb-5 font-bold">
+                                        Anonymous Donations are only visible for you
+                                    </div>
+                                )
+                            }
                             <div className="space-y-4">
                                 {filteredDonations.map((donation) => (
                                     <div
