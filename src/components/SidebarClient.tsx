@@ -24,7 +24,7 @@ import {
     TbLayoutSidebarLeftExpand,
     TbLayoutSidebarRightExpand,
 } from "react-icons/tb";
-import { IoMdNotifications } from 'react-icons/io';
+import { BsPersonHearts } from "react-icons/bs";
 import { useSidebar } from "@/context/SidebarContext";
 import { Role } from "@prisma/client";
 import { RiAdminFill } from "react-icons/ri";
@@ -89,6 +89,15 @@ const SidebarClient = () => {
                                 className="w-full justify-start text-black dark:text-white"
                             >
                                 <PiBuildingOfficeFill /> NGOs
+                            </Button>
+                        </Link>
+
+                        <Link href="/donors">
+                            <Button
+                                variant="ghost"
+                                className="w-full justify-start text-black dark:text-white"
+                            >
+                                <BsPersonHearts /> Top Donors
                             </Button>
                         </Link>
 

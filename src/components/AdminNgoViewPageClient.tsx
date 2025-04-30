@@ -12,11 +12,12 @@ import {
     BiMedal
 } from 'react-icons/bi';
 import NGODonationStats from './NGODonationStats';
-import { FaDonate } from 'react-icons/fa';
+import { FaDonate, FaFilePdf } from 'react-icons/fa';
 import { MdDoNotDisturbAlt, MdOutlinePendingActions } from 'react-icons/md';
 import toast from 'react-hot-toast';
 import NGODonations from './NGODonations';
 import { format } from 'date-fns';
+import MonthlyProofs from './MonthlyProofs';
 
 type FullDonation = Donation & {
     donor: User;
@@ -46,6 +47,7 @@ interface AdminNgoViewPageClientProps {
         accountHolderName: string | null;
         upiId: string | null;
         website: string | null;
+        proofPdf: string | null;
         proofs: Proof[];
         user: {
             id: string;
@@ -58,10 +60,11 @@ interface AdminNgoViewPageClientProps {
         };
     };
     donations: (Donation & { donor: User })[];
-    payouts: (Payout & { ngo: NGOProfile })[]
+    payouts: (Payout & { ngo: NGOProfile })[];
+    monthlyWorkProofs: Proof[]
 }
 
-export default function AdminNgoViewPageClient({ ngo, donations, payouts }: AdminNgoViewPageClientProps) {
+export default function AdminNgoViewPageClient({ ngo, donations, payouts,  monthlyWorkProofs }: AdminNgoViewPageClientProps) {
     const [status, setStatus] = useState<NGOStatus>(ngo.status);
     const [accentTags, setAccentTags] = useState<AccentTag>(ngo.accentTags);
     const [approved, setApproved] = useState<boolean>(ngo.approved);
@@ -247,7 +250,7 @@ export default function AdminNgoViewPageClient({ ngo, donations, payouts }: Admi
                     </div>
                 </div>
             </div>
-
+            
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {/* Key Insights */}
                 <div className="col-span-2 lg:col-span-2 p-6 bg-[#1e293b] rounded-2xl shadow space-y-4">
@@ -373,6 +376,26 @@ export default function AdminNgoViewPageClient({ ngo, donations, payouts }: Admi
                             </a>
                         </p>
                     )}
+
+                    {/* Proof PDF of NGO */}
+                    {ngo.proofPdf && (
+                        <div className="flex flex-wrap gap-4">
+                            <a
+                            href={ngo.proofPdf}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center gap-3 p-4 mt-3 bg-white border border-gray-200 shadow-sm rounded-lg hover:shadow-md hover:border-red-500 transition-all duration-200 group"
+                            >
+                            <div className="text-red-600 group-hover:text-red-700 text-xl">
+                                <FaFilePdf />
+                            </div>
+                            <span className="text-sm font-medium text-gray-700 group-hover:text-red-700">
+                                View NGO proof PDF
+                            </span>
+                            </a>
+                        </div>
+                    )}
+
                 </div>
 
                 {/* Payment Details */}
@@ -405,6 +428,15 @@ export default function AdminNgoViewPageClient({ ngo, donations, payouts }: Admi
                 )}
             </div>
 
+            {/* Monthly Work Proofs */}
+            {
+                monthlyWorkProofs.length > 0 && (
+                    <div className='mt-5'>
+                        <MonthlyProofs proofs={monthlyWorkProofs} ngoId={ngo.id}/>
+                    </div>
+                )
+            }
+
             <NGODonationStats ngoId={ngo.id} />
             <NGODonations donations={fullDonations as FullDonation[]} />
 
@@ -421,7 +453,9 @@ export default function AdminNgoViewPageClient({ ngo, donations, payouts }: Admi
                                     className="rounded-full object-cover border h-10 w-10"
                                 />
                                 <div>
-                                    <h2 className="font-semibold text-lg">{payout.ngo.name}</h2>
+                                    <Link href={`/ngos/${payout.ngoId}`}>
+                                        <h2 className="font-semibold text-lg">{payout.ngo.name}</h2>
+                                    </Link>
                                     <p className="text-sm text-gray-500">{payout.ngo.address}</p>
                                 </div>
                             </div>
