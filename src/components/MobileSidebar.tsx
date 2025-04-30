@@ -31,6 +31,7 @@ import { checkIfUserHasNgo, getDbUserId, getUserDetails } from "@/actions/user.a
 import { Role } from "@prisma/client";
 import { RiAdminFill } from "react-icons/ri";
 import { FaVoteYea } from "react-icons/fa";
+import { BsPersonHearts } from "react-icons/bs";
 
 const MobileSidebar = ({
     open,
@@ -103,6 +104,17 @@ const MobileSidebar = ({
                             <Link href="/ngos">
                                 <Building2Icon className="w-4 h-4" />
                                 NGOs
+                            </Link>
+                        </Button>
+
+                        <Button
+                            variant="ghost"
+                            className="flex items-center gap-3 justify-start"
+                            asChild
+                        >
+                            <Link href="/donors">
+                                <BsPersonHearts className="w-4 h-4"/> 
+                                Top Donors
                             </Link>
                         </Button>
 
