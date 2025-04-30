@@ -209,3 +209,24 @@ export async function updateDonationStatusByNgoId(
         throw new Error("Failed to update donation status by ngoId.")
     }
 }
+
+export async function getAllNoneAnonymousDonations() {
+    try {
+        return await prisma.donation.findMany({
+            where: {isAnonymousDonation: false},
+            include: {
+                donor: {
+                    select: {
+                        id: true,
+                        name: true,
+                        email: true,
+                        image: true,
+                    }
+                }
+            }
+        })
+    } catch (error) {
+        console.error("Error fetching none anonymous donations", error)
+        throw new Error("Failed to fetch none anonymous donations.")
+    }
+}
