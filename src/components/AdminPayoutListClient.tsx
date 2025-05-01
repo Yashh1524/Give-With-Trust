@@ -3,6 +3,7 @@
 import React from 'react'
 import { Payout, NGOProfile } from '@prisma/client'
 import { format } from 'date-fns'
+import Link from 'next/link'
 
 interface Props {
     payouts: (Payout & { ngo: NGOProfile })[]
@@ -28,7 +29,9 @@ const AdminPayoutListClient = ({ payouts }: Props) => {
                                         className="rounded-full object-cover border h-10 w-10"
                                     />
                                     <div>
-                                        <h2 className="font-semibold text-lg">{payout.ngo.name}</h2>
+                                        <Link href={`/ngos/${payout.ngoId}`}>
+                                            <h2 className="font-semibold text-lg hover:text-purple-500">{payout.ngo.name}</h2>
+                                        </Link>
                                         <p className="text-sm text-gray-500">{payout.ngo.address}</p>
                                     </div>
                                 </div>

@@ -227,7 +227,6 @@ export async function calculateAndUpdateRaisedThisMonth(ngoId: string) {
     }
 }
 
-
 export async function updateTotamAmountRaisedThisMonth(ngoId: string, amount: number) {
     try {
         await prisma.nGOProfile.update({

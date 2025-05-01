@@ -31,6 +31,9 @@ export async function getAllPayouts() {
         return await prisma.payout.findMany({
             include: {
                 ngo: true
+            },
+            orderBy: {
+                createdAt: "desc"
             }
         })
     } catch (error) {
@@ -45,6 +48,9 @@ export async function getPayoutsByNgoId(ngoId: string) {
             where: {ngoId: ngoId},
             include: {
                 ngo: true
+            },
+            orderBy: {
+                createdAt: "desc"
             }
         })
 

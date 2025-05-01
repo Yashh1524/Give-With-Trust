@@ -32,28 +32,28 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="bg-white dark:bg-[#100f1b] text-white px-4 sm:px-6 lg:px-8 py-3">
+    <div className="bg-white dark:bg-[#100f1b] text-white px-4 sm:px-6 lg:px-8 pb-3">
       {/* Quote Section */}
       <motion.div
-        className="max-w-4xl mx-auto text-center mb-10"
+        className="max-w-4xl mx-auto text-center mb-5"
         initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8 }}
       >
-        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 text-primary">
+        <h1 className="text-xl sm:text-2xl md:text-3xl font-bold mb-4 text-primary">
           “Transparency builds trust. Trust powers change.”
         </h1>
-        <p className="text-muted-foreground text-sm sm:text-base md:text-lg">
+        <p className="text-muted-foreground text-sm sm:text-base md:text-md">
           GiveWithTrust ensures every donation is backed by proof. We verify NGOs,
           track impact, and empower donors to make meaningful choices.
         </p>
       </motion.div>
 
       {/* Bento Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 max-w-7xl mx-auto">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 max-w-7xl mx-auto">
         {/* Total Impact */}
         <motion.div
-          className="col-span-1 sm:col-span-2 lg:col-span-3 rounded-2xl py-4 px-6 sm:px-8 bg-blue-200 shadow-md hover:scale-[1.01] transition text-gray-900 relative overflow-hidden"
+          className="col-span-1 sm:col-span-2 lg:col-span-3 rounded-2xl py-3 px-6 sm:px-8 bg-blue-200 shadow-md hover:scale-[1.01] transition text-gray-900 relative overflow-hidden"
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2, duration: 0.6 }}
@@ -78,7 +78,7 @@ export default function Home() {
 
         {/* Featured NGO */}
         <motion.div
-          className="lg:col-span-2 rounded-2xl px-6 sm:px-8 py-4 shadow-md hover:scale-[1.01] transition text-gray-900 relative overflow-hidden bg-yellow-100"
+          className="lg:col-span-2 rounded-2xl px-6 sm:px-8 py-3 shadow-md hover:scale-[1.01] transition text-gray-900 relative overflow-hidden bg-yellow-100"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3, duration: 0.5 }}
@@ -102,7 +102,7 @@ export default function Home() {
 
         {/* What We Do */}
         <motion.div
-          className="rounded-2xl px-6 sm:px-8 py-4 shadow-md hover:scale-[1.01] transition text-gray-900 relative overflow-hidden bg-cyan-100"
+          className="rounded-2xl px-6 sm:px-8 py-3 shadow-md hover:scale-[1.01] transition text-gray-900 relative overflow-hidden bg-cyan-100"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4, duration: 0.5 }}
@@ -126,7 +126,7 @@ export default function Home() {
 
         {/* All NGOs */}
         <motion.div
-          className="rounded-2xl px-6 sm:px-8 py-4 shadow-md hover:scale-[1.01] transition text-gray-900 relative overflow-hidden bg-emerald-100"
+          className="rounded-2xl px-6 sm:px-8 py-3 shadow-md hover:scale-[1.01] transition text-gray-900 relative overflow-hidden bg-emerald-100"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5, duration: 0.5 }}
@@ -150,7 +150,7 @@ export default function Home() {
 
         {/* Top Donors */}
         <motion.div
-          className="rounded-2xl px-6 sm:px-8 py-4 shadow-md hover:scale-[1.01] transition text-gray-900 relative overflow-hidden bg-pink-100"
+          className="rounded-2xl px-6 sm:px-8 py-3 shadow-md hover:scale-[1.01] transition text-gray-900 relative overflow-hidden bg-pink-100"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6, duration: 0.5 }}
@@ -174,7 +174,7 @@ export default function Home() {
 
         {/* Why Trust Us */}
         <motion.div
-          className="relative rounded-2xl px-6 sm:px-8 py-4 bg-[#ffeee8] shadow-md hover:scale-[1.02] transition text-gray-800 border overflow-hidden"
+          className="relative rounded-2xl px-6 sm:px-8 py-3 bg-[#ffeee8] shadow-md hover:scale-[1.02] transition text-gray-800 border overflow-hidden"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.7, duration: 0.5 }}
