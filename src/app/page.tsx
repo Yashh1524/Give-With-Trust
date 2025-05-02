@@ -76,28 +76,28 @@ export default function Home() {
           <div className="absolute right-4 bottom-4 text-6xl opacity-10 select-none">💸</div>
         </motion.div>
 
-        {/* Featured NGO */}
+        {/* All NGOs */}
         <motion.div
-          className="lg:col-span-2 rounded-2xl px-6 sm:px-8 py-3 shadow-md hover:scale-[1.01] transition text-gray-900 relative overflow-hidden bg-yellow-100"
+          className="lg:col-span-2 rounded-2xl px-6 sm:px-8 py-3 shadow-md hover:scale-[1.01] transition text-gray-900 relative overflow-hidden bg-emerald-100"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3, duration: 0.5 }}
+          transition={{ delay: 0.5, duration: 0.5 }}
         >
           <div className="flex flex-col justify-between h-full">
             <div>
-              <h2 className="text-xl font-bold mb-2 text-yellow-800">🌟 Featured NGO</h2>
-              <p className="text-base text-yellow-900">
-                Discover the NGO of the month and the real-world impact they're creating.
+              <h2 className="text-xl font-bold mb-2 text-emerald-800">🏢 All NGOs</h2>
+              <p className="text-base text-emerald-900">
+                View the full list of verified NGOs and their current impact reports.
               </p>
             </div>
             <Link
-              href="/featured-ngo"
-              className="mt-4 inline-block text-sm font-semibold text-yellow-800 hover:underline hover:text-yellow-900"
+              href="/ngos"
+              className="mt-4 inline-block text-sm font-semibold text-emerald-800 hover:underline hover:text-emerald-900"
             >
-              View More →
+              Show All →
             </Link>
           </div>
-          <div className="absolute right-4 bottom-4 text-5xl opacity-10 select-none">🏅</div>
+          <div className="absolute right-4 bottom-4 text-5xl opacity-10 select-none">🏷️</div>
         </motion.div>
 
         {/* What We Do */}
@@ -124,33 +124,29 @@ export default function Home() {
           <div className="absolute right-4 bottom-4 text-5xl opacity-10 select-none">📘</div>
         </motion.div>
 
-        {/* All NGOs */}
+        {/* Why Trust Us */}
         <motion.div
-          className="rounded-2xl px-6 sm:px-8 py-3 shadow-md hover:scale-[1.01] transition text-gray-900 relative overflow-hidden bg-emerald-100"
+          className="relative rounded-2xl px-6 sm:px-8 py-3 bg-[#ffeee8] shadow-md hover:scale-[1.02] transition text-gray-800 border overflow-hidden"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5, duration: 0.5 }}
+          transition={{ delay: 0.7, duration: 0.5 }}
         >
-          <div className="flex flex-col justify-between h-full">
-            <div>
-              <h2 className="text-xl font-bold mb-2 text-emerald-800">🏢 All NGOs</h2>
-              <p className="text-base text-emerald-900">
-                View the full list of verified NGOs and their current impact reports.
-              </p>
-            </div>
-            <Link
-              href="/ngos"
-              className="mt-4 inline-block text-sm font-semibold text-emerald-800 hover:underline hover:text-emerald-900"
-            >
-              Show All →
-            </Link>
+          <h2 className="text-lg sm:text-xl font-semibold mb-4 flex items-center gap-2 text-orange-800">
+            🔐 Why Trust Us?
+          </h2>
+          <ul className="space-y-2 text-sm text-orange-900">
+            <li className="flex items-center gap-2">✅ Verified NGOs</li>
+            <li className="flex items-center gap-2">🔍 Proof-based release</li>
+            <li className="flex items-center gap-2">📊 Transparent reports</li>
+          </ul>
+          <div className="absolute right-4 bottom-4 text-5xl opacity-10 select-none pointer-events-none">
+            🛡️
           </div>
-          <div className="absolute right-4 bottom-4 text-5xl opacity-10 select-none">🏷️</div>
         </motion.div>
-
+        
         {/* Top Donors */}
         <motion.div
-          className="rounded-2xl px-6 sm:px-8 py-3 shadow-md hover:scale-[1.01] transition text-gray-900 relative overflow-hidden bg-pink-100"
+          className="lg:col-span-2 rounded-2xl px-6 sm:px-8 py-3 shadow-md hover:scale-[1.01] transition text-gray-900 relative overflow-hidden bg-pink-100"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6, duration: 0.5 }}
@@ -172,25 +168,6 @@ export default function Home() {
           <div className="absolute right-4 bottom-4 text-5xl opacity-10 select-none">💖</div>
         </motion.div>
 
-        {/* Why Trust Us */}
-        <motion.div
-          className="relative rounded-2xl px-6 sm:px-8 py-3 bg-[#ffeee8] shadow-md hover:scale-[1.02] transition text-gray-800 border overflow-hidden"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.7, duration: 0.5 }}
-        >
-          <h2 className="text-lg sm:text-xl font-semibold mb-4 flex items-center gap-2 text-orange-800">
-            🔐 Why Trust Us?
-          </h2>
-          <ul className="space-y-2 text-sm text-orange-900">
-            <li className="flex items-center gap-2">✅ Verified NGOs</li>
-            <li className="flex items-center gap-2">🔍 Proof-based release</li>
-            <li className="flex items-center gap-2">📊 Transparent reports</li>
-          </ul>
-          <div className="absolute right-4 bottom-4 text-5xl opacity-10 select-none pointer-events-none">
-            🛡️
-          </div>
-        </motion.div>
       </div>
     </div>
   );
