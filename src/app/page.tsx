@@ -3,11 +3,15 @@
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import ChatBot from "@/components/ChatBot";
+import { TbMessageChatbot } from "react-icons/tb";
+import { IoCloseSharp } from "react-icons/io5";
 
 export default function Home() {
   const [amount, setAmount] = useState(0);
   const [ngos, setNgos] = useState(0);
   const [donors, setDonors] = useState(0);
+  const [isChatBotOpen, setIsChatBotOpen] = useState(false)
 
   useEffect(() => {
     const animateValue = (target: number, setter: (val: number) => void) => {
@@ -143,7 +147,7 @@ export default function Home() {
             🛡️
           </div>
         </motion.div>
-        
+
         {/* Top Donors */}
         <motion.div
           className="lg:col-span-2 rounded-2xl px-6 sm:px-8 py-3 shadow-md hover:scale-[1.01] transition text-gray-900 relative overflow-hidden bg-pink-100"
@@ -167,8 +171,18 @@ export default function Home() {
           </div>
           <div className="absolute right-4 bottom-4 text-5xl opacity-10 select-none">💖</div>
         </motion.div>
-
       </div>
+
+      {/* Chat Bot */}
+      <div className="absolute h-12 w-12 bg-[#1b5e7b] bottom-10 right-10 rounded-full flex items-center justify-center cursor-pointer"
+        onClick={() => setIsChatBotOpen(!isChatBotOpen)}>
+          {
+            isChatBotOpen 
+              ? < IoCloseSharp size={25}/>
+              : <TbMessageChatbot size={25}/>
+          }
+      </div>
+      <ChatBot isOpen={isChatBotOpen} onClose={() => setIsChatBotOpen(false)} />
     </div>
   );
 }
