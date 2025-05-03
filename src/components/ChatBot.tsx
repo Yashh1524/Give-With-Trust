@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { IoCloseSharp } from "react-icons/io5";
 
 type Message = {
     from: "user" | "bot";
@@ -51,9 +52,9 @@ export default function ChatBot({ isOpen, onClose }: { isOpen: boolean; onClose:
                 <span className="font-semibold text-sm sm:text-base">💬 Chat Assistant</span>
                 <button
                     onClick={onClose}
-                    className="text-sm text-gray-500 hover:text-red-500 transition"
+                    className="cursor-pointer"
                 >
-                    ✕
+                    <IoCloseSharp size={25} className="text-white"/>
                 </button>
             </div>
 
