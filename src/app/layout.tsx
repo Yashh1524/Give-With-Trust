@@ -8,6 +8,7 @@ import Sidebar from "@/components/Sidebar";
 import Footer from "@/components/Footer";
 import { Toaster } from 'react-hot-toast'
 import { SidebarProvider } from "@/context/SidebarContext";
+import ChatBotWrapper from "@/components/ChatBotWrapper";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -46,7 +47,9 @@ export default function RootLayout({
                     {children}
                   </main>
                 </div>
+
               </div>
+              <ChatBotWrapper />
               <Toaster />
             </body>
           </html>
