@@ -75,6 +75,7 @@ const MobileSidebar = ({
                 <div className="mt-6 space-y-4">
                     <nav className="flex flex-col space-y-4 mt-2">
                         <Button
+                            onClick={onClose}
                             variant="ghost"
                             className="flex items-center gap-3 justify-start"
                             asChild
@@ -86,6 +87,7 @@ const MobileSidebar = ({
                         </Button>
 
                         <Button
+                            onClick={onClose}
                             variant="ghost"
                             className="flex items-center gap-3 justify-start"
                             asChild
@@ -97,6 +99,7 @@ const MobileSidebar = ({
                         </Button>
 
                         <Button
+                            onClick={onClose}
                             variant="ghost"
                             className="flex items-center gap-3 justify-start"
                             asChild
@@ -108,6 +111,7 @@ const MobileSidebar = ({
                         </Button>
 
                         <Button
+                            onClick={onClose}
                             variant="ghost"
                             className="flex items-center gap-3 justify-start"
                             asChild
@@ -123,6 +127,7 @@ const MobileSidebar = ({
                                 {hasNgo ? (
                                     <>
                                         <Button
+                            onClick={onClose}
                                             variant="ghost"
                                             className="flex items-center gap-3 justify-start"
                                             asChild
@@ -133,6 +138,7 @@ const MobileSidebar = ({
                                             </Link>
                                         </Button>
                                         <Button
+                            onClick={onClose}
                                             variant="ghost"
                                             className="flex items-center gap-3 justify-start"
                                             asChild
@@ -145,6 +151,7 @@ const MobileSidebar = ({
                                     </>
                                 ) : (
                                     <Button
+                            onClick={onClose}
                                         variant="ghost"
                                         className="flex items-center gap-3 justify-start"
                                         asChild
@@ -160,6 +167,7 @@ const MobileSidebar = ({
                                     userRole === "ADMIN" && (
                                         <Link href="/admin-dashboard">
                                             <Button
+                            onClick={onClose}
                                                 variant="ghost"
                                                 className="w-full justify-start text-black dark:text-white"
                                             >
@@ -169,6 +177,7 @@ const MobileSidebar = ({
                                     )
                                 }
                                 <Button
+                            onClick={onClose}
                                     variant="ghost"
                                     className="flex items-center gap-3 justify-start"
                                     asChild
@@ -180,6 +189,7 @@ const MobileSidebar = ({
                                 </Button>
 
                                 <Button
+                            onClick={onClose}
                                     variant="ghost"
                                     className="flex items-center gap-3 justify-start"
                                     asChild
@@ -192,6 +202,7 @@ const MobileSidebar = ({
 
                                 <SignOutButton>
                                     <Button
+                            onClick={onClose}
                                         variant="ghost"
                                         className="flex items-center gap-3 justify-start w-full"
                                     >
@@ -206,6 +217,7 @@ const MobileSidebar = ({
                             <>
                                 <SignInButton mode="modal">
                                     <Button
+                            onClick={onClose}
                                         variant="default"
                                         className="flex items-center gap-3 justify-center mx-5"
                                     >
@@ -216,6 +228,7 @@ const MobileSidebar = ({
 
                                 <SignUpButton mode="modal">
                                     <Button
+                            onClick={onClose}
                                         variant="default"
                                         className="flex items-center gap-3 justify-center mx-5"
                                     >
