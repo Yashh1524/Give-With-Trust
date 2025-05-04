@@ -148,6 +148,7 @@ export default function ChatBot({
                                         <div className="flex flex-col gap-1 mt-2">
                                             {msg.buttons.map((btn, i) => (
                                                 <Link
+                                                    onClick={onClose}
                                                     key={i}
                                                     href={btn.url}
                                                     className="block w-full px-4 py-2 rounded-md bg-gray-300 dark:bg-gray-500 text-gray-800 dark:text-gray-100 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors duration-200 text-sm font-medium shadow-sm"
