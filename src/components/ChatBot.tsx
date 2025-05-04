@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { IoCloseSharp } from "react-icons/io5";
 import { getGeminiResponse } from "@/actions/gemini.action";
 import { getNGOsByStatus } from "@/actions/ngo.action";
+import Link from "next/link";
 
 type NGO = {
     id: string;
@@ -13,8 +14,9 @@ type NGO = {
 
 type Message = {
     from: "user" | "bot";
-    text: string;
+    text?: string;
     time: string;
+    buttons?: { name: string; url: string }[];
 };
 
 const getCurrentTime = () =>
@@ -58,13 +60,22 @@ export default function ChatBot({
 
                 const response = await getGeminiResponse(pendingQuery, formattedNgos);
 
-                const botText = `${response.message}\n\n🔎 Recommended NGOs:\n${response.ngos
-                    .map((n) => `• ${n.name} — ${n.des}`)
-                    .join("\n")}`;
+                const buttons =
+                    response.ngos?.length > 0
+                        ? response.ngos.map((ngo: NGO) => ({
+                            name: ngo.name,
+                            url: `/ngos/${ngo.id}`,
+                        }))
+                        : undefined;
 
                 setMessages((prev) => [
                     ...prev,
-                    { from: "bot", text: botText, time: getCurrentTime() },
+                    {
+                        from: "bot",
+                        text: response.message,
+                        buttons,
+                        time: getCurrentTime(),
+                    },
                 ]);
             } catch (err) {
                 console.error("Gemini chatbot error:", err);
@@ -122,19 +133,40 @@ export default function ChatBot({
                         className={`flex flex-col ${msg.from === "user" ? "items-end" : "items-start"
                             }`}
                     >
-                        <div
-                            className={`px-4 py-2 rounded-lg text-sm sm:text-base max-w-[80%] shadow ${msg.from === "bot"
+                        {(msg.text || msg.buttons) && (
+                            <div
+                                className={`px-4 py-2 rounded-lg text-sm sm:text-base max-w-[80%] shadow space-y-2 ${msg.from === "bot"
                                     ? "bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-100"
                                     : "bg-blue-600 text-white"
-                                }`}
-                        >
-                            {msg.text}
-                        </div>
+                                    }`}
+                            >
+                                <div>
+                                    {msg.text}
+
+                                    {msg.buttons && msg.buttons.length > 0 && (
+                                        <div className="flex flex-col gap-1 mt-2">
+                                            {msg.buttons.map((btn, i) => (
+                                                <Link
+                                                    key={i}
+                                                    href={btn.url}
+                                                    className="block w-full px-4 py-2 rounded-md bg-gray-300 dark:bg-gray-500 text-gray-800 dark:text-gray-100 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors duration-200 text-sm font-medium shadow-sm"
+                                                >
+                                                    {btn.name}
+                                                </Link>
+
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        )}
+
                         <span className="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400 mt-1">
                             {msg.time}
                         </span>
                     </div>
                 ))}
+
                 {loading && (
                     <div className="text-sm text-gray-500 dark:text-gray-400 italic">
                         Bot is typing...
