@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { IoCloseSharp } from "react-icons/io5";
 import { getGeminiResponse } from "@/actions/gemini.action";
-import { getNGOsByStatus } from "@/actions/ngo.action";
+import { getAllNgo, getNGOsByStatus } from "@/actions/ngo.action";
 import Link from "next/link";
 
 type NGO = {
@@ -51,7 +51,8 @@ export default function ChatBot({
         const fetchBotResponse = async () => {
             setLoading(true);
             try {
-                const ngos = await getNGOsByStatus("PENDING");
+                // const ngos = await getNGOsByStatus("PENDING");
+                const ngos = await getAllNgo();
                 const formattedNgos: NGO[] = ngos.map((ngo: any) => ({
                     id: ngo.id,
                     name: ngo.name,
