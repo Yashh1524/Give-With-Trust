@@ -230,3 +230,18 @@ export async function getAllNoneAnonymousDonations() {
         throw new Error("Failed to fetch none anonymous donations.")
     }
 }
+
+export async function getTotalRaisedAmount() {
+    try {
+        const result = await prisma.donation.aggregate({
+            _sum: {
+                amount: true,
+            },
+        });
+
+        return result._sum.amount || 0;
+    } catch (error) {
+        console.error("Error calculating total raised amount", error);
+        throw new Error("Failed to calculate total raised amount.");
+    }
+}
