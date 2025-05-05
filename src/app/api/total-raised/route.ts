@@ -7,8 +7,13 @@ import { NextResponse } from "next/server";
 export async function GET() {
     try {
         const totalAmountRaised = await getTotalRaisedAmount();
-
-        return NextResponse.json({ amount: totalAmountRaised });
+        const totalNGOCount = await getTotalNGOCount()
+        const totalUserCount = await getTotalUserCount()
+        return NextResponse.json({ 
+            totalAmountRaised, 
+            totalNGOCount,
+            totalUserCount
+        });
     } catch (error) {
         console.error("API error:", error);
         return new NextResponse("Internal Server Error", { status: 500 });

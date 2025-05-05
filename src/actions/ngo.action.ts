@@ -315,3 +315,13 @@ export const getNGOsByStatus = async (status: NGOStatus) => {
         throw new Error("Error fetching all submitted NGOs.")
     }
 }
+
+export const getTotalNGOCount = async () => {
+    try {
+        const count = await prisma.nGOProfile.count();
+        return count;
+    } catch (error) {
+        console.error("Error counting all NGOs:", error);
+        throw new Error("Failed to count all NGOs.");
+    }
+};

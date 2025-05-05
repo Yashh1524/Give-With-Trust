@@ -173,3 +173,13 @@ export async function getCurrentUserRole() {
         return
     }
 }
+
+export async function getTotalUserCount() {
+    try {
+        const count = await prisma.user.count();
+        return count;
+    } catch (error) {
+        console.error("Error counting all NGOs:", error);
+        throw new Error("Failed to count all NGOs.");
+    }
+}
