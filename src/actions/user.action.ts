@@ -21,7 +21,12 @@ export const syncUser = async ({
     username?: string | null;
 }) => {
     try {
-        if (!clerkId) return; // Ensure userId is provided
+        if (!clerkId || !email) {
+            console.warn("Missing required user data.");
+            return;
+        }
+
+        console.log("Syncing user:", { clerkId, firstName, lastName, email, image, username });
 
         // Check if user exists
         const existingUser = await prisma.user.findUnique({
@@ -29,22 +34,27 @@ export const syncUser = async ({
         });
 
         if (existingUser) {
+            console.log("User already exists:", existingUser.id);
             return existingUser;
         }
-        revalidatePath("/")
-        // If user does not exist, create new user in DB
-        await prisma.user.create({
+
+        const newUser = await prisma.user.create({
             data: {
                 clerkId,
                 name: `${firstName || ""} ${lastName || ""}`.trim(),
-                username: username ?? email.split("@")[0],
+                username: username || email.split("@")[0],
                 email,
                 image,
-                role: "DONOR"
+                role: "DONOR",
             },
         });
-        revalidatePath("/")
 
+        console.log("Created new user:", newUser.id);
+
+        // Optional: Revalidate pages that depend on users
+        await revalidatePath("/");
+
+        return newUser;
     } catch (error) {
         console.error("Error in syncUser:", error);
         throw new Error("Database operation failed");
@@ -149,7 +159,7 @@ export async function getCurrentUserRole() {
         // return "ADMIN"
 
         const { userId: clerkId } = await auth();
-        
+
         if (!clerkId) return null;
 
         const user = await getUserByClerkId(clerkId);
