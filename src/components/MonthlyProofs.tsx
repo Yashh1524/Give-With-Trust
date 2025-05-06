@@ -5,17 +5,24 @@ import { useState } from 'react';
 import { FaChevronDown, FaChevronUp, FaFilePdf } from 'react-icons/fa';
 
 const MonthlyProofs = ({ proofs, ngoId }: { proofs: Proof[], ngoId: string }) => {
-    const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
+    // Set the default selected year to the first available year from the proofs
+    const initialYear = proofs.length > 0 ? proofs[0].year : new Date().getFullYear();
+    const [selectedYear, setSelectedYear] = useState(initialYear);
     const [expandedMonths, setExpandedMonths] = useState<Record<string, boolean>>({});
+
+    // console.log("proofs:", proofs);
 
     // Make array for years included in given proofs
     const years = Array.from(new Set(proofs.map((p) => p.year))).sort((a, b) => b - a);
 
+    // Function to toggle the expanded state of a month
     const toggleMonth = (key: string) => {
         setExpandedMonths((prev) => ({ ...prev, [key]: !prev[key] }));
     };
 
+    // Filter proofs by the selected year
     const filteredProofs = proofs.filter((proof) => proof.year === selectedYear);
+    
 
     return (
         <div className="space-y-4 dark:bg-[#1f2937] p-5 rounded-lg">
@@ -60,7 +67,7 @@ const MonthlyProofs = ({ proofs, ngoId }: { proofs: Proof[], ngoId: string }) =>
                                 <p className="text-sm text-gray-300">{proof.description}</p>
 
                                 {/* Images */}
-                                {proof.imageUrl.length > 0 && (
+                                {Array.isArray(proof.imageUrl) && proof.imageUrl.length > 0 && (
                                     <div className="flex flex-wrap gap-4">
                                         {proof.imageUrl.map((url, idx) => (
                                             <img
@@ -74,7 +81,7 @@ const MonthlyProofs = ({ proofs, ngoId }: { proofs: Proof[], ngoId: string }) =>
                                 )}
 
                                 {/* PDFs */}
-                                {proof.pdfUrl.length > 0 && (
+                                {Array.isArray(proof.pdfUrl) && proof.pdfUrl.length > 0 && (
                                     <div className="flex flex-wrap gap-4">
                                         {proof.pdfUrl.map((url, idx) => (
                                             <a
@@ -94,7 +101,6 @@ const MonthlyProofs = ({ proofs, ngoId }: { proofs: Proof[], ngoId: string }) =>
                                         ))}
                                     </div>
                                 )}
-
                             </div>
                         )}
                     </div>
@@ -104,4 +110,4 @@ const MonthlyProofs = ({ proofs, ngoId }: { proofs: Proof[], ngoId: string }) =>
     );
 };
 
-export default MonthlyProofs
+export default MonthlyProofs;
