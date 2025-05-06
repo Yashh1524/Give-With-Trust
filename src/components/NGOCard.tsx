@@ -18,7 +18,7 @@ const accentTagStyles: Record<AccentTag, { label: string; color: string }> = {
 
 const NGOCard = ({ ngo }: NgoCardProps) => {
     const tag = accentTagStyles[ngo.accentTags as AccentTag];
-
+    
     return (
         <Link
             href={`/ngos/${ngo.id}`}
@@ -56,7 +56,7 @@ const NGOCard = ({ ngo }: NgoCardProps) => {
             <div className="text-sm text-gray-700 dark:text-gray-300 space-y-1 mt-auto">
                 <p><strong>Owner:</strong> {ngo.user.name || "Unnamed"}</p>
                 <p><strong>Established:</strong> {new Date(ngo.establishedDate).toDateString()}</p>
-                <p><strong>Raised this month:</strong> ₹{ngo.raisedThisMonth.toFixed(2)}</p>
+                {/* <p><strong>Raised this month:</strong> ₹{ngo.raisedThisMonth.toFixed(2)}</p> */}
             </div>
         </Link>
     );

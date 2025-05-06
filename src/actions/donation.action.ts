@@ -1,7 +1,6 @@
 "use server"
 
 import { prisma } from '@/lib/prisma';
-import { calculateAndUpdateRaisedThisMonth, updateTotamAmountRaisedThisMonth } from './ngo.action';
 import { revalidatePath } from 'next/cache';
 import { DonationStatus } from '@prisma/client';
 
@@ -54,7 +53,6 @@ export async function createDonation({
         },
     });
 
-    calculateAndUpdateRaisedThisMonth(ngoId)
     revalidatePath(`/ngos/${ngoId}`)
     
     return donation;
