@@ -179,7 +179,7 @@ export default function DonateBox({ ngoId, userId }: DonateBoxProps) {
           {loading ? "Processing..." : "Donate"}
         </button>
       </div>
-      <NGODonationStats ngoId={ngoId} />
+      <NGODonationStats ngoId={ngoId} donations={donations}/>
       <NGODonations donations={donations} />
     </>
   );

@@ -1,6 +1,6 @@
 'use client';
 
-import { NGOProfile, Proof } from '@prisma/client';
+import { Donation, NGOProfile, Proof } from '@prisma/client';
 import { ReactNode, useEffect, useState } from 'react';
 import { getDonationByNgoId } from '@/actions/donation.action';
 import { getMonthlyDonationData, getYearlyDonationTotals } from '@/lib/donationHelpers';
@@ -35,9 +35,10 @@ export default function DashboardClient(
     const selectedNgo = ngos.find((ngo) => ngo.id === selectedNgoId);
     const [donations, setDonations] = useState<any[]>([]);
     const [payouts, setPayouts] = useState<any[]>([]);
-
-    const monthlyData = getMonthlyDonationData(donations);
-    const yearlyData = getYearlyDonationTotals(donations);
+    const [monthlyData, setMonthlyData] = useState<any[]>([])
+    const [yearlyData, setYearlyData] = useState<{ [year: number]: number }>({});
+    // const monthlyData = getMonthlyDonationData(donations);
+    // const yearlyData = getYearlyDonationTotals(donations);
 
     const monthlyWorkProofsByNgoId = monthlyWorkProofs.filter((proof) => proof.ngoId === selectedNgoId)
 
@@ -45,6 +46,18 @@ export default function DashboardClient(
         const data = await getDonationByNgoId(ngoId);
         setDonations(data);
     };
+
+    const fetchMonthlyData = async (donations: Donation[]) => {
+        const data = await getMonthlyDonationData(donations)
+        setMonthlyData(data)
+    }
+
+    const fetchYearlyData = async (donations: Donation[]) => {
+        const data = await getYearlyDonationTotals(donations)
+        console.log(data);
+        
+        setYearlyData(data)
+    }
 
     const fetchPayouts = async (ngoId: string) => {
         const data = await getPayoutsByNgoId(ngoId)
@@ -55,6 +68,8 @@ export default function DashboardClient(
         if (selectedNgoId) {
             fetchDonations(selectedNgoId);
             fetchPayouts(selectedNgoId)
+            fetchMonthlyData(donations)
+            fetchYearlyData(donations)
         }
     }, [selectedNgoId]);
 
