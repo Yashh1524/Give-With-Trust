@@ -437,7 +437,7 @@ export default function AdminNgoViewPageClient({ ngo, donations, payouts,  month
                 )
             }
 
-            <NGODonationStats ngoId={ngo.id} />
+            <NGODonationStats ngoId={ngo.id} donations={donations}/>
             <NGODonations donations={fullDonations as FullDonation[]} />
 
             {/* Payouts */}
