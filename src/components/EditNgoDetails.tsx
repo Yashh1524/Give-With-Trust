@@ -107,7 +107,7 @@ const EditNgoDetail = ({ ngo, ngoId }: EditNgoDetailProps) => {
 
     return (
         <div className="w-full min-h-screen flex items-center justify-center px-6 lg:px-12 bg-white dark:bg-[#100f1b] text-black dark:text-white">
-            <div className="w-full max-w-[90vw] mx-auto my-10 p-6 bg-white dark:bg-[#1a1b21] shadow-xl rounded-xl">
+            <div className="w-full max-w-[90vw] mx-auto my-10 p-6 bg-white dark:bg-[#1F2937] shadow-xl rounded-xl">
                 <h2 className="text-3xl font-bold mb-8 text-center">Register Your NGO</h2>
                 <form onSubmit={handleSubmit} className="space-y-10 w-full">
                     {/* ---------- NGO LOGO ---------- */}

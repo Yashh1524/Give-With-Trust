@@ -166,7 +166,7 @@ export default function DashboardClient(
 
 
             {/* NGO Info Section */}
-            <div className="flex flex-col gap-6 lg:grid lg:grid-cols-4 auto-rows-[50px]">
+            <div className="flex flex-col gap-6 lg:grid lg:grid-cols-4">
                 <div className="col-span-1 row-span-4 p-6 bg-white dark:bg-[#1f2937] rounded-lg shadow flex flex-col items-center justify-center">
                     {selectedNgo?.logo ? (
                         <img
@@ -219,7 +219,13 @@ export default function DashboardClient(
                     <h2 className="text-xl font-semibold mb-4">Images</h2>
                     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
                         {selectedNgo?.images.map((img, idx) => (
-                            <img key={idx} src={img} alt={`NGO Image ${idx + 1}`} className="rounded-md object-cover w-full h-40" />
+                            <img 
+                                key={idx} 
+                                src={img} 
+                                alt={`NGO Image ${idx + 1}`} 
+                                // className="rounded-md object-cover" 
+                                className="flex-shrink-0 rounded border object-cover w-[90%] sm:w-[80%] md:w-[45%] lg:w-[30%] h-auto"
+                            />
                         ))}
                     </div>
                 </div>
