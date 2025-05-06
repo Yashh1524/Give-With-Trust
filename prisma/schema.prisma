@@ -1,194 +1,184 @@
 generator client {
-    provider = "prisma-client-js"
+  provider = "prisma-client-js"
 }
 
 datasource db {
-    provider = "postgresql"
-    url      = env("DATABASE_URL")
-}
-
-enum Role {
-    DONOR
-    NGO
-    ADMIN
-}
-
-enum DonationStatus {
-    HELD
-    RELEASED
-    REASSIGNED
-    REASSIGNED_RELEASED
-}
-
-enum NGOStatus {
-    SUBMITTED
-    PENDING
-    NOT_SUBMITTED
-}
-
-enum AccentTag {
-    TRUSTED
-    FEATURED
-    VERIFIED
-    NEW
-    IMPACTFUL
-}
-
-enum Month {
-    JANUARY
-    FEBRUARY
-    MARCH
-    APRIL
-    MAY
-    JUNE
-    JULY
-    AUGUST
-    SEPTEMBER
-    OCTOBER
-    NOVEMBER
-    DECEMBER
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 model User {
-    id           String        @id @default(cuid())
-    clerkId      String        @unique
-    email        String        @unique
-    username     String        @unique
-    name         String?
-    bio          String?
-    image        String?
-    role         Role
-    createdAt    DateTime      @default(now())
-    donations    Donation[]    @relation("DonorDonations")
-    votes        Vote[]
-    ngoProfile   NGOProfile[]
-    voteSessions VoteSession[] @relation("VoteSessionVoters")
+  id           String        @id @default(cuid())
+  clerkId      String        @unique
+  email        String        @unique
+  username     String        @unique
+  name         String?
+  bio          String?
+  image        String?
+  role         Role
+  createdAt    DateTime      @default(now())
+  donations    Donation[]    @relation("DonorDonations")
+  ngoProfile   NGOProfile[]
+  votes        Vote[]
+  voteSessions VoteSession[] @relation("VoteSessionVoters")
 }
 
 model NGOProfile {
-    id              String    @id @default(cuid())
-    userId          String
-    name            String
-    email           String    @unique
-    establishedDate DateTime
-    address         String
-    contactInfo     String
-    description     String
-    approved        Boolean   @default(false)
-    createdAt       DateTime  @default(now())
-    raisedThisMonth Float     @default(0)
-    status          NGOStatus @default(NOT_SUBMITTED)
-    accentTags      AccentTag @default(NEW)
-    website         String?
-
-    accountNumber     String?
-    bankName          String?
-    ifscCode          String?
-    accountHolderName String?
-    upiId             String?
-
-    logo     String?
-    proofPdf String?
-    images   String[]
-
-    proofs              Proof[]
-    donations           Donation[]    @relation("NgoDonations")
-    reassignedDonations Donation[]    @relation("ReassignedDonations")
-    voteSessions        VoteSession[] @relation("FailedNgo")
-    candidateSessions   VoteSession[] @relation("VoteSessionCandidates")
-    winningSessions     VoteSession[] @relation("WinnerNgoRelation")
-    votes               Vote[]
-    payouts             Payout[]
-
-    user User @relation(fields: [userId], references: [id])
+  id                  String        @id @default(cuid())
+  userId              String
+  name                String
+  email               String        @unique
+  establishedDate     DateTime
+  address             String
+  contactInfo         String
+  description         String
+  approved            Boolean       @default(false)
+  createdAt           DateTime      @default(now())
+  raisedThisMonth     Float         @default(0)
+  status              NGOStatus     @default(NOT_SUBMITTED)
+  accentTags          AccentTag     @default(NEW)
+  website             String?
+  accountNumber       String?
+  bankName            String?
+  ifscCode            String?
+  accountHolderName   String?
+  upiId               String?
+  logo                String?
+  proofPdf            String?
+  images              String[]
+  donations           Donation[]    @relation("NgoDonations")
+  reassignedDonations Donation[]    @relation("ReassignedDonations")
+  user                User          @relation(fields: [userId], references: [id])
+  payouts             Payout[]
+  proofs              Proof[]
+  votes               Vote[]
+  voteSessions        VoteSession[] @relation("FailedNgo")
+  winningSessions     VoteSession[] @relation("WinnerNgoRelation")
+  candidateSessions   VoteSession[] @relation("VoteSessionCandidates")
 }
 
 model Donation {
-    id                  String         @id @default(cuid())
-    orderId             String
-    paymentId           String
-    donorId             String
-    ngoId               String
-    amount              Float
-    message             String?
-    createdAt           DateTime       @default(now())
-    month               Month
-    year                Int
-    status              DonationStatus @default(HELD)
-    reAssignedNgoId     String?
-    isAnonymousDonation Boolean        @default(false)
+  id                  String         @id @default(cuid())
+  orderId             String
+  paymentId           String
+  donorId             String
+  ngoId               String
+  amount              Float
+  message             String?
+  createdAt           DateTime       @default(now())
+  month               Month
+  year                Int
+  status              DonationStatus @default(HELD)
+  reAssignedNgoId     String?
+  isAnonymousDonation Boolean        @default(false)
+  donor               User           @relation("DonorDonations", fields: [donorId], references: [id])
+  ngo                 NGOProfile     @relation("NgoDonations", fields: [ngoId], references: [id])
+  reAssignedNgo       NGOProfile?    @relation("ReassignedDonations", fields: [reAssignedNgoId], references: [id])
 
-    donor         User        @relation("DonorDonations", fields: [donorId], references: [id])
-    ngo           NGOProfile  @relation("NgoDonations", fields: [ngoId], references: [id])
-    reAssignedNgo NGOProfile? @relation("ReassignedDonations", fields: [reAssignedNgoId], references: [id])
-
-    @@index([donorId])
-    @@index([ngoId])
-    @@index([status])
-    @@index([month, year])
-    @@index([ngoId, month, year], name: "ngo_month_year_idx")
+  @@index([donorId])
+  @@index([ngoId])
+  @@index([status])
+  @@index([month, year])
+  @@index([ngoId, month, year], map: "ngo_month_year_idx")
 }
 
 model Proof {
-    id          String   @id @default(cuid())
-    ngoId       String
-    month       Month
-    year        Int
-    description String
-    imageUrl    String[]
-    pdfUrl      String[]
-    submittedAt DateTime @default(now())
+  id          String     @id @default(cuid())
+  ngoId       String
+  month       Month
+  year        Int
+  description String
+  submittedAt DateTime   @default(now())
+  imageUrl    String[]
+  pdfUrl      String[]
+  ngo         NGOProfile @relation(fields: [ngoId], references: [id])
 
-    ngo NGOProfile @relation(fields: [ngoId], references: [id])
-
-    @@unique([ngoId, month, year], name: "unique_proof_per_month")
-    @@index([ngoId])
-    @@index([month, year])
+  @@unique([ngoId, month, year], name: "unique_proof_per_month")
+  @@index([ngoId])
+  @@index([month, year])
 }
 
 model VoteSession {
-    id          String   @id @default(cuid())
-    failedNgoId String
-    month       Month
-    year        Int
-    createdAt   DateTime @default(now())
-    isOngoing   Boolean  @default(true)
-    winnerNgoId String?
+  id          String       @id @default(cuid())
+  failedNgoId String
+  month       Month
+  year        Int
+  createdAt   DateTime     @default(now())
+  isOngoing   Boolean      @default(true)
+  winnerNgoId String?
+  votes       Vote[]
+  failedNgo   NGOProfile   @relation("FailedNgo", fields: [failedNgoId], references: [id])
+  winnerNgo   NGOProfile?  @relation("WinnerNgoRelation", fields: [winnerNgoId], references: [id])
+  candidates  NGOProfile[] @relation("VoteSessionCandidates")
+  voters      User[]       @relation("VoteSessionVoters")
 
-    failedNgo  NGOProfile   @relation("FailedNgo", fields: [failedNgoId], references: [id])
-    winnerNgo  NGOProfile?  @relation("WinnerNgoRelation", fields: [winnerNgoId], references: [id])
-    candidates NGOProfile[] @relation("VoteSessionCandidates")
-    voters     User[]       @relation("VoteSessionVoters")
-    votes      Vote[]
-
-    // @@unique([failedNgoId, month, year], name: "unique_vote_session")
-    @@index([month, year])
+  @@index([month, year])
 }
 
 model Vote {
-    id            String   @id @default(cuid())
-    userId        String
-    voteSessionId String
-    selectedNgoId String
-    createdAt     DateTime @default(now())
+  id            String      @id @default(cuid())
+  userId        String
+  voteSessionId String
+  selectedNgoId String
+  createdAt     DateTime    @default(now())
+  selectedNgo   NGOProfile  @relation(fields: [selectedNgoId], references: [id])
+  user          User        @relation(fields: [userId], references: [id])
+  voteSession   VoteSession @relation(fields: [voteSessionId], references: [id], onDelete: Cascade)
 
-    user        User        @relation(fields: [userId], references: [id])
-    voteSession VoteSession @relation(fields: [voteSessionId], references: [id], onDelete: Cascade)
-    selectedNgo NGOProfile  @relation(fields: [selectedNgoId], references: [id])
-
-    @@unique([userId, voteSessionId], name: "user_unique_vote_per_session")
-    @@index([voteSessionId])
-    @@index([selectedNgoId])
+  @@unique([userId, voteSessionId], name: "user_unique_vote_per_session")
+  @@index([voteSessionId])
+  @@index([selectedNgoId])
 }
 
 model Payout {
-    id               String   @id @default(cuid())
-    ngoId            String
-    amount           Float
-    razorpayPayoutId String   @unique
-    createdAt        DateTime @default(now())
+  id               String     @id @default(cuid())
+  ngoId            String
+  amount           Float
+  createdAt        DateTime   @default(now())
+  razorpayPayoutId String     @unique
+  ngo              NGOProfile @relation(fields: [ngoId], references: [id], onDelete: Cascade)
 
-    ngo NGOProfile @relation(fields: [ngoId], references: [id], onDelete: Cascade)
+  @@index([ngoId])
+}
 
-    @@index([ngoId])
+enum Role {
+  DONOR
+  NGO
+  ADMIN
+}
+
+enum DonationStatus {
+  HELD
+  RELEASED
+  REASSIGNED
+  REASSIGNED_RELEASED
+}
+
+enum NGOStatus {
+  SUBMITTED
+  PENDING
+  NOT_SUBMITTED
+}
+
+enum AccentTag {
+  TRUSTED
+  FEATURED
+  VERIFIED
+  NEW
+  IMPACTFUL
+}
+
+enum Month {
+  JANUARY
+  FEBRUARY
+  MARCH
+  APRIL
+  MAY
+  JUNE
+  JULY
+  AUGUST
+  SEPTEMBER
+  OCTOBER
+  NOVEMBER
+  DECEMBER
 }

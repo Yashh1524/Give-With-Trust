@@ -224,7 +224,7 @@ export default function DashboardClient(
                                 src={img} 
                                 alt={`NGO Image ${idx + 1}`} 
                                 // className="rounded-md object-cover" 
-                                className="flex-shrink-0 rounded border object-cover w-[90%] sm:w-[80%] md:w-[45%] lg:w-[30%] h-auto"
+                                className="flex-shrink-0 rounded border object-cover"
                             />
                         ))}
                     </div>
