@@ -51,9 +51,6 @@ export const syncUser = async ({
 
         console.log("Created new user:", newUser.id);
 
-        // Optional: Revalidate pages that depend on users
-        await revalidatePath("/");
-
         return newUser;
     } catch (error) {
         console.error("Error in syncUser:", error);
