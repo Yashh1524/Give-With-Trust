@@ -26,7 +26,7 @@ export const syncUser = async ({
             return;
         }
 
-        console.log("Syncing user:", { clerkId, firstName, lastName, email, image, username });
+        // console.log("Syncing user:", { clerkId, firstName, lastName, email, image, username });
 
         // Check if user exists
         const existingUser = await prisma.user.findUnique({
@@ -49,7 +49,7 @@ export const syncUser = async ({
             },
         });
 
-        console.log("Created new user:", newUser.id);
+        // console.log("Created new user:", newUser.id);
 
         return newUser;
     } catch (error) {
