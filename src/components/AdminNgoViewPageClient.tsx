@@ -78,7 +78,7 @@ export default function AdminNgoViewPageClient({ ngo, donations, payouts,  month
         .filter((d) => d.status === 'RELEASED')
         .reduce((sum, d) => sum + d.amount, 0);
     const reassignedDonations = donations
-        .filter((d) => d.status === 'REASSIGNED')
+        .filter((d) => d.status === 'REASSIGNED' || d.status === 'REASSIGNED_RELEASED')
         .reduce((sum, d) => sum + d.amount, 0);
 
     // Donors
@@ -454,7 +454,7 @@ export default function AdminNgoViewPageClient({ ngo, donations, payouts,  month
                                 />
                                 <div>
                                     <Link href={`/ngos/${payout.ngoId}`}>
-                                        <h2 className="font-semibold text-lg">{payout.ngo.name}</h2>
+                                        <h2 className="font-semibold text-lg hover:text-purple-500">{payout.ngo.name}</h2>
                                     </Link>
                                     <p className="text-sm text-gray-500">{payout.ngo.address}</p>
                                 </div>

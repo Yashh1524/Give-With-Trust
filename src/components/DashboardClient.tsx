@@ -330,7 +330,9 @@ export default function DashboardClient(
                                     className="rounded-full object-cover border h-10 w-10"
                                 />
                                 <div>
-                                    <h2 className="font-semibold text-lg">{payout.ngo.name}</h2>
+                                    <Link href={`/ngos/${payout.ngo.id}`}>
+                                        <h2 className="font-semibold text-lg hover:text-purple-500">{payout.ngo.name}</h2>
+                                    </Link>
                                     <p className="text-sm text-gray-500">{payout.ngo.address}</p>
                                 </div>
                             </div>
