@@ -119,7 +119,7 @@ export default function ChatBot({
             {/* Header */}
             <div className="bg-gray-100 dark:bg-gray-800 px-4 py-3 flex justify-between items-center border-b border-gray-300 dark:border-gray-700">
                 <span className="font-semibold text-sm sm:text-base">
-                    💬 Chat Assistant
+                    💬 CareMate
                 </span>
                 <button onClick={onClose} className="cursor-pointer">
                     <IoCloseSharp size={25} className="text-white" />
@@ -171,7 +171,7 @@ export default function ChatBot({
 
                 {loading && (
                     <div className="text-sm text-gray-500 dark:text-gray-400 italic">
-                        Bot is typing...
+                        CareMate is typing...
                     </div>
                 )}
                 <div ref={scrollRef} />

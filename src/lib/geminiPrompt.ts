@@ -15,10 +15,11 @@ List of NGOs:
 ${ngos.map((ngo) => `- ID: ${ngo.id}, Name: ${ngo.name}, Description: ${ngo.des}`).join("\n")}
 
 Instructions:
-1. Select the 2–3 most relevant NGOs based on the query.
+1. Select the most relevant NGO based on the query.
 2. Write a short, friendly reply (max 2 sentences).
 3. For each recommended NGO, return its id, name, and description.
-4. Respond strictly in the following JSON format:
+4. If query is something else than asking for ngo give short sweet reply saying i can only help with ngo recommandation
+5. Respond strictly in the following JSON format:
     {
     "message": "Short helpful reply",
         "ngos": [
