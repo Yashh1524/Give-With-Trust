@@ -139,10 +139,22 @@ export async function updateUserDetails(
 
 export async function updateUserRole(role: Role, userId: string) {
     try {
-        await prisma.user.update({
-            where: { id: userId },
-            data: { role: role }
+
+        const user = await prisma.user.findUnique({
+            where: {id: userId}
         })
+
+        if(!user) {
+            throw new Error("User not found")
+        }
+
+        if(user.role !== "ADMIN") {
+            await prisma.user.update({
+                where: { id: userId },
+                data: { role: role }
+            })
+        }
+        
     } catch (error) {
         console.error("Failed to update user role")
         throw new Error("User role update failed")
