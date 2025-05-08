@@ -4,6 +4,8 @@ import { getAllNoneAnonymousDonations } from '@/actions/donation.action';
 import TopDonorsClient from '@/components/TopDonorsClient';
 import React from 'react';
 
+export const dynamic = 'force-dynamic'; // This forces dynamic rendering (no caching)
+
 const Page = async () => {
     const allNotAnonymousDonations = await getAllNoneAnonymousDonations();
 
