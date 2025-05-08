@@ -22,9 +22,10 @@ interface Feedback {
 interface FeedBackBoxProps {
     ngoId: string
     userId: string | null | undefined
+    hasUserDonatedToThisNgo: boolean
 }
 
-const FeedBackBox = ({ ngoId, userId }: FeedBackBoxProps) => {
+const FeedBackBox = ({ ngoId, userId, hasUserDonatedToThisNgo }: FeedBackBoxProps) => {
     const [rating, setRating] = useState(0)
     const [message, setMessage] = useState('')
     const [isLoading, setIsLoading] = useState(false)
@@ -66,6 +67,10 @@ const FeedBackBox = ({ ngoId, userId }: FeedBackBoxProps) => {
 
         try {
             setIsLoading(true)
+            // console.log(ngoId)
+            // console.log(userId)
+            // console.log(message)
+            // console.log(rating)
             await createFeedback({ ngoId, userId, message, rating })
             toast.success('Feedback submitted.')
 
@@ -86,46 +91,50 @@ const FeedBackBox = ({ ngoId, userId }: FeedBackBoxProps) => {
 
     return (
         <div className="mt-6">
-            <div className="bg-gray-100 dark:bg-[#1F2937] text-gray-900 dark:text-gray-100 rounded-2xl shadow-md p-6 space-y-4 hover:scale-[1.01] transition">
-                <h2 className="text-xl font-bold">Share Your Feedback</h2>
-                <p className="text-sm text-muted-foreground">
-                    Help others by sharing your experience with this NGO.
-                </p>
+            {
+                hasUserDonatedToThisNgo && (
+                    <div className="bg-gray-100 dark:bg-[#1F2937] text-gray-900 dark:text-gray-100 rounded-2xl shadow-md p-6 space-y-4 hover:scale-[1.01] transition">
+                        <h2 className="text-xl font-bold">Share Your Feedback</h2>
+                        <p className="text-sm text-muted-foreground">
+                            Help others by sharing your experience with this NGO.
+                        </p>
 
-                <div>
-                    <label className="block mb-1 font-medium">Rating (1-5)</label>
-                    <Input
-                        type="number"
-                        min={1}
-                        max={5}
-                        value={rating}
-                        onChange={e => setRating(Number(e.target.value))}
-                        disabled={hasSubmitted}
-                        className="bg-white dark:bg-[#263447]"
-                    />
-                </div>
+                        <div>
+                            <label className="block mb-1 font-medium">Rating (1-5)</label>
+                            <Input
+                                type="number"
+                                min={1}
+                                max={5}
+                                value={rating}
+                                onChange={e => setRating(Number(e.target.value))}
+                                disabled={hasSubmitted}
+                                className="bg-white dark:bg-[#263447]"
+                            />
+                        </div>
 
-                <div>
-                    <label className="block mb-1 font-medium">Message</label>
-                    <Textarea
-                        placeholder="Your thoughts..."
-                        value={message}
-                        onChange={e => setMessage(e.target.value)}
-                        disabled={hasSubmitted}
-                        className="bg-white dark:bg-[#263447]"
-                    />
-                </div>
+                        <div>
+                            <label className="block mb-1 font-medium">Message</label>
+                            <Textarea
+                                placeholder="Your thoughts..."
+                                value={message}
+                                onChange={e => setMessage(e.target.value)}
+                                disabled={hasSubmitted}
+                                className="bg-white dark:bg-[#263447]"
+                            />
+                        </div>
 
-                <Button disabled={isLoading || hasSubmitted} onClick={handleSubmit}>
-                    Submit Feedback
-                </Button>
+                        <Button disabled={isLoading || hasSubmitted} onClick={handleSubmit}>
+                            Submit Feedback
+                        </Button>
 
-                {hasSubmitted && (
-                    <p className="text-sm text-green-600 dark:text-green-400">
-                        ✅ You have already submitted feedback.
-                    </p>
-                )}
-            </div>
+                        {hasSubmitted && (
+                            <p className="text-sm text-green-600 dark:text-green-400">
+                                ✅ You have already submitted feedback.
+                            </p>
+                        )}
+                    </div>
+                )
+            }
 
             <div className="mt-8 space-y-4">
                 <h3 className="text-lg font-semibold">🗣️ Donor Feedback</h3>
@@ -135,7 +144,7 @@ const FeedBackBox = ({ ngoId, userId }: FeedBackBoxProps) => {
                 {feedbacks.map(feedback => (
                     <div
                         key={feedback.id}
-                        className="bg-white dark:bg-[#232323] text-gray-800 dark:text-gray-100 rounded-xl p-4 shadow-sm"
+                        className="bg-white dark:bg-[#1F2937] text-gray-800 dark:text-gray-100 rounded-xl p-4 shadow-sm"
                     >
                         <div className="flex items-center gap-2 mb-1">
                             {feedback.user.image && (

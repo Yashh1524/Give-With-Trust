@@ -21,7 +21,7 @@ model User {
   ngoProfile   NGOProfile[]
   votes        Vote[]
   voteSessions VoteSession[] @relation("VoteSessionVoters")
-  Feedback Feedback[]
+  Feedback     Feedback[]    // ✅ Relation to Feedback
 }
 
 model NGOProfile {
@@ -56,7 +56,7 @@ model NGOProfile {
   voteSessions        VoteSession[] @relation("FailedNgo")
   winningSessions     VoteSession[] @relation("WinnerNgoRelation")
   candidateSessions   VoteSession[] @relation("VoteSessionCandidates")
-  Feedback Feedback[]
+  Feedback            Feedback[]    // ✅ Relation to Feedback
 }
 
 model Donation {
@@ -156,9 +156,7 @@ model Feedback {
 
   @@index([ngoId])
   @@index([userId])
-  @@unique([userId, ngoId])
 }
-
 
 enum Role {
   DONOR

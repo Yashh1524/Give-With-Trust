@@ -1,3 +1,4 @@
+import { hasUserDonatedToNgo } from '@/actions/donation.action';
 import { getNgoByNgoId } from '@/actions/ngo.action';
 import { getMonthlyWorkProofsByNgoId } from '@/actions/proofs.action';
 import { getDbUserId } from '@/actions/user.action';
@@ -9,7 +10,8 @@ export default async function NGOProfilePage({ params }: { params: Promise<{ id:
     const ngoId = (await params).id
     const ngo = await getNgoByNgoId(ngoId);
     const userId = await getDbUserId()
-    
+    const hasUserDonatedToThisNgo = await hasUserDonatedToNgo(userId as string, ngoId)
+
     if (!ngo) return <div className="text-center py-10 text-red-500">NGO not found.</div>;
     
     const monthlyWorkProofs = await getMonthlyWorkProofsByNgoId(ngoId)
@@ -89,7 +91,7 @@ export default async function NGOProfilePage({ params }: { params: Promise<{ id:
                 ngo?.approved && (
                     <>
                         <DonateBox ngoId={ngoId} userId={userId} />
-                        <FeedBackBox ngoId={ngoId} userId={userId}/>
+                        <FeedBackBox ngoId={ngoId} userId={userId} hasUserDonatedToThisNgo={hasUserDonatedToThisNgo}/>
                     </>
                 )
             }

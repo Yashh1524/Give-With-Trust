@@ -54,7 +54,7 @@ export async function createDonation({
     });
 
     revalidatePath(`/ngos/${ngoId}`)
-    
+
     return donation;
 }
 
@@ -114,7 +114,7 @@ export async function getDonationByNgoId(ngoId: string) {
 export async function getDonationByUserId(userId: string) {
     try {
         const donations = await prisma.donation.findMany({
-            where: {donorId: userId},
+            where: { donorId: userId },
             orderBy: {
                 createdAt: 'desc',
             },
@@ -137,7 +137,7 @@ export async function getDonationByUserId(userId: string) {
             },
         })
 
-        if(!donations) throw new Error("No donation found")
+        if (!donations) throw new Error("No donation found")
 
         return donations
     } catch (error) {
@@ -149,7 +149,7 @@ export async function getDonationByUserId(userId: string) {
 export async function getAllDonationByStatus(status: DonationStatus) {
     try {
         return await prisma.donation.findMany({
-            where: {status: status},
+            where: { status: status },
             include: {
                 donor: {
                     select: {
@@ -169,14 +169,14 @@ export async function getAllDonationByStatus(status: DonationStatus) {
 }
 
 export async function updateDonationStatus(
-    newStatus: DonationStatus, 
-    donationId: string, 
+    newStatus: DonationStatus,
+    donationId: string,
     reassignedNgoId: string | null
 ) {
     try {
         return await prisma.donation.update({
-            where: {id: donationId},
-            data:{
+            where: { id: donationId },
+            data: {
                 status: newStatus,
                 reAssignedNgoId: reassignedNgoId || null
             },
@@ -188,16 +188,16 @@ export async function updateDonationStatus(
 }
 
 export async function updateDonationStatusByNgoId(
-    newStatus: DonationStatus, 
+    newStatus: DonationStatus,
     ngoId: string,
     reassignedNgoId?: string | null
 ) {
     try {
         const donations = await prisma.donation.updateMany({
-            where: {ngoId: ngoId},
+            where: { ngoId: ngoId },
             data: {
                 status: newStatus,
-                reAssignedNgoId: reassignedNgoId 
+                reAssignedNgoId: reassignedNgoId
             }
         })
         revalidatePath("/admin-dashboard/send-money")
@@ -211,7 +211,7 @@ export async function updateDonationStatusByNgoId(
 export async function getAllNoneAnonymousDonations() {
     try {
         return await prisma.donation.findMany({
-            where: {isAnonymousDonation: false},
+            where: { isAnonymousDonation: false },
             include: {
                 donor: {
                     select: {
@@ -241,5 +241,24 @@ export async function getTotalRaisedAmount() {
     } catch (error) {
         console.error("Error calculating total raised amount", error);
         throw new Error("Failed to calculate total raised amount.");
+    }
+}
+
+export async function hasUserDonatedToNgo(userId: string, ngoId: string): Promise<boolean> {
+    try {
+        const donation = await prisma.donation.findFirst({
+            where: {
+                donorId: userId,
+                ngoId: ngoId,
+            },
+            select: {
+                id: true, // just to check existence
+            },
+        });
+
+        return !!donation;
+    } catch (error) {
+        console.error("Error checking donation:", error);
+        return false;
     }
 }

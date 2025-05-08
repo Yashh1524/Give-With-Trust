@@ -1,3 +1,5 @@
+"use server"
+
 import { prisma } from "@/lib/prisma";
 
 export async function createFeedback({
@@ -11,6 +13,10 @@ export async function createFeedback({
     message: string;
     rating: number;
 }) {
+    console.log(ngoId)
+    console.log(userId)
+    console.log(message)
+    console.log(rating)
     return await prisma.feedback.create({
         data: {
             ngoId,
@@ -36,7 +42,6 @@ export async function getFeedbackByNgoId(ngoId: string) {
         orderBy: { createdAt: "desc" },
     });
 }
-
 export async function updateFeedback({
     ngoId,
     userId,
@@ -48,27 +53,26 @@ export async function updateFeedback({
     message: string;
     rating: number;
 }) {
-    // Find the existing feedback using the unique compound fields
-    const existing = await prisma.feedback.findUnique({
+    const latest = await prisma.feedback.findFirst({
         where: {
-            userId_ngoId: {
-                userId,
-                ngoId,
-            },
+            ngoId,
+            userId,
+        },
+        orderBy: {
+            createdAt: "desc",
         },
     });
 
-    if (!existing) throw new Error("Feedback not found");
+    if (!latest) throw new Error("Feedback not found");
 
     return await prisma.feedback.update({
-        where: { id: existing.id },
+        where: { id: latest.id },
         data: {
             message,
             rating,
         },
     });
 }
-
 export async function deleteFeedback({
     ngoId,
     userId,
@@ -76,18 +80,19 @@ export async function deleteFeedback({
     ngoId: string;
     userId: string;
 }) {
-    const existing = await prisma.feedback.findUnique({
+    const latest = await prisma.feedback.findFirst({
         where: {
-            userId_ngoId: {
-                userId,
-                ngoId,
-            },
+            ngoId,
+            userId,
+        },
+        orderBy: {
+            createdAt: "desc",
         },
     });
 
-    if (!existing) throw new Error("Feedback not found");
+    if (!latest) throw new Error("Feedback not found");
 
     return await prisma.feedback.delete({
-        where: { id: existing.id },
+        where: { id: latest.id },
     });
 }
