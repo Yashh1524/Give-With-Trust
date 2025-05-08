@@ -184,7 +184,9 @@ const ProfileClient: React.FC<Props> = ({ user, currUserId, donations, ngos }) =
                                                 <img src={ngo.logo} alt={ngo.name} className="w-14 h-14 rounded-full object-cover border" />
                                             )}
                                             <div>
-                                                <h3 className="text-xl font-semibold text-blue-700 dark:text-blue-300">{ngo.name}</h3>
+                                                <Link href={`/ngos/${ngo.id}`}>
+                                                    <h3 className="text-xl font-semibold text-blue-700 dark:text-blue-300 hover:bg-purple-500">{ngo.name}</h3>
+                                                </Link>
                                                 <p className="text-sm text-gray-600 dark:text-gray-400">{ngo.description}</p>
                                                 <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">{ngo.address}</p>
                                             </div>

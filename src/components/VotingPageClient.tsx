@@ -218,7 +218,7 @@ const VotingPageClient: React.FC<VotingPageClientProps> = ({ voteSession, userId
                                         >
                                             {ngo.name}
                                         </Link>
-                                        <p className="text-sm text-gray-500 dark:text-gray-400">{ngo.accentTags}</p>
+                                        <p className="text-sm bg-purple-700 border-1 w-fit px-2 rounded-md text-white">{ngo.accentTags}</p>
                                     </div>
                                 </div>
                             </div>
