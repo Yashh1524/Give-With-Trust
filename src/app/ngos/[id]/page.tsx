@@ -2,6 +2,7 @@ import { getNgoByNgoId } from '@/actions/ngo.action';
 import { getMonthlyWorkProofsByNgoId } from '@/actions/proofs.action';
 import { getDbUserId } from '@/actions/user.action';
 import DonateBox from '@/components/DonateBox';
+import FeedBackBox from '@/components/FeedBackBox';
 import MonthlyProofs from '@/components/MonthlyProofs';
 
 export default async function NGOProfilePage({ params }: { params: Promise<{ id: string }> }) {
@@ -88,6 +89,7 @@ export default async function NGOProfilePage({ params }: { params: Promise<{ id:
                 ngo?.approved && (
                     <>
                         <DonateBox ngoId={ngoId} userId={userId} />
+                        <FeedBackBox ngoId={ngoId} userId={userId}/>
                     </>
                 )
             }
