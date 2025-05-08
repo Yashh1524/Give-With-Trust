@@ -242,7 +242,7 @@ export async function endVoteSession(voteSessionId: string) {
         });
 
         await updateDonationStatusByNgoId("REASSIGNED", voteSession.failedNgo.id, winnerNgoId);
-        await updateNgoProofStatus(voteSession.failedNgo.id, "PENDING");
+        // await updateNgoProofStatus(voteSession.failedNgo.id, "PENDING");
 
         revalidatePath(`/admin-dashboard/voting-sessions`);
 

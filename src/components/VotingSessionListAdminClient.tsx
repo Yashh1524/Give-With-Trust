@@ -132,7 +132,7 @@ const VotingSessionListAdminClient: React.FC<Props> = ({
 
                             const voterDetails = await getUserDetails(voter);
                             if (!voterDetails?.email) continue;
-
+                            console.log(voterDetails)
                             await fetch('/api/send-new-voting-session-email', {
                                 method: 'POST',
                                 headers: { 'Content-Type': 'application/json' },

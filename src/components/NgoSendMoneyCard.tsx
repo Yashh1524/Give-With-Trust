@@ -8,6 +8,7 @@ import React, { useState } from 'react'
 import toast from 'react-hot-toast'
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 import { FaArrowRight } from "react-icons/fa";
+import { updateNgoProofStatus } from '@/actions/ngo.action'
 
 interface DonationWithDonor extends Donation {
     donor: {
@@ -56,6 +57,7 @@ const NgoSendMoneyCard: React.FC<NgoSendMoneyCardProps> = ({ ngoDetails, amount,
                         await updateDonationStatusByNgoId("RELEASED" as DonationStatus, ngoDetails.id)
                     }
                 }
+                await updateNgoProofStatus(failedNgo?.id as string, "PENDING");
             } else {
                 toast.error(`Failed: ${data.error}`)
             }
