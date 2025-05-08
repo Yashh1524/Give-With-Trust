@@ -241,7 +241,7 @@ export default function DashboardClient(
             <div className="flex flex-col gap-6 md:grid md:grid-cols-3">
                 {monthlyData.some((m) => m > 0) && (
                     <div className="p-6 bg-white dark:bg-[#1f2937] rounded-lg shadow col-span-1">
-                        <h3 className="font-semibold mb-4">Monthly Donations (This Year)</h3>
+                        <h3 className="font-semibold mb-4">Month-Wise Donations</h3>
                         <MonthlyDonationPieChart monthlyData={monthlyData} />
                     </div>
                 )}

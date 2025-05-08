@@ -255,7 +255,7 @@ const AdminVotingSessionDetailsPageClient: React.FC<AdminVotingSessionDetailsPag
                                 </div>
                             </div>
 
-                            <p className="text-gray-700 dark:text-gray-300 mb-4">{ngo.description}</p>
+                            {/* <p className="text-gray-700 dark:text-gray-300 mb-4">{ngo.description}</p> */}
 
                             <Progress value={progress} />
                             <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">{voteCount} / {totalVotes} votes</p>

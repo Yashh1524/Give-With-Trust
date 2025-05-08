@@ -28,7 +28,7 @@ export default function NGODonationStats({ ngoId, donations }: NGODonationStatsP
             {monthlyData.some((m) => m > 0) && (
                 <div className="my-10">
                     <h2 className="text-lg font-semibold text-gray-800 dark:text-white mb-10">
-                        Donations (This Year)
+                        Month-Wise Donations
                     </h2>
                     <MonthlyDonationPieChart monthlyData={monthlyData} />
                 </div>
