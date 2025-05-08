@@ -13,10 +13,10 @@ export async function createFeedback({
     message: string;
     rating: number;
 }) {
-    console.log(ngoId)
-    console.log(userId)
-    console.log(message)
-    console.log(rating)
+    // console.log(ngoId)
+    // console.log(userId)
+    // console.log(message)
+    // console.log(rating)
     return await prisma.feedback.create({
         data: {
             ngoId,

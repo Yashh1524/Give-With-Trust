@@ -148,7 +148,7 @@ model Feedback {
   ngoId     String
   userId    String
   message   String
-  rating    Int        @default(0)
+  rating    Float        @default(0)
   createdAt DateTime   @default(now())
 
   ngo       NGOProfile @relation(fields: [ngoId], references: [id])

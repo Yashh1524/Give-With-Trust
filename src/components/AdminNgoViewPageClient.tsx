@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { AccentTag, Donation, NGOProfile, NGOStatus, Payout, Proof, User } from '@prisma/client';
 import { updateNgoFieldsByAdmin } from '@/actions/ngo.action';
 import Link from 'next/link';
@@ -18,6 +18,20 @@ import toast from 'react-hot-toast';
 import NGODonations from './NGODonations';
 import { format } from 'date-fns';
 import MonthlyProofs from './MonthlyProofs';
+import { getFeedbackByNgoId } from '@/actions/feedback.action';
+import FeedbackList from './FeedbackList';
+
+interface Feedback {
+    id: string;
+    message: string;
+    rating: number;
+    createdAt: string;
+    user: {
+        id: string;
+        name: string | null;
+        image: string | null;
+    };
+}
 
 type FullDonation = Donation & {
     donor: User;
@@ -69,6 +83,20 @@ export default function AdminNgoViewPageClient({ ngo, donations, payouts,  month
     const [accentTags, setAccentTags] = useState<AccentTag>(ngo.accentTags);
     const [approved, setApproved] = useState<boolean>(ngo.approved);
     const [isSaving, setIsSaving] = useState(false);
+    const [feedbacks, setFeedbacks] = useState<Feedback[]>([]);
+
+    const fetchFeedbacks = async (ngoId: string) => {
+        const data = await getFeedbackByNgoId(ngoId);
+        const normalized = (data || []).map(f => ({
+            ...f,
+            createdAt: f.createdAt.toString()
+        }));
+        setFeedbacks(normalized);
+    };
+
+    useEffect(() => {
+        fetchFeedbacks(ngo.id);
+    }, [ngo.id]);
 
     const totalRaised = donations.reduce((sum, d) => sum + d.amount, 0);
     const heldDonations = donations
@@ -439,6 +467,11 @@ export default function AdminNgoViewPageClient({ ngo, donations, payouts,  month
 
             <NGODonationStats ngoId={ngo.id} donations={donations}/>
             <NGODonations donations={fullDonations as FullDonation[]} />
+
+            {/* FeedBacks */}
+            <div className="px-6 py-4 bg-white dark:bg-[#1f2937] rounded-lg shadow">
+                <FeedbackList feedbacks={feedbacks} />
+            </div>
 
             {/* Payouts */}
             <div className='mt-10 p-6 bg-white dark:bg-[#1f2937] rounded-lg shadow'>

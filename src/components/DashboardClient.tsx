@@ -21,6 +21,21 @@ import Link from 'next/link';
 import MonthlyProofs from './MonthlyProofs';
 import { FaDonate } from 'react-icons/fa';
 import { getPayoutsByNgoId } from '@/actions/payout.action';
+import { getFeedbackByNgoId } from '@/actions/feedback.action';
+import FeedbackList from './FeedbackList';
+
+interface Feedback {
+    id: string;
+    message: string;
+    rating: number;
+    createdAt: string;
+    user: {
+        id: string;
+        name: string | null;
+        image: string | null;
+    };
+}
+
 
 export default function DashboardClient(
     {
@@ -35,10 +50,21 @@ export default function DashboardClient(
     const selectedNgo = ngos.find((ngo) => ngo.id === selectedNgoId);
     const [donations, setDonations] = useState<any[]>([]);
     const [payouts, setPayouts] = useState<any[]>([]);
+    const [feedbacks, setFeedbacks] = useState<Feedback[]>([]);
+
     const monthlyData = getMonthlyDonationData(donations);
     const yearlyData = getYearlyDonationTotals(donations);
 
     const monthlyWorkProofsByNgoId = monthlyWorkProofs.filter((proof) => proof.ngoId === selectedNgoId)
+
+    const fetchFeedbacks = async (ngoId: string) => {
+        const data = await getFeedbackByNgoId(ngoId);
+        const normalized = (data || []).map(f => ({
+            ...f,
+            createdAt: f.createdAt.toString()
+        }));
+        setFeedbacks(normalized);
+    };
 
     const fetchDonations = async (ngoId: string) => {
         const data = await getDonationByNgoId(ngoId);
@@ -54,6 +80,7 @@ export default function DashboardClient(
         if (selectedNgoId) {
             fetchDonations(selectedNgoId);
             fetchPayouts(selectedNgoId)
+            fetchFeedbacks(selectedNgoId)
         }
     }, [selectedNgoId]);
 
@@ -218,10 +245,10 @@ export default function DashboardClient(
                     <h2 className="text-xl font-semibold mb-4">Images</h2>
                     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
                         {selectedNgo?.images.map((img, idx) => (
-                            <img 
-                                key={idx} 
-                                src={img} 
-                                alt={`NGO Image ${idx + 1}`} 
+                            <img
+                                key={idx}
+                                src={img}
+                                alt={`NGO Image ${idx + 1}`}
                                 // className="rounded-md object-cover" 
                                 className="flex-shrink-0 rounded border object-cover"
                             />
@@ -315,6 +342,11 @@ export default function DashboardClient(
             <div className="p-6 bg-white dark:bg-[#1f2937] rounded-lg shadow">
                 <h3 className="text-lg font-semibold mb-4">All Donations</h3>
                 <NGODonations donations={donations} />
+            </div>
+
+            {/* FeedBacks */}
+            <div className="px-6 py-4 bg-white dark:bg-[#1f2937] rounded-lg shadow">
+                <FeedbackList feedbacks={feedbacks} />
             </div>
 
             {/* Payouts */}
