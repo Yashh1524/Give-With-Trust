@@ -273,3 +273,30 @@ export const getTotalNGOCount = async () => {
         throw new Error("Failed to count all NGOs.");
     }
 };
+
+export async function getAllNgoWithRatings() {
+    const ngos = await prisma.nGOProfile.findMany({
+        include: {
+            Feedback: {
+                select: {
+                    rating: true,
+                },
+            },
+        },
+    });
+
+    return ngos.map((ngo) => {
+        const ratings = ngo.Feedback.map(f => f.rating);
+        const avgRating =
+            ratings.length > 0
+                ? ratings.reduce((sum, r) => sum + r, 0) / ratings.length
+                : 0;
+
+        return {
+            id: ngo.id,
+            name: ngo.name,
+            description: ngo.description,
+            avgRating: parseFloat(avgRating.toFixed(1)),
+        };
+    });
+}

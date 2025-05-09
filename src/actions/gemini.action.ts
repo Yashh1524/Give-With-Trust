@@ -7,6 +7,7 @@ type NGO = {
     id: string;
     name: string;
     des: string;
+    avgRating: number
 };
 
 type GeminiResponse = {

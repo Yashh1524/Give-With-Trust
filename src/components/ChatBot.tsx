@@ -3,13 +3,14 @@
 import { useState, useEffect, useRef } from "react";
 import { IoCloseSharp } from "react-icons/io5";
 import { getGeminiResponse } from "@/actions/gemini.action";
-import { getAllNgo, getNGOsByStatus } from "@/actions/ngo.action";
+import { getAllNgoWithRatings } from "@/actions/ngo.action";
 import Link from "next/link";
 
 type NGO = {
     id: string;
     name: string;
     des: string;
+    avgRating: number;
 };
 
 type Message = {
@@ -51,23 +52,30 @@ export default function ChatBot({
         const fetchBotResponse = async () => {
             setLoading(true);
             try {
-                // const ngos = await getNGOsByStatus("PENDING");
-                const ngos = await getAllNgo();
-                const formattedNgos: NGO[] = ngos.map((ngo: any) => ({
+                const ngos = await getAllNgoWithRatings();
+
+                // Sort by avgRating descending
+                const sortedNgos = ngos.sort(
+                    (a: any, b: any) => (b.avgRating || 0) - (a.avgRating || 0)
+                );
+
+                const formattedNgos: NGO[] = sortedNgos.map((ngo: any) => ({
                     id: ngo.id,
                     name: ngo.name,
                     des: ngo.description,
+                    avgRating: ngo.avgRating,
                 }));
-
+                // console.log("formattedNgos:",formattedNgos)
                 const response = await getGeminiResponse(pendingQuery, formattedNgos);
-
+                // console.log(response)
                 const buttons =
                     response.ngos?.length > 0
-                        ? response.ngos.map((ngo: NGO) => ({
-                            name: ngo.name,
+                        ? (response.ngos as NGO[]).map((ngo) => ({
+                            name: `${ngo.name} (${ngo.avgRating?.toFixed(1) ?? "N/A"}★)`,
                             url: `/ngos/${ngo.id}`,
                         }))
                         : undefined;
+
 
                 setMessages((prev) => [
                     ...prev,
@@ -131,8 +139,7 @@ export default function ChatBot({
                 {messages.map((msg, idx) => (
                     <div
                         key={idx}
-                        className={`flex flex-col ${msg.from === "user" ? "items-end" : "items-start"
-                            }`}
+                        className={`flex flex-col ${msg.from === "user" ? "items-end" : "items-start"}`}
                     >
                         {(msg.text || msg.buttons) && (
                             <div
@@ -155,7 +162,6 @@ export default function ChatBot({
                                                 >
                                                     {btn.name}
                                                 </Link>
-
                                             ))}
                                         </div>
                                     )}
@@ -183,8 +189,15 @@ export default function ChatBot({
                     className="flex-1 px-4 py-2 text-sm sm:text-base bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 rounded-lg outline-none"
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
+                    onKeyDown={(e) => {
+                        if (e.key === "Enter" && !e.shiftKey) {
+                            e.preventDefault();
+                            handleSend();
+                        }
+                    }}
                     placeholder="Type your message..."
                 />
+
                 <button
                     onClick={handleSend}
                     disabled={loading}

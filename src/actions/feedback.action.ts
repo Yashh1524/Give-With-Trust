@@ -96,3 +96,14 @@ export async function deleteFeedback({
         where: { id: latest.id },
     });
 }
+
+export async function getAverageRatingByNgoId(ngoId: string) {
+    const result = await prisma.feedback.aggregate({
+        where: { ngoId },
+        _avg: {
+            rating: true,
+        },
+    });
+
+    return result._avg.rating ?? 0; // return 0 if no ratings exist
+}
