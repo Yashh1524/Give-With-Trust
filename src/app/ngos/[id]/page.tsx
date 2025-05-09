@@ -1,21 +1,24 @@
 import { hasUserDonatedToNgo } from '@/actions/donation.action';
+import { getAverageRatingByNgoId } from '@/actions/feedback.action';
 import { getNgoByNgoId } from '@/actions/ngo.action';
 import { getMonthlyWorkProofsByNgoId } from '@/actions/proofs.action';
 import { getDbUserId } from '@/actions/user.action';
 import DonateBox from '@/components/DonateBox';
 import FeedBackBox from '@/components/FeedBackBox';
 import MonthlyProofs from '@/components/MonthlyProofs';
+import { FaStar } from "react-icons/fa6";
 
 export default async function NGOProfilePage({ params }: { params: Promise<{ id: string }> }) {
     const ngoId = (await params).id
     const ngo = await getNgoByNgoId(ngoId);
     const userId = await getDbUserId()
     const hasUserDonatedToThisNgo = await hasUserDonatedToNgo(userId as string, ngoId)
+    const avgRating = await getAverageRatingByNgoId(ngoId)
 
     if (!ngo) return <div className="text-center py-10 text-red-500">NGO not found.</div>;
-    
+
     const monthlyWorkProofs = await getMonthlyWorkProofsByNgoId(ngoId)
-    
+
     return (
         <div className="max-w-6xl mx-auto p-4 sm:p-6 lg:p-8">
             {/* Header */}
@@ -30,6 +33,15 @@ export default async function NGOProfilePage({ params }: { params: Promise<{ id:
                             <span className="px-2 py-1 text-xs rounded-full bg-emerald-100 text-emerald-700">Approved</span>
                         )}
                     </div>
+                    <div className="mt-2">
+                        <p className="text-md text-gray-700 dark:text-gray-300 flex items-center gap-1">
+                            <span className="flex items-center">
+                                <FaStar className="text-yellow-500" />  
+                            </span>
+                            <span className="text-gray-500 dark:text-gray-400">{avgRating.toFixed(1)}</span>
+                        </p>
+                    </div>
+
                 </div>
                 {ngo.logo && (
                     <img
@@ -82,7 +94,7 @@ export default async function NGOProfilePage({ params }: { params: Promise<{ id:
             {/* Monthly Work Proofs */}
             {
                 monthlyWorkProofs.length > 0 && (
-                    <MonthlyProofs proofs={monthlyWorkProofs} ngoId={ngoId}/>
+                    <MonthlyProofs proofs={monthlyWorkProofs} ngoId={ngoId} />
                 )
             }
 
@@ -91,7 +103,7 @@ export default async function NGOProfilePage({ params }: { params: Promise<{ id:
                 ngo?.approved && (
                     <>
                         <DonateBox ngoId={ngoId} userId={userId} />
-                        <FeedBackBox ngoId={ngoId} userId={userId} hasUserDonatedToThisNgo={hasUserDonatedToThisNgo}/>
+                        <FeedBackBox ngoId={ngoId} userId={userId} hasUserDonatedToThisNgo={hasUserDonatedToThisNgo} />
                     </>
                 )
             }

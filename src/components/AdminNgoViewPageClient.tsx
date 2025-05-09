@@ -18,8 +18,9 @@ import toast from 'react-hot-toast';
 import NGODonations from './NGODonations';
 import { format } from 'date-fns';
 import MonthlyProofs from './MonthlyProofs';
-import { getFeedbackByNgoId } from '@/actions/feedback.action';
+import { getAverageRatingByNgoId, getFeedbackByNgoId } from '@/actions/feedback.action';
 import FeedbackList from './FeedbackList';
+import { FaStar } from 'react-icons/fa6';
 
 interface Feedback {
     id: string;
@@ -84,6 +85,7 @@ export default function AdminNgoViewPageClient({ ngo, donations, payouts,  month
     const [approved, setApproved] = useState<boolean>(ngo.approved);
     const [isSaving, setIsSaving] = useState(false);
     const [feedbacks, setFeedbacks] = useState<Feedback[]>([]);
+    const [avgRating, setAvgRating] = useState(0)
 
     const fetchFeedbacks = async (ngoId: string) => {
         const data = await getFeedbackByNgoId(ngoId);
@@ -94,8 +96,14 @@ export default function AdminNgoViewPageClient({ ngo, donations, payouts,  month
         setFeedbacks(normalized);
     };
 
+    const fetchAvgRating = async (ngoId: string) => {
+        const data = await getAverageRatingByNgoId(ngoId)
+        setAvgRating(data)
+    }
+
     useEffect(() => {
         fetchFeedbacks(ngo.id);
+        fetchAvgRating(ngo.id)
     }, [ngo.id]);
 
     const totalRaised = donations.reduce((sum, d) => sum + d.amount, 0);
@@ -162,6 +170,12 @@ export default function AdminNgoViewPageClient({ ngo, donations, payouts,  month
                 <div>
                     <h1 className="text-3xl font-bold text-gray-900 dark:text-white">{ngo.name}</h1>
                     <p className="text-sm text-gray-500">{ngo.email}</p>
+                    <p className="text-md text-gray-700 dark:text-gray-300 flex items-center gap-1">
+                        <span className="flex items-center">
+                            <FaStar className="text-yellow-500" />  
+                        </span>
+                        <span className="text-gray-500 dark:text-gray-400">{avgRating.toFixed(1)}</span>
+                    </p>
                     <div className="flex flex-wrap gap-2 mt-10">
                         {/* Editable status */}
                         <select

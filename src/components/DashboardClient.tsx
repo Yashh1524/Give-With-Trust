@@ -21,8 +21,9 @@ import Link from 'next/link';
 import MonthlyProofs from './MonthlyProofs';
 import { FaDonate } from 'react-icons/fa';
 import { getPayoutsByNgoId } from '@/actions/payout.action';
-import { getFeedbackByNgoId } from '@/actions/feedback.action';
+import { getAverageRatingByNgoId, getFeedbackByNgoId } from '@/actions/feedback.action';
 import FeedbackList from './FeedbackList';
+import { FaStar } from 'react-icons/fa6';
 
 interface Feedback {
     id: string;
@@ -51,6 +52,7 @@ export default function DashboardClient(
     const [donations, setDonations] = useState<any[]>([]);
     const [payouts, setPayouts] = useState<any[]>([]);
     const [feedbacks, setFeedbacks] = useState<Feedback[]>([]);
+    const [avgRating, setAvgRating] = useState(0)
 
     const monthlyData = getMonthlyDonationData(donations);
     const yearlyData = getYearlyDonationTotals(donations);
@@ -65,6 +67,11 @@ export default function DashboardClient(
         }));
         setFeedbacks(normalized);
     };
+
+    const fetchAvgRating = async (ngoId: string) => {
+        const data = await getAverageRatingByNgoId(ngoId)
+        setAvgRating(data)
+    }
 
     const fetchDonations = async (ngoId: string) => {
         const data = await getDonationByNgoId(ngoId);
@@ -81,6 +88,7 @@ export default function DashboardClient(
             fetchDonations(selectedNgoId);
             fetchPayouts(selectedNgoId)
             fetchFeedbacks(selectedNgoId)
+            fetchAvgRating(selectedNgoId)
         }
     }, [selectedNgoId]);
 
@@ -206,7 +214,15 @@ export default function DashboardClient(
                 </div>
 
                 {/* NGO Details */}
-                <div className="p-6 bg-white dark:bg-[#1f2937] rounded-lg shadow col-span-3 row-span-4">
+                <div className="p-6 relative bg-white dark:bg-[#1f2937] rounded-lg shadow col-span-3 row-span-4">
+                    <div className="mt-2 absolute top-5 right-5">
+                        <p className="text-md text-gray-700 dark:text-gray-300 flex items-center gap-1">
+                            <span className="flex items-center">
+                                <FaStar className="text-yellow-500" />  
+                            </span>
+                            <span className="text-gray-500 dark:text-gray-400">{avgRating.toFixed(1)}</span>
+                        </p>
+                    </div>
                     <h2 className="flex gap-2 items-center text-xl font-semibold mb-2">
                         <BiSolidDetail /> NGO Details
                     </h2>
