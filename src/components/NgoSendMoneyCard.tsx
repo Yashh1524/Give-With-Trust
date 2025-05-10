@@ -31,42 +31,52 @@ const NgoSendMoneyCard: React.FC<NgoSendMoneyCardProps> = ({ ngoDetails, amount,
     const [showDonations, setShowDonations] = useState(false)
 
     const handleSendMoney = async () => {
-        if (!amount) return
-        setLoading(true)
+        if (!amount) return;
+        setLoading(true);
+
         try {
             const res = await fetch('/api/send-money-to-submitted-ngo', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ ngo: ngoDetails, amount }),
-            })
-            const data = await res.json()
-            // console.log(data);
-            // console.log(ngoDetails);
-            // console.log(amount)
+            });
+
+            const data = await res.json();
 
             if (data.success) {
-                await createPayout(ngoDetails.id, amount, data.payoutId)
-                toast.success(`Sent ₹${amount} to ${ngoDetails.name}`)
-                for (const donation of donations) {
-                    if (donation.status === "REASSIGNED") {
+                await createPayout(ngoDetails.id, amount, data.payoutId);
+                toast.success(`Sent ₹${amount} to ${ngoDetails.name}`);
+
+                // If there are any REASSIGNED donations, update REASSIGNED_RELEASED for the failed NGO
+                if (failedNgo?.id) {
+                    const hasReassigned = donations.some(d => d.status === "REASSIGNED");
+                    if (hasReassigned) {
                         await updateDonationStatusByNgoId(
                             "REASSIGNED_RELEASED" as DonationStatus,
-                            failedNgo?.id as string
-                        )
-                    } else {
-                        await updateDonationStatusByNgoId("RELEASED" as DonationStatus, ngoDetails.id)
+                            failedNgo.id
+                        );
                     }
+
+                    // Also update proof status if needed
+                    await updateNgoProofStatus(failedNgo.id, "PENDING");
                 }
-                await updateNgoProofStatus(failedNgo?.id as string, "PENDING");
+
+                // Always update RELEASED status for the selected NGO
+                await updateDonationStatusByNgoId(
+                    "RELEASED" as DonationStatus,
+                    ngoDetails.id
+                );
             } else {
-                toast.error(`Failed: ${data.error}`)
+                toast.error(`Failed: ${data.error}`);
             }
-        } catch (err) {
-            toast.error('Something went wrong')
+        } catch (err: any) {
+            console.error("Send Money Error:", err);
+            toast.error('Something went wrong');
         } finally {
-            setLoading(false)
+            setLoading(false);
         }
-    }
+    };
+
 
     return (
         <div className="w-full">
