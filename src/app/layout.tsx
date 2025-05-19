@@ -6,7 +6,7 @@ import { ThemeProvider } from "@/context/ThemeContext";
 import Navbar from "@/components/Navbar";
 import Sidebar from "@/components/Sidebar";
 import Footer from "@/components/Footer";
-import { Toaster } from 'react-hot-toast'
+import { Toaster } from "react-hot-toast";
 import { SidebarProvider } from "@/context/SidebarContext";
 import ChatBotWrapper from "@/components/ChatBotWrapper";
 
@@ -35,23 +35,27 @@ export default function RootLayout({
       <ThemeProvider>
         <SidebarProvider>
           <html lang="en">
-            <body 
+            <body
               suppressHydrationWarning={true}
-              className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+              className={`${geistSans.variable} ${geistMono.variable} antialiased h-screen overflow-hidden`}
             >
-              <div className="flex flex-col h-screen overflow-y-hidden">
+              <div className="flex flex-col h-full">
+                {/* Navbar at top */}
                 <Navbar />
-                <div className="flex flex-1 bg-white dark:bg-[#100f1b] overflow-hidden">
+
+                {/* Sidebar + Scrollable Content */}
+                <div className="flex flex-1 overflow-hidden bg-white dark:bg-[#100f1b]">
                   <Sidebar />
-                  <main className="flex-1 p-4 md:p-6 lg:p-8 overflow-y-auto h-[calc(100vh-64px)]">
+                  <main className="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8 scrollbar-hide">
                     {children}
                   </main>
                 </div>
-
+                {/* Floating UI */}
+                <ChatBotWrapper />
+                <Toaster />
               </div>
-              <ChatBotWrapper />
-              <Toaster />
             </body>
+              <Footer />
           </html>
         </SidebarProvider>
       </ThemeProvider>
