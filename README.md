@@ -4,6 +4,18 @@
 
 ---
 
+## 🎥 Demo Video
+
+[Watch on YouTube](https://www.youtube.com/watch?v=o9hRJNVbHgs)
+
+---
+
+## Linkdin Post
+
+https://www.linkedin.com/posts/yashbhut1524_nextjs-donationplatform-webdevelopment-activity-7336694547051159553-DAEW?utm_source=share&utm_medium=member_desktop&rcm=ACoAAD4XP0kB01VvtR_GE96tQbmlDR2btaAT4WM
+
+---
+
 ## 🚀 Why GiveWithTrust?
 
 Many donors hesitate to give repeatedly due to uncertainty about how funds are used. GiveWithTrust solves this by making NGO funding **proof-based**, **time-bound**, and **community-controlled**. By doing so, we empower both **donors** and **NGOs**, creating a system that encourages genuine impact and discourages misuse.
