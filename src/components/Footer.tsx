@@ -5,7 +5,7 @@ import { FaGithub, FaInstagram, FaLinkedin, FaXTwitter, FaYoutube } from "react-
 
 const socialLinks = [
     {
-        href: "https://github.com/YashBhut1524",
+        href: "https://github.com/Yashh1524",
         icon: <FaGithub size={24} />,
         label: "Github",
     },
