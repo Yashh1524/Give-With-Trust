@@ -20,7 +20,7 @@ const socialLinks = [
         label: "X",
     },
     {
-        href: "https://www.linkedin.com/in/yashbhut1524/",
+        href: "https://www.linkedin.com/in/yashh1524/",
         icon: <FaLinkedin size={24} />,
         label: "LinkedIn",
     },
