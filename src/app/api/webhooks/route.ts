@@ -68,7 +68,7 @@ export async function POST(req: Request) {
                 username: username,
             });
 
-            // console.log(`User ${id} ${evt.type === "user.created" ? "created" : "updated"} in database.`);
+            console.log(`User ${id} ${evt.type === "user.created" ? "created" : "updated"} in database.`);
         }
 
 
